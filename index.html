@@ -293,85 +293,49 @@
         <!-- 3. Foreground Narrative Scene Cards (Fade & Glide on Scroll) -->
         <div class="film-stage-content">
           <!-- ACT 0: Cover / Cinematic Movie Premiere Title Screen -->
+          <!-- ACT 0: Cover / Hero Card with Full Original Text & Blessings -->
           <div id="cover" class="film-scene-frame frame-0 is-active" data-scene="0">
-            <div class="cinema-premiere-card">
-              <!-- Corner Golden Filigree Accents -->
-              <span class="gold-corner tl" aria-hidden="true"></span>
-              <span class="gold-corner tr" aria-hidden="true"></span>
-              <span class="gold-corner bl" aria-hidden="true"></span>
-              <span class="gold-corner br" aria-hidden="true"></span>
-
-              <!-- Divine Tamil Invocation -->
-              <div class="cinema-divine-banner rise" style="--d:.05s">
-                <span class="cinema-om" aria-hidden="true">ௐ</span>
-                <span class="cinema-mantra">திருவருள் கூடும் சுப முகூர்த்த அழைப்பிதழ்</span>
-                <span class="cinema-om" aria-hidden="true">ௐ</span>
-              </div>
-              <p class="cinema-blessing-text rise" style="--d:.12s">With the divine blessings of Lord Murugan &amp; our elders</p>
-
-              <!-- Arched Royal Cameo of the Couple (Clean, No Polaroid, No Tape, No Sticker) -->
-              <div class="cinema-cameo-frame rise" style="--d:.2s">
-                <div class="cameo-arch">
-                  <img src="./couple-comic.webp?v=4.0" alt="GnanaGanesh &amp; Dharshini" class="cameo-couple-img" />
+            <div class="panel-inner hero-inner">
+              <div class="card hero-card">
+                <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
+                <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
+                <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
+                <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+                <div class="polaroid rise" style="--d:.0s">
+                  <img src="./couple-comic.webp?v=4.0" alt="GnanaGanesh and Dharshini in comic art style" />
+                  <span class="tape t1" aria-hidden="true"></span>
+                  <span class="tape t2" aria-hidden="true"></span>
+                  <span class="polaroid-caption">GnanaGanesh ♥ Dharshini</span>
                 </div>
-                <div class="cameo-ribbon">
-                  <span>திருமண பந்தம்</span>
-                </div>
-              </div>
-
-              <!-- Grand Movie Title Names -->
-              <div class="cinema-title-wrap rise" style="--d:.3s">
-                <h1 class="cinema-main-title">
-                  <span class="title-name">GnanaGanesh</span>
-                  <span class="title-connector">
-                    <span class="connector-line"></span>
-                    <span class="connector-weds">weds</span>
-                    <span class="connector-line"></span>
-                  </span>
-                  <span class="title-name">Dharshini</span>
-                </h1>
-              </div>
-
-              <!-- 3-Act Celebration Marquee Strip -->
-              <div class="cinema-marquee rise" style="--d:.4s">
-                <div class="marquee-item" data-act-jump="1" role="button" tabindex="0" title="View Engagement Details">
-                  <span class="mq-badge">ACT I · ENGAGEMENT</span>
-                  <span class="mq-date">Sat, 12 Dec · 6:30 PM</span>
-                  <span class="mq-venue">Shanmugar Mahal, Tiruchendur</span>
-                </div>
-                <div class="marquee-sep" aria-hidden="true">✦</div>
-                <div class="marquee-item highlight-act" data-act-jump="2" role="button" tabindex="0" title="View Muhurtham Details">
-                  <span class="mq-badge">ACT II · SACRED MUHURTHAM</span>
-                  <span class="mq-date">Sun, 13 Dec · 6:30 AM</span>
-                  <span class="mq-venue">Shanmugar Mahal, Tiruchendur</span>
-                </div>
-                <div class="marquee-sep" aria-hidden="true">✦</div>
-                <div class="marquee-item" data-act-jump="3" role="button" tabindex="0" title="View Reception Details">
-                  <span class="mq-badge">ACT III · RECEPTION</span>
-                  <span class="mq-date">Sun, 13 Dec · 6:30 PM</span>
-                  <span class="mq-venue">Thoothukudi (Pearl City)</span>
+                <div class="date-sticker rise" style="--d:.7s">Save the<br />Date!</div>
+                <div class="hero-text">
+                  <div class="hero-pillayar rise" style="--d:.05s"><img class="pillayar" src="./logo.jpg" alt="Lord Ganesha" /></div>
+                  <p class="tamil rise" style="--d:.15s">திருமண அழைப்பு</p>
+                  <p class="blessing rise" style="--d:.25s">With the divine blessings of Lord Murugan &amp; our elders</p>
+                  <div class="kolam-rule rise" style="--d:.3s" aria-hidden="true"><span>❋</span> <span>◇</span> <span>❋</span></div>
+                  <h1 class="rise" style="--d:.4s">
+                    <span class="name">GnanaGanesh</span>
+                    <span class="weds">weds</span>
+                    <span class="name">Dharshini</span>
+                  </h1>
+                  <p class="date rise" style="--d:.5s">Sunday, 13 December 2026 · Muhurtham 6:30 – 7:30 AM</p>
+                  <p class="venue-short rise" style="--d:.55s">Shanmugar Mahal, Tiruchendur</p>
+                  <div class="cta-row rise" style="--d:.65s">
+                    <button class="btn primary" type="button" data-scroll="#rsvp">RSVP / Call</button>
+                    <button class="btn" type="button" data-scroll="#venue">Venue &amp; Map</button>
+                  </div>
+                  <div class="cover-modes rise" style="--d:.8s">
+                    <button id="playBtn" class="btn primary cinema-cta" type="button">
+                      <span class="play-icon-glow">▶</span>
+                      <span>Watch Wedding Film / கதைப் பயணம்</span>
+                    </button>
+                    <button id="exploreBtn" class="btn cinema-cta-sec" type="button" data-act-jump="1">
+                      <span>📜 Unfold Chronicles ↓</span>
+                    </button>
+                  </div>
+                  <p class="scroll-cue rise" style="--d:.95s">Scroll down to unfold the story <span aria-hidden="true">↓</span></p>
                 </div>
               </div>
-
-              <!-- Direct Premiere Controls -->
-              <div class="cinema-cta-bar rise" style="--d:.5s">
-                <button id="playBtn" class="btn primary cinema-play-cta" type="button">
-                  <span class="play-icon-glow">▶</span>
-                  <span>Watch Wedding Film / கதைப் பயணம்</span>
-                </button>
-                <button id="exploreBtn" class="btn cinema-unfold-cta" type="button" data-act-jump="1">
-                  <span>📜 Unfold Chronicles ↓</span>
-                </button>
-              </div>
-
-              <!-- Fast Nav Pills -->
-              <div class="cinema-pill-nav rise" style="--d:.6s">
-                <button class="cinema-pill" type="button" data-scroll="#venue">📍 Venue &amp; Map</button>
-                <button class="cinema-pill" type="button" data-scroll="#rsvp">💌 RSVP / Wishes</button>
-                <button class="cinema-pill" type="button" data-scroll="#countdown">🌾 Shower Blessings</button>
-              </div>
-
-              <p class="cinema-scroll-hint rise" style="--d:.7s">Scroll to journey through the celebrations <span aria-hidden="true">↓</span></p>
             </div>
           </div>
 
