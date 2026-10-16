@@ -1,4 +1,4 @@
-# ganesh-weds-dharshini.gnanaganesh.in
+# gg-weds-d.gnanaganesh.in
 
 Standalone mobile-friendly wedding invitation site (no build step — plain HTML/CSS/JS).
 
@@ -32,10 +32,10 @@ Then: Vercel dashboard → Add New → Project → import `ganesh-weds-dharshini
 
 ## 4. Point the subdomain to it
 
-1. Vercel → wedding project → Settings → Domains → add `ganesh-weds-dharshini.gnanaganesh.in`
+1. Vercel → wedding project → Settings → Domains → add `gg-weds-d.gnanaganesh.in`
 2. Vercel will show a CNAME target, usually `cname.vercel-dns.com`
 3. Spaceship → domain `gnanaganesh.in` → DNS → add record:
    - Type: `CNAME`, Host: `ganesh-weds-dharshini`, Value: `cname.vercel-dns.com`, TTL: auto
-4. Wait 5–60 min, open `https://ganesh-weds-dharshini.gnanaganesh.in`
+4. Wait 5–60 min, open `https://gg-weds-d.gnanaganesh.in`
 
 Do NOT point it at the main `gnanaganesh.in` project — that would serve your portfolio on both domains.
