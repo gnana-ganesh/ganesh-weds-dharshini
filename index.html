@@ -16,7 +16,7 @@
   <link rel="preload" as="image" type="image/webp" href="./invitation-comic.webp" />
   <link rel="stylesheet" href="./styles.css?v=5.0" />
 </head>
-<body class="opened">
+<body class="locked">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <symbol id="gull" viewBox="0 0 28 10">
       <path d="M1,7 Q8,1 14,6 Q20,1 27,7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -196,6 +196,25 @@
       <circle cx="34" cy="16" r="2" fill="#fff" />
     </symbol>
   </svg>
+
+  <div id="opener" class="opener" role="dialog" aria-modal="true" aria-label="Wedding invitation cover">
+    <p class="opener-top tamil"><span>திருமண அழைப்பு</span></p>
+    <div class="envelope" id="envelope" aria-hidden="false">
+      <div class="env-back"></div>
+      <div class="letter" id="letter">
+        <p class="tamil gold-dark">With divine blessings</p>
+        <h2>GnanaGanesh <span>weds</span> Dharshini</h2>
+        <p class="open-sub">13 Dec 2026 · Tiruchendur</p>
+        <div class="kolam small" aria-hidden="true">❋ ── ◇ ── ❋</div>
+      </div>
+      <div class="env-front"></div>
+      <div class="env-flap" id="envFlap"></div>
+      <button id="openBtn" class="seal-btn" type="button" aria-label="Open invitation">
+        <img src="./seal.jpg" alt="Sacred Ganesha seal" />
+      </button>
+    </div>
+    <p class="opener-hint">Tap the seal to open</p>
+  </div>
 
 
   <button id="musicBtn" class="music-btn" aria-pressed="false" aria-label="Toggle traditional music">
