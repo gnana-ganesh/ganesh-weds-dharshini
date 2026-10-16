@@ -597,7 +597,7 @@ body.locked { overflow: hidden; }
 /* Chrome Navigation & Audio */
 .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--gold-rich); z-index: 40; box-shadow: 0 0 8px rgba(232, 199, 126, 0.8); }
 .music-btn {
-  position: fixed; top: 12px; right: 12px; z-index: 40;
+  position: fixed; top: 12px; right: 12px; z-index: 100;
   background: rgba(38, 5, 14, 0.92); color: #ffeec2;
   border: 1px solid var(--gold-rich); border-radius: 999px;
   padding: 0.5rem 0.85rem; font-size: 0.9rem; font-weight: 600; cursor: pointer;
@@ -1469,30 +1469,40 @@ body.cinema-active .comic-art {
   transform: translateY(0);
 }
 
-/* Floating Akshadhai & Rose Petals Physics */
+/* ==========================================================================
+   NATURAL, ORGANIZED PETAL & AKSHADHAI SHOWER (NO SOUND)
+   ========================================================================== */
 .akshadhai-grain {
   position: fixed;
   z-index: 1500;
   pointer-events: none;
-  width: 7px;
-  height: 9px;
-  border-radius: 50% 50% 40% 40%;
-  background: radial-gradient(circle at 35% 35%, #fffde6, #f5c842 60%, #c49514 100%);
-  box-shadow: 0 0 8px rgba(245, 200, 66, 0.8);
-  animation: akshadhaiFly var(--anim-dur, 2.2s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  width: 5px;
+  height: 8px;
+  border-radius: 50% 50% 45% 45%;
+  background: radial-gradient(circle at 35% 30%, #fffde8, #f5c842 55%, #c89518 100%);
+  box-shadow: 0 0 6px rgba(245, 200, 66, 0.7);
+  animation: naturalGrainFall var(--anim-dur, 3.4s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  will-change: transform, opacity;
 }
 
-@keyframes akshadhaiFly {
+@keyframes naturalGrainFall {
   0% {
-    transform: translate(0, 0) scale(0.4) rotate(0deg);
-    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.6);
+    opacity: 0;
   }
-  30% {
-    transform: translate(var(--dx), var(--dy-peak, -320px)) scale(1.1) rotate(180deg);
-    opacity: 1;
+  10% {
+    opacity: 0.95;
+    transform: translate3d(calc(var(--spread-x) * 0.4), var(--rise-y, -35px), 0) rotate(60deg) scale(1);
+  }
+  35% {
+    transform: translate3d(calc(var(--spread-x) * 0.7 + var(--sway)), calc(var(--drop-h) * 0.3), 0) rotate(160deg);
+  }
+  65% {
+    transform: translate3d(calc(var(--spread-x) * 0.9 - var(--sway) * 0.6), calc(var(--drop-h) * 0.65), 0) rotate(280deg);
+    opacity: 0.9;
   }
   100% {
-    transform: translate(calc(var(--dx) * 1.3), 105vh) scale(0.8) rotate(540deg);
+    transform: translate3d(calc(var(--spread-x) + var(--sway) * 0.3), var(--drop-h), 0) rotate(420deg) scale(0.8);
     opacity: 0;
   }
 }
@@ -1501,21 +1511,32 @@ body.cinema-active .comic-art {
   position: fixed;
   z-index: 1500;
   pointer-events: none;
-  font-size: 1.45rem;
-  animation: rosePetalShower var(--anim-dur, 2.5s) ease-in-out forwards;
+  font-size: var(--petal-size, 1.2rem);
+  line-height: 1;
+  animation: naturalPetalFall var(--anim-dur, 3.8s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.28));
+  will-change: transform, opacity;
 }
 
-@keyframes rosePetalShower {
+@keyframes naturalPetalFall {
   0% {
-    transform: translate(0, 0) rotate(0deg) scale(0.6);
-    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) rotateY(0deg) scale(0.6);
+    opacity: 0;
   }
-  25% {
-    transform: translate(var(--dx), var(--dy-peak, -260px)) rotate(90deg) scale(1.2);
+  12% {
     opacity: 1;
+    transform: translate3d(calc(var(--spread-x) * 0.35), var(--rise-y, -50px), 0) rotate(var(--rot-1, 35deg)) rotateY(45deg) scale(1.05);
+  }
+  40% {
+    transform: translate3d(calc(var(--spread-x) * 0.65 + var(--sway)), calc(var(--drop-h) * 0.35), 0) rotate(var(--rot-2, -40deg)) rotateY(120deg) scale(0.98);
+    opacity: 0.95;
+  }
+  70% {
+    transform: translate3d(calc(var(--spread-x) * 0.85 - var(--sway) * 0.8), calc(var(--drop-h) * 0.7), 0) rotate(var(--rot-1, 45deg)) rotateY(210deg) scale(0.92);
+    opacity: 0.85;
   }
   100% {
-    transform: translate(calc(var(--dx) * 1.4), 105vh) rotate(420deg) scale(0.85);
+    transform: translate3d(calc(var(--spread-x) + var(--sway) * 0.4), var(--drop-h), 0) rotate(calc(var(--rot-2, -60deg) * 2)) rotateY(320deg) scale(0.85);
     opacity: 0;
   }
 }

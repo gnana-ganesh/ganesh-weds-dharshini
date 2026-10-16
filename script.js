@@ -1,12 +1,3 @@
-// Shared WebAudio context for short synth accents (e.g. the blessing chime).
-let drumAudioCtx = null;
-function getDrumContext() {
-  if (!drumAudioCtx) {
-    drumAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (drumAudioCtx.state === "suspended") drumAudioCtx.resume();
-  return drumAudioCtx;
-}
 
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -433,74 +424,67 @@ async function recordShower() {
 
 function triggerBlessingShower(originX, originY, count = 14) {
   if (reducedMotion) return;
-  const flowerGlyphs = ["🌸", "🌹", "🌼", "🌺", "🏵️"];
+  const flowerGlyphs = ["🌸", "🌹", "🌼", "🏵️", "🌺"];
+  const totalItems = Math.min(Math.max(count, 10), 16);
 
-  for (let i = 0; i < count; i++) {
-    const isPetal = i % 4 === 0;
+  for (let i = 0; i < totalItems; i++) {
+    const isPetal = i % 3 !== 0; // ~66% petals, ~33% golden akshadhai grains
     const el = document.createElement("span");
 
     if (isPetal) {
       el.className = "blessing-rose-petal";
       el.textContent = flowerGlyphs[i % flowerGlyphs.length];
+      const sizeRem = 0.95 + (i % 4) * 0.12;
+      el.style.setProperty("--petal-size", `${sizeRem}rem`);
     } else {
       el.className = "akshadhai-grain";
     }
 
-    el.style.left = originX + "px";
-    el.style.top = originY + "px";
+    // Centered start coordinates
+    el.style.left = `${originX}px`;
+    el.style.top = `${originY}px`;
 
-    const dx = (Math.random() - 0.5) * 80 + "vw";
-    const dyPeak = -(160 + Math.random() * 320) + "px";
-    const dur = 2.0 + Math.random() * 1.0 + "s";
+    // Symmetrical, organized fan spread
+    const spreadNorm = (i / (totalItems - 1) - 0.5) * 2; // -1.0 to +1.0
+    const spreadX = (spreadNorm * (50 + (i % 3) * 20)) + "px"; // soft horizontal fan ±70px
+    const riseY = -(25 + (1 - Math.abs(spreadNorm)) * 25 + (i % 3) * 8) + "px"; // gentle crest in center
+    const sway = ((i % 2 === 0 ? 1 : -1) * (20 + (i % 3) * 8)) + "px"; // natural oscillating sway ±30px
+    const rot1 = (spreadNorm * 35) + "deg";
+    const rot2 = (-spreadNorm * 45) + "deg";
 
-    el.style.setProperty("--dx", dx);
-    el.style.setProperty("--dy-peak", dyPeak);
+    // Drop distance to bottom of viewport with margin
+    const dropH = Math.max(450, window.innerHeight - originY + 120) + "px";
+
+    // Durations & rhythmic delays
+    const dur = 3.2 + (i % 4) * 0.3 + "s";
+    const delay = (i * 0.03) + "s";
+
+    el.style.setProperty("--spread-x", spreadX);
+    el.style.setProperty("--rise-y", riseY);
+    el.style.setProperty("--sway", sway);
+    el.style.setProperty("--rot-1", rot1);
+    el.style.setProperty("--rot-2", rot2);
+    el.style.setProperty("--drop-h", dropH);
     el.style.setProperty("--anim-dur", dur);
+    el.style.animationDelay = delay;
 
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 3200);
+    setTimeout(() => el.remove(), 4500);
   }
 }
 
-// Auspicious Chime sound on blessing
-function playBlessingChime() {
-  try {
-    const ctx = getDrumContext();
-    const t = ctx.currentTime + 0.02;
-    // Pentatonic mangala chime chord (C5, E5, G5, C6)
-    [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = f;
-      g.gain.setValueAtTime(0.0001, t + idx * 0.05);
-      g.gain.exponentialRampToValueAtTime(0.08, t + idx * 0.05 + 0.015);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + idx * 0.05 + 1.6);
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.start(t + idx * 0.05);
-      o.stop(t + idx * 0.05 + 1.8);
-    });
-  } catch {}
-}
-
-// Shower petals on every tap, anywhere on the page
+// Shower petals on taps, anywhere on the page EXCEPT on buttons & interactive links
 document.addEventListener("pointerdown", (e) => {
+  // Never interfere with buttons (like mute/unmute), links, inputs, or scrubber controls
+  if (e.target.closest("button, a, input, select, textarea, [role='button'], .film-cue-dot")) {
+    return;
+  }
   const now = Date.now();
-  if (now - lastShowerAt < 350) return;
+  if (now - lastShowerAt < 280) return;
   lastShowerAt = now;
   const x = (typeof e.clientX === "number" ? e.clientX : window.innerWidth / 2);
   const y = (typeof e.clientY === "number" ? e.clientY : window.innerHeight / 2);
   triggerBlessingShower(x, y);
-  playBlessingChime();
-  // First tap anywhere also starts the looping invitation track (gesture unlocks audio)
-  if (!playing) {
-    try {
-      startMusic();
-      playing = true;
-      if (btn) { btn.setAttribute("aria-pressed", "true"); btn.classList.add("is-playing"); }
-    } catch {}
-  }
   recordShower();
 });
 
