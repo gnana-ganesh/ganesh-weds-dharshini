@@ -270,7 +270,7 @@ if (calBtn) calBtn.addEventListener("click", () => {
     `DTSTART:${start}`, `DTEND:${end}`,
     "SUMMARY:GnanaGanesh weds Dharshini — Muhurtham",
     "LOCATION:Shanmugar Mahal\\, Tiruchendur",
-    "DESCRIPTION:Wedding invitation — gg-weds-d.gnanaganesh.in",
+    "DESCRIPTION:Wedding invitation — ganesh-weds-dharshini.gnanaganesh.in",
     "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
