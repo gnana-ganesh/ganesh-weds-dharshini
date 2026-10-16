@@ -406,12 +406,19 @@ window.addEventListener("scroll", () => {
 updateProgress();
 
 // Scroll-triggered reveal (like the reference's section entrances)
+// Scroll-triggered reveal & dynamic day-night atmospheric transition
 if ("IntersectionObserver" in window) {
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
-      if (e.isIntersecting) e.target.classList.add("in");
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        const timeTheme = e.target.dataset.time;
+        if (timeTheme) {
+          document.body.setAttribute("data-time-of-day", timeTheme);
+        }
+      }
     });
-  }, { threshold: 0.22 });
+  }, { threshold: 0.28 });
   panels.forEach((p) => io.observe(p));
 } else {
   panels.forEach((p) => p.classList.add("in"));
