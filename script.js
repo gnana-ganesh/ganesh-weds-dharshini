@@ -462,7 +462,7 @@ const cinemaScenes = [
   },
   {
     targetId: "reception",
-    chapter: "ACT III · GRAND RECEPTION · 13 DEC (6:30 PM)",
+    chapter: "ACT III · RECEPTION · 13 DEC (6:30 PM)",
     tamil: "மாலை 6:30 மணிக்கு மணமக்கள் வரவேற்பு விழா · தூத்துக்குடி...",
     english: "Act III: Starlit reception celebration and royal banquet in the Pearl City of Thoothukudi...",
     duration: 5500

@@ -1842,7 +1842,7 @@ body.cinema-active .comic-art {
   pointer-events: none;
 }
 
-/* Night: Grand Reception on 13.12.2026, 6:30 PM (Starlit Coastal Night in Thoothukudi) */
+/* Night: Reception on 13.12.2026, 6:30 PM (Starlit Coastal Night in Thoothukudi) */
 .panel.night {
   background: radial-gradient(circle at 50% 10%, #0c152e 0%, #070c1d 50%, #03060f 100%);
   color: #f7f9fc;
