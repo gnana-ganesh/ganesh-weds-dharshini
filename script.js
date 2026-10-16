@@ -9,63 +9,16 @@ function getDrumContext() {
 }
 
 
-// Sealed-envelope opener: seal breaks -> flap opens -> card rises -> expands into the temple-by-the-sea scene
-const opener = document.getElementById("opener");
-const openBtn = document.getElementById("openBtn");
-const envelope = document.getElementById("envelope");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-function revealSite() {
-  opener.classList.add("open");
-  document.body.classList.remove("locked");
-  document.body.classList.add("opened");
-  window.scrollTo({ top: 0 });
-  const cover = document.getElementById("cover");
-  if (cover) cover.classList.add("in");
-  if (location.hash) {
-    const t = document.querySelector(location.hash);
-    if (t) setTimeout(() => t.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" }), 150);
+
+// Initial hash scroll if deep-linked
+if (location.hash) {
+  const targetElement = document.querySelector(location.hash);
+  if (targetElement) {
+    setTimeout(() => {
+      targetElement.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+    }, 250);
   }
-}
-if (opener && openBtn && envelope) {
-  document.body.classList.add("locked");
-  document.body.classList.remove("opened");
-  const petals = ["🌸", "🏵️", "🌼", "❋"];
-  const burst = () => {
-    if (reducedMotion) return;
-    for (let i = 0; i < 22; i++) {
-      const s = document.createElement("span");
-      s.className = "petal";
-      s.textContent = petals[i % petals.length];
-      s.style.left = `${38 + Math.random() * 24}%`;
-      s.style.setProperty("--dx", `${(Math.random() - 0.5) * 60}vw`);
-      s.style.animationDelay = `${Math.random() * 0.3}s`;
-      opener.appendChild(s);
-      setTimeout(() => s.remove(), 2400);
-    }
-  };
-  openBtn.addEventListener("click", () => {
-    openBtn.disabled = true;
-    // Guest track loops from the tap itself (user gesture unlocks audio)
-    try {
-      startMusic();
-      playing = true;
-      if (btn) { btn.setAttribute("aria-pressed", "true"); btn.classList.add("is-playing"); }
-    } catch {}
-    if (reducedMotion) {
-      revealSite();
-      setTimeout(() => opener.remove(), 100);
-      return;
-    }
-    envelope.classList.add("unsealed");       // seal pops visually
-    setTimeout(() => { envelope.classList.add("flap-open"); }, 380);   // flap rotates up
-    setTimeout(() => { envelope.classList.add("letter-out"); }, 1050); // card slides out
-    setTimeout(() => { envelope.classList.add("expand"); burst(); }, 1950); // card -> temple scene
-    setTimeout(revealSite, 2650);
-    setTimeout(() => opener.remove(), 3450);
-  });
-} else {
-  document.body.classList.remove("locked");
-  document.body.classList.add("opened");
 }
 
 // Muhurtham: Sunday 13 Dec 2026, 6:30 AM IST. Format: YYYY-MM-DDTHH:MM:SS+05:30
