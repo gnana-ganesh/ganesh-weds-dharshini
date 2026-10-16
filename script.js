@@ -493,6 +493,14 @@ document.addEventListener("pointerdown", (e) => {
   const y = (typeof e.clientY === "number" ? e.clientY : window.innerHeight / 2);
   triggerBlessingShower(x, y);
   playBlessingChime();
+  // First tap anywhere also starts the looping invitation track (gesture unlocks audio)
+  if (!playing) {
+    try {
+      startMusic();
+      playing = true;
+      if (btn) { btn.setAttribute("aria-pressed", "true"); btn.classList.add("is-playing"); }
+    } catch {}
+  }
   recordShower();
 });
 
