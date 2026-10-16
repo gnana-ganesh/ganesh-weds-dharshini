@@ -1,183 +1,227 @@
-// Invitation sounds — warm and mature, synthesized with WebAudio (no files needed)
-let sfxCtx = null, master = null, verbSend = null;
-function audio() {
-  if (!sfxCtx) {
-    sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
-    master = sfxCtx.createGain(); master.gain.value = 0.9; master.connect(sfxCtx.destination);
-    // small hall reverb from a generated impulse
-    const dur = 2.4, rate = sfxCtx.sampleRate, len = Math.floor(rate * dur);
-    const ir = sfxCtx.createBuffer(2, len, rate);
-    for (let c = 0; c < 2; c++) {
-      const d = ir.getChannelData(c);
-      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.8);
-    }
-    const conv = sfxCtx.createConvolver(); conv.buffer = ir;
-    const wet = sfxCtx.createGain(); wet.gain.value = 0.45;
-    verbSend = sfxCtx.createGain();
-    verbSend.connect(conv); conv.connect(wet); wet.connect(master);
+// Traditional South Indian Drum Roll (Thavil Melam / தவில் உருட்டு)
+// Plays on "Tap to Open": an authentic temple drum roll that accelerates in rhythm
+// and crescendo, culminating in a resonant, auspicious "DHEEM" strike as the Tiruchendur scene unfolds.
+let drumAudioCtx = null;
+function getDrumContext() {
+  if (!drumAudioCtx) {
+    drumAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
-  if (sfxCtx.state === "suspended") sfxCtx.resume();
-  return sfxCtx;
-}
-function out(node, send = 0.6) {
-  node.connect(master);
-  if (send > 0) { const s = sfxCtx.createGain(); s.gain.value = send; node.connect(s); s.connect(verbSend); }
-}
-function noiseSrc(ctx, dur) {
-  const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
-  const ch = buf.getChannelData(0);
-  for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
-  const src = ctx.createBufferSource();
-  src.buffer = buf;
-  return src;
-}
-// Muted wax-seal break: soft low thud, no cartoon pop
-function playPop() {
-  try {
-    const ctx = audio(), t = ctx.currentTime;
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = "sine";
-    o.frequency.setValueAtTime(170, t);
-    o.frequency.exponentialRampToValueAtTime(58, t + 0.18);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.28, t + 0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
-    o.connect(g); out(g, 0.5);
-    o.start(t); o.stop(t + 0.35);
-  } catch {}
-}
-// Flap opening: faint low air movement, slow and quiet — no swoosh sweep
-function playWhoosh(dur = 0.8) {
-  try {
-    const ctx = audio(), t = ctx.currentTime;
-    const src = noiseSrc(ctx, dur);
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 900;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.05, t + dur * 0.45);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(lp); lp.connect(g); out(g, 0.7);
-    src.start(t); src.stop(t + dur + 0.05);
-  } catch {}
-}
-// Card sliding out: soft warm page, quiet with a slow bloom
-function playPaper(dur = 0.9) {
-  try {
-    const ctx = audio(), t = ctx.currentTime;
-    const src = noiseSrc(ctx, dur);
-    const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 500;
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.07, t + dur * 0.35);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(hp); hp.connect(lp); lp.connect(g); out(g, 0.7);
-    src.start(t); src.stop(t + dur + 0.05);
-  } catch {}
-}
-// Reveal: one temple bell over a warm Sa–Pa drone swell. Dignified, no sparkle.
-// Hindu temple bell (kovil mani): bronze partials with slow beating + bright strike clang
-function templeBell(freq, t, vol, decay) {
-  // slightly detuned pairs give bronze its living shimmer
-  [[1, 1, 0], [1.004, 0.55, 0], [2.39, 0.34, 0], [2.398, 0.2, 0], [3.91, 0.16, 0], [5.43, 0.09, 0]].forEach(([m, a]) => {
-    const o = sfxCtx.createOscillator(), g = sfxCtx.createGain();
-    o.type = "sine"; o.frequency.value = freq * m;
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(Math.max(vol * a, 0.0002), t + 0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-    o.connect(g); out(g, 0.9);
-    o.start(t); o.stop(t + decay + 0.1);
-  });
-  // deep hum an octave below for body
-  const h = sfxCtx.createOscillator(), hg = sfxCtx.createGain();
-  h.type = "sine"; h.frequency.value = freq / 2;
-  hg.gain.setValueAtTime(0.0001, t);
-  hg.gain.exponentialRampToValueAtTime(Math.max(vol * 0.35, 0.0002), t + 0.03);
-  hg.gain.exponentialRampToValueAtTime(0.0001, t + decay * 0.8);
-  h.connect(hg); out(hg, 0.8);
-  h.start(t); h.stop(t + decay);
-  // bright metallic strike transient
-  const src = noiseSrc(sfxCtx, 0.07);
-  const hp = sfxCtx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 4200;
-  const ng = sfxCtx.createGain();
-  ng.gain.setValueAtTime(Math.max(vol * 0.5, 0.0002), t);
-  ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
-  src.connect(hp); hp.connect(ng); out(ng, 0.7);
-  src.start(t);
-}
-function playShimmer() {
-  try {
-    const ctx = audio(), t = ctx.currentTime;
-    const dg = ctx.createGain();
-    dg.gain.setValueAtTime(0.0001, t);
-    dg.gain.exponentialRampToValueAtTime(0.035, t + 1.1);
-    dg.gain.exponentialRampToValueAtTime(0.0001, t + 3.4);
-    out(dg, 0.8);
-    [130.81, 196.0].forEach((f) => {
-      const o = ctx.createOscillator(); o.type = "sine"; o.frequency.value = f;
-      o.connect(dg); o.start(t); o.stop(t + 3.5);
-    });
-    templeBell(261.63, t + 0.05, 0.22, 3.6);
-    templeBell(392.0, t + 0.9, 0.09, 2.8);
-  } catch {}
+  if (drumAudioCtx.state === "suspended") drumAudioCtx.resume();
+  return drumAudioCtx;
 }
 
-// Festive nadaswaram welcome when the invitation opens.
-// Drop a real recording as "nadaswaram.mp3" next to index.html and it plays;
-// otherwise a synthesized reed-like mangala phrase plays (no files needed).
-let nadPlayed = false;
-function playMangalaSynth() {
+function playSynthesizedDrumRoll() {
   try {
-    const ctx = audio(), t0 = ctx.currentTime + 0.05;
-    // soft Sa–Pa drone bed
-    const dg = ctx.createGain();
-    dg.gain.setValueAtTime(0.0001, t0);
-    dg.gain.exponentialRampToValueAtTime(0.03, t0 + 1.0);
-    dg.gain.exponentialRampToValueAtTime(0.0001, t0 + 8.2);
-    out(dg, 0.8);
-    [130.81, 196.0].forEach((f) => {
-      const o = ctx.createOscillator(); o.type = "sine"; o.frequency.value = f;
-      o.connect(dg); o.start(t0); o.stop(t0 + 8.3);
-    });
-    // reedy lead (detuned saws + vibrato), Mohanam ascent
-    const seq = [
-      [261.63, 0.0, 0.42], [293.66, 0.42, 0.42], [329.63, 0.84, 0.42],
-      [392.0, 1.26, 0.84], [440.0, 2.1, 0.42], [392.0, 2.52, 0.42],
-      [329.63, 2.94, 0.42], [293.66, 3.36, 0.84], [261.63, 4.2, 1.4],
-      [329.63, 5.7, 0.3], [392.0, 6.0, 0.3], [440.0, 6.3, 0.3], [523.25, 6.6, 1.6],
-    ];
-    const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1900; lp.Q.value = 0.6;
-    const lg = ctx.createGain(); lg.gain.value = 0.075;
-    lp.connect(lg); out(lg, 0.85);
-    seq.forEach(([f, dt, d]) => {
-      const st = t0 + dt;
-      const o = ctx.createOscillator(); o.type = "sawtooth"; o.frequency.value = f;
-      const o2 = ctx.createOscillator(); o2.type = "sawtooth"; o2.frequency.value = f; o2.detune.value = 6;
-      const vib = ctx.createOscillator(); vib.frequency.value = 5.8;
-      const vg = ctx.createGain(); vg.gain.value = f * 0.012;
-      vib.connect(vg); vg.connect(o.frequency); vg.connect(o2.frequency);
+    const ctx = getDrumContext();
+    const t0 = ctx.currentTime + 0.02;
+
+    // Master bus & Limiter
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.85, t0);
+    master.connect(ctx.destination);
+
+    // Warm Hall Reverb (Temple Mandapam Acoustics)
+    const rate = ctx.sampleRate, dur = 2.0, len = Math.floor(rate * dur);
+    const ir = ctx.createBuffer(2, len, rate);
+    for (let c = 0; c < 2; c++) {
+      const ch = ir.getChannelData(c);
+      for (let i = 0; i < len; i++) {
+        ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5);
+      }
+    }
+    const conv = ctx.createConvolver();
+    conv.buffer = ir;
+    const wet = ctx.createGain();
+    wet.gain.value = 0.38;
+    conv.connect(wet);
+    wet.connect(master);
+
+    const out = (node, send = 0.5) => {
+      node.connect(master);
+      if (send > 0) {
+        const s = ctx.createGain();
+        s.gain.value = send;
+        node.connect(s);
+        s.connect(conv);
+      }
+    };
+
+    // Shared white noise buffer for crisp stick/skin snaps
+    const noiseBuf = ctx.createBuffer(1, Math.ceil(rate * 0.1), rate);
+    const nData = noiseBuf.getChannelData(0);
+    for (let i = 0; i < nData.length; i++) nData[i] = Math.random() * 2 - 1;
+
+    // High head strike (Valanthalai - stick/capped finger "Ta / Ki")
+    const strikeHigh = (t, vol = 0.5, pan = 0) => {
+      // Noise snap
+      const nSrc = ctx.createBufferSource();
+      nSrc.buffer = noiseBuf;
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 2800;
+      bp.Q.value = 1.6;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(vol * 0.6, t);
+      ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.025);
+      nSrc.connect(bp);
+      bp.connect(ng);
+
+      // Tonal skin transient
+      const o = ctx.createOscillator();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(420, t);
+      o.frequency.exponentialRampToValueAtTime(260, t + 0.035);
+      const og = ctx.createGain();
+      og.gain.setValueAtTime(vol * 0.8, t);
+      og.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+      o.connect(og);
+
+      // Mix & stereo pan
+      const mix = ctx.createGain();
+      mix.gain.value = 1.0;
+      ng.connect(mix);
+      og.connect(mix);
+
+      if (ctx.createStereoPanner) {
+        const p = ctx.createStereoPanner();
+        p.pan.value = Math.max(-0.6, Math.min(0.6, pan));
+        mix.connect(p);
+        out(p, 0.45);
+      } else {
+        out(mix, 0.45);
+      }
+      nSrc.start(t);
+      nSrc.stop(t + 0.03);
+      o.start(t);
+      o.stop(t + 0.05);
+    };
+
+    // Bass head strike (Thoppi - resonant pitch-bent "Thom / Dheem")
+    const strikeBass = (t, vol = 0.6, decay = 0.18, pan = 0) => {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(140, t);
+      o.frequency.exponentialRampToValueAtTime(58, t + decay * 0.7);
+
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 380;
+
       const g = ctx.createGain();
-      g.gain.setValueAtTime(0.0001, st);
-      g.gain.exponentialRampToValueAtTime(1, st + 0.09);
-      g.gain.setValueAtTime(1, st + Math.max(d - 0.08, 0.1));
-      g.gain.exponentialRampToValueAtTime(0.0001, st + d + 0.06);
-      o.connect(g); o2.connect(g); g.connect(lp);
-      [o, o2, vib].forEach(n => { n.start(st); n.stop(st + d + 0.15); });
+      g.gain.setValueAtTime(Math.max(0.0001, vol), t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+
+      o.connect(lp);
+      lp.connect(g);
+
+      if (ctx.createStereoPanner) {
+        const p = ctx.createStereoPanner();
+        p.pan.value = pan;
+        g.connect(p);
+        out(p, 0.55);
+      } else {
+        out(g, 0.55);
+      }
+      o.start(t);
+      o.stop(t + decay + 0.02);
+    };
+
+    // Auspicious Temple Bell resonance for the final strike
+    const playTempleChime = (t, freq = 392.0, vol = 0.18) => {
+      [1.0, 1.004, 2.76, 5.4].forEach((m, i) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = freq * m;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(vol / (i + 1), t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 2.0);
+        o.connect(g);
+        out(g, 0.85);
+        o.start(t);
+        o.stop(t + 2.1);
+      });
+    };
+
+    // Build the traditional accelerando drum roll sequence
+    let curTime = t0;
+    let panToggle = -0.25;
+
+    // Phase 1: Opening steady rhythm (0.0s to 0.4s) — Ta-Ki-Ta-Ki
+    const phase1Delays = [0.11, 0.10, 0.09, 0.085];
+    phase1Delays.forEach((dt, idx) => {
+      const v = 0.35 + idx * 0.04;
+      if (idx % 2 === 0) strikeHigh(curTime, v, panToggle);
+      else strikeBass(curTime, v * 0.9, 0.16, -panToggle);
+      panToggle = -panToggle;
+      curTime += dt;
     });
-  } catch {}
+
+    // Phase 2: Accelerando & Crescendo (0.4s to 1.15s) — roll picks up speed
+    let dt = 0.075;
+    while (curTime < t0 + 1.15) {
+      const progress = (curTime - t0) / 1.15;
+      const v = 0.45 + progress * 0.3;
+      if (Math.random() > 0.35) {
+        strikeHigh(curTime, v, panToggle);
+      } else {
+        strikeBass(curTime, v * 0.85, 0.12, -panToggle);
+      }
+      panToggle = -panToggle;
+      curTime += dt;
+      dt = Math.max(0.038, dt * 0.91);
+    }
+
+    // Phase 3: High-density buzz roll (உருட்டு) (1.15s to 1.78s)
+    dt = 0.026;
+    while (curTime < t0 + 1.78) {
+      const v = 0.65 + ((curTime - t0 - 1.15) / 0.63) * 0.25;
+      strikeHigh(curTime, v * (0.85 + Math.random() * 0.3), (Math.random() - 0.5) * 0.5);
+      if (Math.random() < 0.2) {
+        strikeBass(curTime, v * 0.6, 0.09, 0);
+      }
+      curTime += dt;
+    }
+
+    // Phase 4: Triplet Cadence (1.80s, 1.86s, 1.91s) — Ta - Ki - Ta!
+    strikeHigh(t0 + 1.80, 0.85, -0.25);
+    strikeBass(t0 + 1.80, 0.7, 0.14, 0.15);
+
+    strikeHigh(t0 + 1.86, 0.90, 0.25);
+
+    strikeHigh(t0 + 1.91, 0.95, -0.1);
+    strikeBass(t0 + 1.91, 0.75, 0.12, 0);
+
+    // Phase 5: Grand Culminating Strike at t = 1.96s (expand & petal burst)
+    // Thunderous celebratory "DHEEM" with deep temple resonance & bell shimmer!
+    const tFinal = t0 + 1.96;
+    strikeHigh(tFinal, 1.0, 0);
+    strikeBass(tFinal, 1.0, 1.5, 0); // deep resonant 1.5s decay
+    playTempleChime(tFinal, 392.0, 0.22); // auspicious temple bell ring
+
+  } catch (err) {
+    console.warn("Drum roll audio note:", err);
+  }
 }
-function playNadaswaram() {
-  if (nadPlayed) return; nadPlayed = true;
+
+function playTraditionalDrumRoll() {
   let done = false;
-  const synth = () => { if (!done) { done = true; playMangalaSynth(); } };
+  const synth = () => {
+    if (!done) {
+      done = true;
+      playSynthesizedDrumRoll();
+    }
+  };
   try {
-    const a = new Audio("./nadaswaram.mp3");
-    a.volume = 0.85;
-    a.addEventListener("error", synth);
-    a.addEventListener("playing", () => { done = true; });
-    const p = a.play();
+    const audio = new Audio("./drumroll.mp3");
+    audio.volume = 0.9;
+    audio.addEventListener("playing", () => { done = true; });
+    audio.addEventListener("error", synth);
+    const p = audio.play();
     if (p && typeof p.catch === "function") p.catch(synth);
-  } catch { synth(); }
+  } catch {
+    synth();
+  }
 }
 
 // Sealed-envelope opener: seal breaks -> flap opens -> card rises -> expands into the temple-by-the-sea scene
@@ -217,16 +261,15 @@ if (opener && openBtn && envelope) {
   openBtn.addEventListener("click", () => {
     openBtn.disabled = true;
     if (reducedMotion) {
-      playPop(); playNadaswaram();
       revealSite();
       setTimeout(() => opener.remove(), 100);
       return;
     }
-    playPop();                                            // seal breaks
-    envelope.classList.add("unsealed");       // seal pops
-    setTimeout(() => { envelope.classList.add("flap-open"); playWhoosh(0.8); }, 380);   // flap rotates up
-    setTimeout(() => { envelope.classList.add("letter-out"); playPaper(0.9); }, 1050); // card slides out
-    setTimeout(() => { envelope.classList.add("expand"); burst(); playWhoosh(1.0); playShimmer(); playNadaswaram(); }, 1950); // card -> temple scene
+    playTraditionalDrumRoll();
+    envelope.classList.add("unsealed");       // seal pops visually
+    setTimeout(() => { envelope.classList.add("flap-open"); }, 380);   // flap rotates up
+    setTimeout(() => { envelope.classList.add("letter-out"); }, 1050); // card slides out
+    setTimeout(() => { envelope.classList.add("expand"); burst(); }, 1950); // card -> temple scene
     setTimeout(revealSite, 2650);
     setTimeout(() => opener.remove(), 3450);
   });
@@ -350,73 +393,308 @@ if ("IntersectionObserver" in window) {
   panels.forEach((p) => p.classList.add("in"));
 }
 
-// Play-tour: auto glide through the story; any manual scroll/touch stops it
-let tourTimer = null;
+// ==========================================================================
+// CINEMATIC VIDEO WALKTHROUGH ENGINE (கதைப் பயணம்)
+// ==========================================================================
+const cinemaOverlay = document.getElementById("cinemaOverlay");
+const cinemaChapter = document.getElementById("cinemaChapter");
+const subTamil = document.getElementById("subTamil");
+const subEnglish = document.getElementById("subEnglish");
+const cinemaProgressBar = document.getElementById("cinemaProgressBar");
+const cinemaPlayPauseBtn = document.getElementById("cinemaPlayPauseBtn");
+const exitCinemaBtn = document.getElementById("exitCinemaBtn");
+const cinemaPrevBtn = document.getElementById("cinemaPrevBtn");
+const cinemaNextBtn = document.getElementById("cinemaNextBtn");
 const playBtn = document.getElementById("playBtn");
-function stopTour() {
-  if (tourTimer) { clearInterval(tourTimer); tourTimer = null; }
-  if (playBtn) {
-    playBtn.setAttribute("aria-pressed", "false");
-    playBtn.innerHTML = "▶ Play invitation";
+
+const cinemaScenes = [
+  {
+    targetId: "cover",
+    chapter: "PROLOGUE · THE SACRED SHORE",
+    tamil: "அருள்மிகு திருச்செந்தூர் அலைகடலின் ஓரம்...",
+    english: "At the sacred coastal shrine of Tiruchendur, where the morning sun kisses the waves...",
+    duration: 5200
+  },
+  {
+    targetId: "invitation",
+    chapter: "ACT I · THE SACRED INVITATION",
+    tamil: "இரு குடும்பங்களின் அன்பான திருமண அழைப்பு...",
+    english: "With ancestral blessings and boundless joy, two families unite in celebration...",
+    duration: 5200
+  },
+  {
+    targetId: "story-chapter",
+    chapter: "ACT II · OUR STORY",
+    tamil: "எங்கள் இனிய காதல் பயணம்...",
+    english: "Two souls walking together, bound by destiny, shared laughter, and eternal devotion...",
+    duration: 5800
+  },
+  {
+    targetId: "agenda",
+    chapter: "ACT III · SACRED CEREMONIES",
+    tamil: "சுபமுகூர்த்த வைபவம் & மணமக்கள் வரவேற்பு...",
+    english: "From the sacred Thali-tying Muhurtham to the grand evening reception feast...",
+    duration: 6000
+  },
+  {
+    targetId: "venue",
+    chapter: "ACT IV · VENUE & LOCATION",
+    tamil: "திருச்செந்தூர் சண்முகர் மஹாலில்...",
+    english: "Join us at Shanmugar Mahal, Tiruchendur. We eagerly await your gracious arrival...",
+    duration: 5000
+  },
+  {
+    targetId: "countdown",
+    chapter: "ACT V · BLESSINGS & FINALE",
+    tamil: "அன்போடு வந்து அட்சதை தூவி வாழ்த்துக!",
+    english: "Shower your heartfelt blessings upon us as we begin our sacred married life together...",
+    duration: 6500
+  }
+];
+
+let cinemaActive = false;
+let currentSceneIdx = 0;
+let sceneTimer = null;
+let sceneStartTime = 0;
+let sceneRemainingTime = 0;
+let isPaused = false;
+
+function updateCinemaSubtitles(scene) {
+  if (!subTamil || !subEnglish || !cinemaChapter) return;
+  subTamil.style.opacity = "0";
+  subEnglish.style.opacity = "0";
+  setTimeout(() => {
+    cinemaChapter.textContent = scene.chapter;
+    subTamil.textContent = scene.tamil;
+    subEnglish.textContent = scene.english;
+    subTamil.style.opacity = "1";
+    subEnglish.style.opacity = "1";
+  }, 200);
+
+  if (cinemaProgressBar) {
+    const pct = ((currentSceneIdx + 1) / cinemaScenes.length) * 100;
+    cinemaProgressBar.style.width = pct + "%";
   }
 }
-function startTour() {
-  stopTour();
-  const order = panels;
-  let idx = 0;
-  // start from the panel nearest the top of the viewport
-  let best = 0, bestDist = Infinity;
-  order.forEach((p, i) => {
-    const d = Math.abs(p.getBoundingClientRect().top);
-    if (d < bestDist) { bestDist = d; best = i; }
+
+function showScene(idx) {
+  if (idx < 0) idx = 0;
+  if (idx >= cinemaScenes.length) {
+    exitCinemaMode();
+    return;
+  }
+  currentSceneIdx = idx;
+  const scene = cinemaScenes[idx];
+  const target = document.getElementById(scene.targetId);
+  if (target) {
+    target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+  }
+  updateCinemaSubtitles(scene);
+
+  if (sceneTimer) clearTimeout(sceneTimer);
+  sceneStartTime = Date.now();
+  sceneRemainingTime = scene.duration;
+
+  if (!isPaused) {
+    sceneTimer = setTimeout(() => {
+      showScene(currentSceneIdx + 1);
+    }, scene.duration);
+  }
+}
+
+function startCinemaMode(fromIdx = 0) {
+  cinemaActive = true;
+  document.body.classList.add("cinema-active");
+  if (playBtn) {
+    playBtn.innerHTML = "⏸ Pause Film";
+  }
+  if (cinemaPlayPauseBtn) {
+    cinemaPlayPauseBtn.textContent = "⏸";
+  }
+  isPaused = false;
+
+  // Auto-play ambient drone/music if silent
+  if (!playing && typeof startDrone === "function") {
+    try {
+      startDrone();
+      playing = true;
+      if (btn) {
+        btn.setAttribute("aria-pressed", "true");
+        btn.innerHTML = "🔊 <span>Playing</span>";
+      }
+    } catch {}
+  }
+
+  showScene(fromIdx);
+}
+
+function exitCinemaMode() {
+  cinemaActive = false;
+  document.body.classList.remove("cinema-active");
+  if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+  if (playBtn) {
+    playBtn.innerHTML = '<span class="play-icon-glow">▶</span> <span>Watch Wedding Film / கதைப் பயணம்</span>';
+  }
+}
+
+function toggleCinemaPause() {
+  if (!cinemaActive) {
+    startCinemaMode(currentSceneIdx);
+    return;
+  }
+  if (!isPaused) {
+    isPaused = true;
+    if (sceneTimer) clearTimeout(sceneTimer);
+    const elapsed = Date.now() - sceneStartTime;
+    sceneRemainingTime = Math.max(1000, cinemaScenes[currentSceneIdx].duration - elapsed);
+    if (cinemaPlayPauseBtn) cinemaPlayPauseBtn.textContent = "▶";
+    if (playBtn) playBtn.innerHTML = "▶ Resume Film";
+  } else {
+    isPaused = false;
+    sceneStartTime = Date.now();
+    if (cinemaPlayPauseBtn) cinemaPlayPauseBtn.textContent = "⏸";
+    if (playBtn) playBtn.innerHTML = "⏸ Pause Film";
+    sceneTimer = setTimeout(() => {
+      showScene(currentSceneIdx + 1);
+    }, sceneRemainingTime);
+  }
+}
+
+if (playBtn) {
+  playBtn.addEventListener("click", () => {
+    if (cinemaActive && !isPaused) {
+      toggleCinemaPause();
+    } else if (cinemaActive && isPaused) {
+      toggleCinemaPause();
+    } else {
+      startCinemaMode(0);
+    }
   });
-  idx = Math.min(best + 1, order.length - 1);
-  if (playBtn) {
-    playBtn.setAttribute("aria-pressed", "true");
-    playBtn.innerHTML = "⏸ Pause tour";
-  }
-  const step = () => {
-    if (idx >= order.length) { stopTour(); return; }
-    order[idx].scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-    idx++;
-  };
-  step();
-  tourTimer = setInterval(step, 3400);
-  // pause when the tab hides
-  const onHide = () => { if (document.hidden) stopTour(); };
-  document.addEventListener("visibilitychange", onHide, { once: true });
 }
-if (playBtn) playBtn.addEventListener("click", () => {
-  if (tourTimer) stopTour(); else startTour();
-});
-["wheel", "touchmove", "keydown"].forEach((ev) =>
-  window.addEventListener(ev, () => { if (tourTimer) stopTour(); }, { passive: true })
-);
+
+if (exitCinemaBtn) exitCinemaBtn.addEventListener("click", exitCinemaMode);
+if (cinemaPlayPauseBtn) cinemaPlayPauseBtn.addEventListener("click", toggleCinemaPause);
+if (cinemaNextBtn) cinemaNextBtn.addEventListener("click", () => showScene(currentSceneIdx + 1));
+if (cinemaPrevBtn) cinemaPrevBtn.addEventListener("click", () => showScene(currentSceneIdx - 1));
+
 const exploreBtn = document.getElementById("exploreBtn");
 if (exploreBtn) exploreBtn.addEventListener("click", () => {
-  stopTour();
+  exitCinemaMode();
   const t = document.getElementById("invitation");
   if (t) t.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 });
+
+// Any user escape key exits cinema mode
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && cinemaActive) exitCinemaMode();
+});
+
 // Smooth anchor buttons
-const goIds = ["cover", "invitation", "agenda", "venue", "travel", "rsvp", "countdown"];
 document.addEventListener("click", (e) => {
   const t = e.target.closest("[data-scroll]");
   if (t) {
     e.preventDefault();
-    stopTour();
+    exitCinemaMode();
     const target = document.querySelector(t.dataset.scroll);
     if (target) target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-    return;
-  }
-  const g = e.target.closest("[data-go]");
-  if (g) {
-    e.preventDefault();
-    stopTour();
-    const p = panels[parseInt(g.dataset.go, 10)] || document.getElementById(goIds[parseInt(g.dataset.go, 10)]);
-    if (p) (p.scrollIntoView ? p : document.getElementById(goIds[parseInt(g.dataset.go, 10)])).scrollIntoView?.({ behavior: reducedMotion ? "auto" : "smooth" });
   }
 });
+
+// ==========================================================================
+// INTERACTIVE SHOWER BLESSINGS (அட்சதை & மலர் மழை)
+// ==========================================================================
+const blessBtn = document.getElementById("blessBtn");
+const blessingCount = document.getElementById("blessingCount");
+const blessingToast = document.getElementById("blessingToast");
+
+let blessings = parseInt(localStorage.getItem("ganesh_dharshini_blessings") || "1842", 10);
+if (blessingCount) blessingCount.textContent = blessings.toLocaleString("en-IN");
+
+function triggerBlessingShower(originX, originY) {
+  if (reducedMotion) return;
+  const count = 38;
+  const flowerGlyphs = ["🌸", "🌹", "🌼", "🌺", "🏵️"];
+
+  for (let i = 0; i < count; i++) {
+    const isPetal = i % 4 === 0;
+    const el = document.createElement("span");
+    
+    if (isPetal) {
+      el.className = "blessing-rose-petal";
+      el.textContent = flowerGlyphs[i % flowerGlyphs.length];
+    } else {
+      el.className = "akshadhai-grain";
+    }
+
+    el.style.left = originX + "px";
+    el.style.top = originY + "px";
+
+    const dx = (Math.random() - 0.5) * 80 + "vw";
+    const dyPeak = -(160 + Math.random() * 320) + "px";
+    const dur = 2.0 + Math.random() * 1.0 + "s";
+
+    el.style.setProperty("--dx", dx);
+    el.style.setProperty("--dy-peak", dyPeak);
+    el.style.setProperty("--anim-dur", dur);
+
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+}
+
+// Auspicious Chime sound on blessing
+function playBlessingChime() {
+  try {
+    const ctx = getDrumContext();
+    const t = ctx.currentTime + 0.02;
+    // Pentatonic mangala chime chord (C5, E5, G5, C6)
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t + idx * 0.05);
+      g.gain.exponentialRampToValueAtTime(0.08, t + idx * 0.05 + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + idx * 0.05 + 1.6);
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start(t + idx * 0.05);
+      o.stop(t + idx * 0.05 + 1.8);
+    });
+  } catch {}
+}
+
+if (blessBtn) {
+  blessBtn.addEventListener("click", (e) => {
+    const rect = blessBtn.getBoundingClientRect();
+    const x = e.clientX || rect.left + rect.width / 2;
+    const y = e.clientY || rect.top + rect.height / 2;
+
+    triggerBlessingShower(x, y);
+    playBlessingChime();
+
+    blessings++;
+    localStorage.setItem("ganesh_dharshini_blessings", String(blessings));
+    if (blessingCount) {
+      blessingCount.textContent = blessings.toLocaleString("en-IN");
+      blessingCount.classList.remove("bump");
+      void blessingCount.offsetWidth;
+      blessingCount.classList.add("bump");
+    }
+
+    if (blessingToast) {
+      const msgs = [
+        "🌸 வாழ்க வளமுடன்! Thank you for showering your blessings!",
+        "✨ மங்கலம் பெருகுக! Your love and wishes mean the world to us!",
+        "💐 அன்பான நல்வாழ்த்துகளுக்கு மனமார்ந்த நன்றி!",
+        "🪔 May Lord Murugan bless you and your family!"
+      ];
+      blessingToast.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+      blessingToast.classList.add("show");
+      setTimeout(() => blessingToast.classList.remove("show"), 3800);
+    }
+  });
+}
 
 // Ambient floating petals (reference-style falling petal layer)
 if (!reducedMotion) {

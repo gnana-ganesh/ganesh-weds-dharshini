@@ -200,7 +200,7 @@ body.locked { overflow: hidden; }
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 .polaroid img {
-  width: 100%; aspect-ratio: 1000 / 558; object-fit: fill;
+  width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: center 20%;
   display: block; border-radius: 2px; background: #fff;
 }
 .polaroid-caption {
@@ -237,10 +237,10 @@ body.locked { overflow: hidden; }
 }
 
 .ceremony-photo {
-  width: 100%; max-width: 460px; max-height: 24vh; display: block; margin: 0 auto;
-  object-fit: cover; object-position: 50% 22%;
-  border-radius: 10px; border: 2px solid var(--gold-rich);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  width: 100%; max-width: 480px; aspect-ratio: 16 / 9; display: block; margin: 0 auto;
+  object-fit: cover; object-position: center 25%;
+  border-radius: 8px; border: 1.5px solid var(--gold-rich);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
 /* ---------- Realistic & Artistic Tiruchendur Temple Scene (Cover) ---------- */
@@ -282,7 +282,7 @@ body.locked { overflow: hidden; }
 
 .sun-radiance {
   position: absolute;
-  left: 20%; top: 40%;
+  left: 82%; top: 54%;
   width: min(480px, 60vw); height: min(480px, 60vw);
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, rgba(255, 238, 180, 0.45) 0%, rgba(250, 195, 85, 0.22) 35%, rgba(250, 195, 85, 0.05) 58%, transparent 75%);
@@ -298,7 +298,7 @@ body.locked { overflow: hidden; }
 .wave-glow {
   position: absolute; left: 0; right: 0; bottom: 0; height: 38%;
   background:
-    radial-gradient(ellipse at 40% 85%, rgba(255, 225, 140, 0.28) 0%, transparent 60%),
+    radial-gradient(ellipse at 75% 85%, rgba(255, 225, 140, 0.28) 0%, transparent 60%),
     linear-gradient(180deg, transparent 0%, rgba(240, 195, 90, 0.1) 40%, rgba(18, 4, 9, 0.45) 100%);
   mix-blend-mode: screen;
   pointer-events: none;
@@ -332,11 +332,11 @@ body.locked { overflow: hidden; }
   pointer-events: none;
   animation: spark-twinkle 3.2s ease-in-out infinite;
 }
-.spark.s1 { left: 16%; top: 38%; animation-delay: -0.4s; }
-.spark.s2 { left: 24%; top: 52%; animation-delay: -1.2s; }
-.spark.s3 { left: 32%; top: 72%; animation-delay: -2.1s; }
-.spark.s4 { left: 45%; top: 78%; animation-delay: -0.7s; }
-.spark.s5 { left: 12%; top: 68%; animation-delay: -1.8s; }
+.spark.s1 { left: 82%; top: 54%; animation-delay: -0.4s; }
+.spark.s2 { left: 74%; top: 62%; animation-delay: -1.2s; }
+.spark.s3 { left: 88%; top: 72%; animation-delay: -2.1s; }
+.spark.s4 { left: 68%; top: 76%; animation-delay: -0.7s; }
+.spark.s5 { left: 92%; top: 66%; animation-delay: -1.8s; }
 .spark.s6 { left: 58%; top: 82%; animation-delay: -2.7s; }
 @keyframes spark-twinkle {
   0%, 100% { opacity: 0.15; transform: scale(0.6); }
@@ -718,6 +718,16 @@ body.locked { overflow: hidden; }
   .polaroid { max-width: 270px; }
   .date-sticker { right: 0; }
   .hero-inner { padding: 3.8rem 0.75rem 2.8rem; }
+  .chapter-title { font-size: 1.65rem; }
+  .cinema-topbar { padding: 0.6rem 0.8rem; }
+  .cinema-chapter-label { font-size: 0.82rem; }
+  .cinema-bottombar { padding: 0.8rem 0.9rem 1.2rem; }
+  .sub-tamil { font-size: 1.02rem; }
+  .sub-english { font-size: 0.88rem; }
+  .comic-caption-strip { padding: 0.6rem 0.9rem; gap: 8px; }
+  .comic-caption-strip p { font-size: 0.88rem; }
+  .engagement-strip { flex-direction: column; text-align: center; gap: 0.5rem; }
+  .blessing-trigger-btn { font-size: 0.92rem !important; padding: 0.8rem 1.4rem !important; }
 }
 
 @media (min-width: 768px) {
@@ -750,6 +760,1045 @@ body.locked { overflow: hidden; }
   #venue .card p { grid-column: 1; }
   #venue .card .cta-row { grid-column: 1; justify-content: flex-start; }
   #venue .map-wrap { grid-column: 2; grid-row: 2 / 4; margin-top: 0; }
+  .comic-showcase { display: grid; grid-template-columns: 1.25fr 0.95fr; gap: 2rem; align-items: center; }
+  .ceremonies-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ==========================================================================
+   CINEMA / VIDEO WALKTHROUGH MODE HUD
+   ========================================================================== */
+.cinema-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+body.cinema-active .cinema-overlay {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+body.cinema-active {
+  user-select: none;
+}
+
+/* 2.39:1 Letterbox Bars */
+.cinema-topbar {
+  background: linear-gradient(180deg, rgba(8, 2, 5, 0.96) 0%, rgba(14, 3, 7, 0.88) 75%, transparent 100%);
+  border-bottom: 1px solid rgba(232, 199, 126, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  padding: 0.9rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateY(-100%);
+  transition: transform 0.5s var(--ease-out);
+}
+
+body.cinema-active .cinema-topbar {
+  transform: translateY(0);
+}
+
+.cinema-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cinema-rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e8384f;
+  box-shadow: 0 0 10px #e8384f;
+  animation: recPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes recPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.85); }
+}
+
+.cinema-film-title {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--gold-pale);
+  text-transform: uppercase;
+}
+
+.cinema-chapter-label {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-rich);
+  font-style: italic;
+  text-shadow: 0 0 12px rgba(232, 199, 126, 0.4);
+}
+
+.cinema-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  color: var(--gold-pale);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+}
+
+.cinema-close-btn:hover {
+  background: rgba(232, 199, 126, 0.2);
+  border-color: var(--gold-rich);
+  color: #fff;
+  transform: scale(1.04);
+}
+
+.cinema-bottombar {
+  background: linear-gradient(0deg, rgba(8, 2, 5, 0.97) 0%, rgba(14, 3, 7, 0.9) 70%, transparent 100%);
+  border-top: 1px solid rgba(232, 199, 126, 0.35);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.8);
+  padding: 1.2rem 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  transform: translateY(100%);
+  transition: transform 0.5s var(--ease-out);
+}
+
+body.cinema-active .cinema-bottombar {
+  transform: translateY(0);
+}
+
+.cinema-subtitles {
+  text-align: center;
+  max-width: 680px;
+  min-height: 4.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  transition: opacity 0.35s ease;
+}
+
+.sub-tamil {
+  margin: 0;
+  font-family: var(--font-tamil);
+  color: #ffe6a3;
+  font-size: 1.18rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 16px rgba(255, 230, 163, 0.35);
+}
+
+.sub-english {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: #fff9eb;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+
+.cinema-hud-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  width: 100%;
+  max-width: 580px;
+}
+
+.cinema-ctrl-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  color: var(--gold-pale);
+  font-size: 0.9rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.cinema-ctrl-btn:hover {
+  background: rgba(232, 199, 126, 0.25);
+  border-color: var(--gold-rich);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.cinema-ctrl-btn.play-pause {
+  width: 44px;
+  height: 44px;
+  font-size: 1.05rem;
+  background: linear-gradient(135deg, var(--gold-rich), #b3851e);
+  color: var(--ink-950);
+  border: none;
+  font-weight: bold;
+}
+
+.cinema-progress-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cinema-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-rich));
+  box-shadow: 0 0 10px rgba(232, 199, 126, 0.8);
+  transition: width 0.3s ease;
+}
+
+/* Audio waves animation */
+.cinema-audio-waves {
+  display: flex;
+  align-items: flex-end;
+  gap: 3.5px;
+  height: 20px;
+  padding: 0 4px;
+}
+
+.wave-bar {
+  width: 3px;
+  background: var(--gold-rich);
+  border-radius: 2px;
+  animation: wavePulse 1.2s ease-in-out infinite alternate;
+}
+.wave-bar.w1 { height: 7px; animation-delay: 0.1s; }
+.wave-bar.w2 { height: 16px; animation-delay: 0.35s; }
+.wave-bar.w3 { height: 11px; animation-delay: 0.2s; }
+.wave-bar.w4 { height: 18px; animation-delay: 0.45s; }
+
+@keyframes wavePulse {
+  0% { transform: scaleY(0.3); opacity: 0.5; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+/* Cinema CTA Button on Hero */
+.cinema-cta {
+  background: linear-gradient(135deg, #a82338 0%, #63121f 100%) !important;
+  border: 1.5px solid var(--gold-rich) !important;
+  box-shadow: 0 6px 20px rgba(168, 35, 56, 0.4), 0 0 16px rgba(232, 199, 126, 0.35) !important;
+  font-weight: 600;
+  gap: 8px;
+  animation: cinemaBtnPulse 3s ease-in-out infinite;
+}
+
+@keyframes cinemaBtnPulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(168, 35, 56, 0.4), 0 0 14px rgba(232, 199, 126, 0.3); }
+  50% { box-shadow: 0 8px 26px rgba(168, 35, 56, 0.65), 0 0 24px rgba(255, 230, 163, 0.65); transform: translateY(-1px); }
+}
+
+.play-icon-glow {
+  color: var(--gold-rich);
+  font-size: 0.95rem;
+  display: inline-block;
+  transform: translateX(1px);
+}
+
+.cinema-cta-sec {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--gold-soft) !important;
+  color: var(--gold-pale) !important;
+}
+
+/* ==========================================================================
+   COMIC STORY & GRAPHIC NOVEL CHAPTER STYLING
+   ========================================================================== */
+.chapter-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.chapter-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-rich);
+  background: rgba(232, 199, 126, 0.12);
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 0.6rem;
+}
+
+.chapter-title {
+  margin: 0;
+  font-size: 2.1rem;
+  color: var(--gold-pale);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.chapter-sub {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--gold-soft);
+}
+
+.gold-tint {
+  background: radial-gradient(circle at 50% 20%, #2b0b14 0%, #150308 100%);
+  color: var(--cream);
+}
+
+.comic-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.comic-frame {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0d0205;
+  border: 3px solid rgba(232, 199, 126, 0.75);
+  box-shadow: 0 0 0 4px #1b0409, 0 16px 40px rgba(0, 0, 0, 0.6);
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s ease;
+}
+
+.comic-frame:hover {
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: 0 0 0 4px #1b0409, 0 22px 50px rgba(232, 199, 126, 0.25);
+}
+
+.comic-art {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+body.cinema-active .comic-art {
+  transform: scale(1.06);
+}
+
+.comic-tape {
+  position: absolute;
+  top: -6px;
+  width: 60px;
+  height: 22px;
+  background: rgba(255, 248, 225, 0.5);
+  border: 1px dashed rgba(200, 160, 80, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.comic-tape.t-left { left: 30px; transform: rotate(-4deg); }
+.comic-tape.t-right { right: 30px; transform: rotate(5deg); }
+
+.comic-caption-strip {
+  background: linear-gradient(180deg, rgba(14, 3, 7, 0.85) 0%, rgba(8, 1, 4, 0.98) 100%);
+  border-top: 1px solid rgba(232, 199, 126, 0.4);
+  padding: 0.8rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.caption-marker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--ink-950);
+  background: linear-gradient(135deg, var(--gold-rich), #d4af37);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.comic-caption-strip p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #fff9eb;
+}
+
+/* Comic Speech Bubbles */
+.comic-dialogues {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+
+.speech-bubble {
+  position: relative;
+  background: rgba(255, 252, 242, 0.96);
+  color: var(--ink);
+  border-radius: 16px;
+  padding: 1.2rem 1.5rem;
+  border: 2px solid var(--gold-rich);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.speech-bubble:hover {
+  transform: translateY(-2px);
+}
+
+.speech-bubble .avatar-tag {
+  display: inline-block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.65rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.speech-bubble.groom .avatar-tag {
+  background: #1e3a5f;
+  color: #fff;
+}
+
+.speech-bubble.bride .avatar-tag {
+  background: #871828;
+  color: #fff;
+}
+
+.speech-bubble p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: #241411;
+  font-style: italic;
+}
+
+.comic-narrator {
+  background: rgba(22, 5, 10, 0.75);
+  border: 1px solid rgba(232, 199, 126, 0.5);
+  border-radius: 14px;
+  padding: 1.2rem 1.6rem;
+  text-align: center;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.narrator-icon {
+  color: var(--gold-rich);
+  font-size: 1.1rem;
+}
+
+.comic-narrator p.tamil {
+  margin: 0.4rem 0 0.2rem;
+  font-size: 1.15rem;
+  color: var(--gold-pale);
+  font-weight: 600;
+}
+
+.comic-narrator p.narrator-en {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #fff3db;
+}
+
+/* ==========================================================================
+   CEREMONIES GRID & RECEPTION COMIC
+   ========================================================================= */
+.ceremonies-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.ceremony-comic-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.ceremony-comic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.comic-frame-sm {
+  position: relative;
+  overflow: hidden;
+  max-height: 240px;
+  background: #0d0205;
+}
+
+.comic-frame-sm img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.ceremony-comic-card:hover .comic-frame-sm img {
+  transform: scale(1.04);
+}
+
+.comic-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(14, 3, 7, 0.88);
+  border: 1px solid var(--gold-rich);
+  color: var(--gold-pale);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.ceremony-details {
+  padding: 1.4rem 1.6rem;
+  color: var(--ink);
+  background: #ffffff;
+}
+
+.ceremony-details h3 {
+  margin: 0 0 0.4rem;
+  color: var(--maroon);
+  font-size: 1.35rem;
+}
+
+.ceremony-time {
+  margin: 0;
+  font-weight: 600;
+  color: #7a1f2b;
+  font-size: 0.96rem;
+}
+
+.ceremony-venue {
+  margin: 0.2rem 0 0.6rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.ceremony-desc {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: #3b2823;
+}
+
+.engagement-strip {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: linear-gradient(135deg, #fffdf8, #fdf5e0);
+  border: 1.5px solid var(--gold-rich);
+  padding: 1.1rem 1.4rem;
+  border-radius: 14px;
+  margin-top: 0.8rem;
+}
+
+.eng-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.eng-content h4 {
+  margin: 0 0 0.2rem;
+  color: var(--maroon);
+  font-size: 1.1rem;
+}
+
+.eng-content p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #3d2720;
+}
+
+/* ==========================================================================
+   INTERACTIVE SHOWER BLESSINGS SHRINE & PARTICLES
+   ========================================================================== */
+.blessing-shrine {
+  background: linear-gradient(135deg, #2b0b14 0%, #170409 100%);
+  border: 2px solid var(--gold-rich);
+  box-shadow: 0 0 24px rgba(232, 199, 126, 0.35);
+  border-radius: 18px;
+  padding: 1.8rem 1.6rem;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.blessing-shrine::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(232, 199, 126, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.blessing-emoji {
+  font-size: 2.2rem;
+  display: block;
+  margin-bottom: 0.3rem;
+  filter: drop-shadow(0 0 8px rgba(232, 199, 126, 0.6));
+}
+
+.blessing-header h3 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: var(--gold-pale);
+  letter-spacing: 0.04em;
+}
+
+.blessing-sub {
+  margin: 0.35rem 0 1.2rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--gold-soft);
+}
+
+.blessing-counter-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  border-radius: 12px;
+  padding: 0.6rem 1.6rem;
+  margin-bottom: 1.3rem;
+}
+
+.blessing-count-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #ffe6a3;
+  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  line-height: 1.1;
+  text-shadow: 0 0 16px rgba(255, 230, 163, 0.6);
+  transition: transform 0.2s ease;
+}
+
+.blessing-count-number.bump {
+  transform: scale(1.15);
+}
+
+.blessing-count-label {
+  font-size: 0.78rem;
+  color: var(--gold-soft);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.blessing-trigger-btn {
+  background: linear-gradient(135deg, #d4af37 0%, #b5861a 100%) !important;
+  color: var(--ink-950) !important;
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  padding: 0.9rem 1.8rem !important;
+  border-radius: 999px !important;
+  border: 2px solid #fff5cc !important;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.5), 0 0 18px rgba(255, 245, 204, 0.4) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.blessing-trigger-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.7), 0 0 24px rgba(255, 245, 204, 0.6) !important;
+}
+
+.blessing-trigger-btn:active {
+  transform: scale(0.96);
+}
+
+.blessing-toast {
+  min-height: 1.6rem;
+  margin-top: 0.8rem;
+  font-family: var(--font-tamil);
+  color: #ffe6a3;
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  transform: translateY(6px);
+}
+
+.blessing-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Floating Akshadhai & Rose Petals Physics */
+.akshadhai-grain {
+  position: fixed;
+  z-index: 1500;
+  pointer-events: none;
+  width: 7px;
+  height: 9px;
+  border-radius: 50% 50% 40% 40%;
+  background: radial-gradient(circle at 35% 35%, #fffde6, #f5c842 60%, #c49514 100%);
+  box-shadow: 0 0 8px rgba(245, 200, 66, 0.8);
+  animation: akshadhaiFly var(--anim-dur, 2.2s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes akshadhaiFly {
+  0% {
+    transform: translate(0, 0) scale(0.4) rotate(0deg);
+    opacity: 1;
+  }
+  30% {
+    transform: translate(var(--dx), var(--dy-peak, -320px)) scale(1.1) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(var(--dx) * 1.3), 105vh) scale(0.8) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+.blessing-rose-petal {
+  position: fixed;
+  z-index: 1500;
+  pointer-events: none;
+  font-size: 1.45rem;
+  animation: rosePetalShower var(--anim-dur, 2.5s) ease-in-out forwards;
+}
+
+@keyframes rosePetalShower {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(0.6);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(var(--dx), var(--dy-peak, -260px)) rotate(90deg) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(var(--dx) * 1.4), 105vh) rotate(420deg) scale(0.85);
+    opacity: 0;
+  }
+}
+
+/* WhatsApp CTA Button */
+.whatsapp-btn {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important;
+  color: #fff !important;
+  border: 1.5px solid #70e69d !important;
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4) !important;
+  font-weight: 600;
+}
+
+.whatsapp-btn:hover {
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.6) !important;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   COMIC LAYOUTS FOR ALL PAGES
+   ========================================================================== */
+
+/* 1. Invitation Comic Layout */
+.invitation-comic-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.inv-emblem-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 0.8rem;
+}
+
+.temple-emblem.small {
+  width: 44px;
+  height: 44px;
+}
+
+.inv-lead {
+  margin: 0;
+  font-family: var(--font-tamil);
+  color: var(--maroon);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.inv-body {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+  text-align: center;
+  margin: 0.4rem 0 1.2rem;
+}
+
+.families-comic-box {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin: 1.2rem 0;
+}
+
+.family-scroll {
+  background: linear-gradient(135deg, #fffdfa 0%, #faf3e1 100%);
+  border: 1.5px solid var(--gold-rich);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.family-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-950);
+  background: linear-gradient(135deg, var(--gold-rich), #d4af37);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.4rem;
+}
+
+.family-scroll h4 {
+  margin: 0 0 0.4rem;
+  color: var(--maroon);
+  font-size: 1.15rem;
+}
+
+.family-scroll p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #4a342e;
+}
+
+.inv-footnote {
+  margin: 0.6rem 0 0;
+  color: var(--maroon);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* 2. Venue Comic Layout */
+.venue-comic-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.venue-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.venue-info {
+  text-align: left;
+}
+
+.venue-pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: rgba(122, 31, 43, 0.1);
+  color: var(--maroon);
+  border: 1px solid var(--maroon);
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  margin-bottom: 0.4rem;
+}
+
+.venue-name {
+  margin: 0;
+  font-size: 1.85rem;
+  color: var(--maroon);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.venue-addr {
+  margin: 0.2rem 0 0.4rem;
+  font-weight: 600;
+  color: #3b2823;
+  font-size: 0.98rem;
+}
+
+.venue-landmark {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.venue-cta-row {
+  margin-top: 0.4rem;
+  justify-content: flex-start !important;
+}
+
+/* 3. Travel Scrapbook */
+.travel-scrapbook {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.travel-comic-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fffdf8 100%);
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.travel-comic-card:hover {
+  transform: translateY(-4px) rotate(-0.5deg);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+  border-color: var(--gold-rich);
+}
+
+.travel-comic-card.stay-card {
+  background: linear-gradient(135deg, #fffdf6 0%, #fef8e6 100%);
+  border-color: var(--gold-rich);
+}
+
+.travel-stamp {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--gold-rich);
+  background: rgba(232, 199, 126, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+}
+
+.transit-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--maroon);
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.travel-comic-card h4 {
+  margin: 0 0 0.5rem;
+  color: var(--maroon);
+  font-size: 1.22rem;
+  font-family: var(--font-tamil);
+}
+
+.travel-comic-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #3b2823;
+}
+
+/* 4. RSVP Comic Layout */
+.rsvp-comic-card {
+  text-align: center;
+  padding: 2.2rem 1.8rem;
+}
+
+.rsvp-bubble {
+  max-width: 580px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #fffcf5 0%, #fff7e4 100%);
+  border-color: var(--gold-rich);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.avatar-tag.couple-tag {
+  background: linear-gradient(135deg, #7a1f2b, #4a0d17);
+  color: #ffe6a3;
+  border: 1px solid var(--gold-rich);
+  font-size: 0.82rem;
+}
+
+.rsvp-help-text {
+  font-size: 0.95rem;
+  color: #5a443e;
+  margin-bottom: 0.8rem;
+}
+
+/* Desktop Grid Enhancements for Comic Layouts */
+@media (min-width: 768px) {
+  .invitation-comic-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1.05fr;
+    gap: 2.2rem;
+    align-items: center;
+  }
+  .families-comic-box {
+    grid-template-columns: 1fr 1fr;
+  }
+  .venue-comic-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1.05fr;
+    gap: 2.2rem;
+    align-items: center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

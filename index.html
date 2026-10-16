@@ -12,7 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Noto+Serif+Tamil:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="preload" as="image" type="image/webp" href="./tiruchendur-comic-portrait.webp" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" />
   <link rel="preload" as="image" type="image/webp" href="./tiruchendur-comic-landscape.webp" />
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="preload" as="image" type="image/webp" href="./couple-comic.webp" />
+  <link rel="preload" as="image" type="image/webp" href="./invitation-comic.webp" />
+  <link rel="stylesheet" href="./styles.css?v=3.0" />
 </head>
 <body class="locked">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -214,6 +216,41 @@
     <p class="opener-hint">Tap the seal to open</p>
   </div>
 
+  <!-- Cinema / Video Walkthrough Mode HUD -->
+  <div id="cinemaOverlay" class="cinema-overlay" aria-hidden="true">
+    <div class="cinema-topbar">
+      <div class="cinema-badge">
+        <span class="cinema-rec-dot"></span>
+        <span class="cinema-film-title">GNANAGANESH &amp; DHARSHINI · WEDDING CHRONICLE</span>
+      </div>
+      <div class="cinema-chapter-label" id="cinemaChapter">PROLOGUE · THE SACRED SHORE</div>
+      <button id="exitCinemaBtn" class="cinema-close-btn" type="button" aria-label="Exit Video Mode">
+        ✕ <span>Exit Video Mode</span>
+      </button>
+    </div>
+
+    <div class="cinema-bottombar">
+      <div class="cinema-subtitles" id="cinemaSubtitles">
+        <p class="sub-tamil" id="subTamil">அருள்மிகு திருச்செந்தூர் அலைகடலின் ஓரம்...</p>
+        <p class="sub-english" id="subEnglish">At the holy coastal shrine of Tiruchendur, where the morning sun kisses the waves...</p>
+      </div>
+      <div class="cinema-hud-controls">
+        <button id="cinemaPrevBtn" class="cinema-ctrl-btn" type="button" aria-label="Previous Scene">⏮</button>
+        <button id="cinemaPlayPauseBtn" class="cinema-ctrl-btn play-pause" type="button" aria-label="Pause Story">⏸</button>
+        <button id="cinemaNextBtn" class="cinema-ctrl-btn" type="button" aria-label="Next Scene">⏭</button>
+        <div class="cinema-progress-track">
+          <div class="cinema-progress-bar" id="cinemaProgressBar"></div>
+        </div>
+        <div class="cinema-audio-waves" id="cinemaAudioWaves" title="Traditional Music Active">
+          <span class="wave-bar w1"></span>
+          <span class="wave-bar w2"></span>
+          <span class="wave-bar w3"></span>
+          <span class="wave-bar w4"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <button id="musicBtn" class="music-btn" aria-pressed="false" aria-label="Toggle traditional music">🔇 <span>Music</span></button>
   <div id="progress" class="progress" aria-hidden="true"></div>
 
@@ -224,10 +261,10 @@
     <section id="cover" class="panel hero maroon">
       <div class="scene" aria-hidden="true">
         <picture class="temple-vista">
-          <source type="image/webp" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" srcset="./tiruchendur-temple-portrait.webp" />
-          <source type="image/jpeg" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" srcset="./tiruchendur-temple-portrait.jpg" />
-          <source type="image/webp" srcset="./tiruchendur-temple-landscape.webp" />
-          <img class="temple-artwork" src="./tiruchendur-temple-landscape.jpg" alt="Realistic and artistic painting of Tiruchendur Murugan Temple on the seashore at golden dawn" fetchpriority="high" />
+          <source type="image/webp" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" srcset="./tiruchendur-comic-portrait.webp" />
+          <source type="image/jpeg" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" srcset="./tiruchendur-comic-portrait.jpg" />
+          <source type="image/webp" srcset="./tiruchendur-comic-landscape.webp" />
+          <img class="temple-artwork" src="./tiruchendur-comic-landscape.jpg" alt="Artistic comic illustration of Tiruchendur Murugan Temple on the seashore with glowing oil lamps" fetchpriority="high" />
         </picture>
         <div class="sun-radiance" aria-hidden="true"></div>
         <div class="wave-glow" aria-hidden="true"></div>
@@ -247,7 +284,7 @@
           <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
           <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
           <div class="polaroid rise" style="--d:.0s">
-            <img src="./couple.jpg" alt="GnanaGanesh and Dharshini" />
+            <img src="./couple-comic.webp" alt="GnanaGanesh and Dharshini in comic art style" />
             <span class="tape t1" aria-hidden="true"></span>
             <span class="tape t2" aria-hidden="true"></span>
             <span class="polaroid-caption">GnanaGanesh ♥ Dharshini</span>
@@ -270,8 +307,13 @@
               <button class="btn" type="button" data-scroll="#venue">Venue &amp; Map</button>
             </div>
             <div class="cover-modes rise" style="--d:.8s">
-              <button id="playBtn" class="btn primary small" type="button">▶ Play invitation</button>
-              <button id="exploreBtn" class="btn small" type="button">Explore myself</button>
+              <button id="playBtn" class="btn primary cinema-cta" type="button">
+                <span class="play-icon-glow">▶</span>
+                <span>Watch Wedding Film / கதைப் பயணம்</span>
+              </button>
+              <button id="exploreBtn" class="btn cinema-cta-sec" type="button">
+                <span>📜 Explore Story</span>
+              </button>
             </div>
             <p class="scroll-cue rise" style="--d:.95s">Scroll down to walk in with us <span aria-hidden="true">↓</span></p>
           </div>
@@ -279,100 +321,280 @@
       </div>
     </section>
 
-    <section id="invitation" class="panel cream">
-      <div class="panel-inner">
-        <div class="emblem-wrap rise" style="--d:.0s"><svg class="temple-emblem" aria-hidden="true"><use href="#emblem-kalasam" /></svg></div>
-        <div class="card">
-          <p class="tamil center rise" style="--d:.15s">அன்புடையீர் வருக!</p>
-          <p class="rise" style="--d:.25s">
-            Together with their families, <strong>GnanaGanesh</strong> (S/o [Father] &amp; [Mother])
-            and <strong>Dharshini</strong> (D/o [Father] &amp; [Mother]) joyfully invite you
-            with family to grace the auspicious occasion of their marriage and bless the couple.
-          </p>
-          <div class="families rise" style="--d:.35s">
-            <div>
-              <h3>Groom's family</h3>
-              <p>[Father GnanaGanesh's side]<br />[Mother]<br />[Native place]</p>
-            </div>
-            <div>
-              <h3>Bride's family</h3>
-              <p>[Father Dharshini's side]<br />[Mother]<br />[Native place]</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="agenda" class="panel maroon">
-      <div class="panel-inner">
-        <div class="emblem-wrap rise" style="--d:.0s"><img class="ceremony-photo" src="./ceremony.jpg" alt="Thaali tying ceremony at the homam" /></div>
-        <div class="card">
-          <h2 class="rise" style="--d:.15s">Agenda</h2>
-          <ol class="timeline rise" style="--d:.25s">
-            <li>
-              <strong>Nichayathartham (Engagement)</strong>
-              <span>Sat, 12 Dec 2026 · 6:30 PM – 7:30 PM</span>
-              <em>Shanmugar Mahal, Tiruchendur. Exchange of gifts, followed by dinner.</em>
-            </li>
-            <li>
-              <strong>Muhurtham (Wedding)</strong>
-              <span>Sun, 13 Dec 2026 · 6:30 AM – 7:30 AM</span>
-              <em>Kettu Kattu / Thali, Kashi Yatra at 5:30 AM.</em>
-            </li>
-            <li>
-              <strong>Reception</strong>
-              <span>Sun, 13 Dec 2026 · 6:30 PM – 9:00 PM</span>
-              <em>Sandhya Mahal, VMS Nagar South, Thoothukudi. Photos, blessings, followed by dinner.</em>
-            </li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-    <section id="venue" class="panel cream">
+    <!-- ACT I: The Sacred Invitation & Blessings Shrine -->
+    <section id="invitation" class="panel cream invitation-panel">
       <div class="panel-inner wide">
-        <div class="emblem-wrap rise" style="--d:.0s"><svg class="temple-emblem" aria-hidden="true"><use href="#emblem-gopuram" /></svg></div>
-        <div class="card">
-          <h2 class="rise" style="--d:.15s">Venue &amp; Location</h2>
-          <p class="rise" style="--d:.25s"><strong>Shanmugar Mahal</strong><br />Tiruchendur, Tamil Nadu</p>
-          <div class="cta-row rise" style="--d:.35s">
-            <a class="btn primary" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur" target="_blank" rel="noopener">Open in Google Maps</a>
-            <button class="btn" type="button" data-scroll="#travel">How to reach</button>
+        <div class="chapter-header rise" style="--d:.0s">
+          <span class="chapter-badge">SCENE I · SACRED INVITATION</span>
+          <h2 class="tamil chapter-title">சுபமுகூர்த்த அழைப்பிதழ்</h2>
+          <p class="chapter-sub">With the divine grace of Lord Murugan &amp; ancestral blessings</p>
+        </div>
+
+        <div class="invitation-comic-grid rise" style="--d:.15s">
+          <!-- Left: Sacred Shrine Comic Art Frame -->
+          <div class="comic-frame inv-comic-frame">
+            <span class="comic-tape t-left" aria-hidden="true"></span>
+            <span class="comic-tape t-right" aria-hidden="true"></span>
+            <img class="comic-art" src="./invitation-comic.webp" alt="Sacred Kalasam and glowing kuthuvilakku lamps blessing shrine" loading="lazy" />
+            <div class="comic-caption-strip">
+              <span class="caption-marker">SCENE 01</span>
+              <p>Sacred Kalasam &amp; Kuthuvilakku shrine invoking divine grace for the holy union</p>
+            </div>
           </div>
-          <div class="map-wrap rise" style="--d:.45s">
-            <iframe title="Wedding venue map" loading="lazy"
-              src="https://www.google.com/maps?q=Shanmugar+Mahal+Tiruchendur&output=embed"></iframe>
+
+          <!-- Right: Auspicious Family Invitation Card -->
+          <div class="card inv-card">
+            <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+            
+            <div class="inv-emblem-row">
+              <svg class="temple-emblem small" aria-hidden="true"><use href="#emblem-kalasam" /></svg>
+              <p class="tamil inv-lead">அன்புடையீர் வணக்கம்!</p>
+            </div>
+            
+            <p class="inv-body">
+              Together with their families, <strong>GnanaGanesh</strong> (S/o [Father] &amp; [Mother])
+              and <strong>Dharshini</strong> (D/o [Father] &amp; [Mother]) joyfully invite you
+              with family and friends to grace the auspicious occasion of their marriage and shower your heartfelt blessings.
+            </p>
+
+            <div class="families-comic-box">
+              <div class="family-scroll groom">
+                <span class="family-tag">Groom's Family</span>
+                <h4>மணமகன் இல்லத்தார்</h4>
+                <p>[Father GnanaGanesh's side]<br />[Mother]<br />[Native place]</p>
+              </div>
+              <div class="family-scroll bride">
+                <span class="family-tag">Bride's Family</span>
+                <h4>மணமகள் இல்லத்தார்</h4>
+                <p>[Father Dharshini's side]<br />[Mother]<br />[Native place]</p>
+              </div>
+            </div>
+
+            <div class="kolam-rule" aria-hidden="true"><span>❋</span> <span>◇</span> <span>❋</span></div>
+            <p class="inv-footnote tamil">தங்கள் நல்வரவை அன்புடன் எதிர்பார்க்கும் குடும்பத்தினர்</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="travel" class="panel maroon">
-      <div class="panel-inner">
-        <div class="emblem-wrap rise" style="--d:.0s"><svg class="temple-emblem" aria-hidden="true"><use href="#emblem-journey" /></svg></div>
-        <div class="card">
-          <h2 class="rise" style="--d:.15s">How to plan</h2>
-          <ul class="travel rise" style="--d:.25s">
-            <li><strong>By train:</strong> nearest station Tiruchendur (TCN). Autos and taxis available outside the station.</li>
-            <li><strong>By bus:</strong> Tiruchendur bus stand, with town buses and autos to the mahal.</li>
-            <li><strong>By car:</strong> parking at [____ street / ground]. Use Maps link above on the day. Placeholder.</li>
-            <li><strong>Stay:</strong> rooms blocked at [Hotel ____, phone]. Mention "GnanaGanesh–Dharshini wedding". Placeholder.</li>
-          </ul>
+    <!-- ACT II: Graphic Novel / Comic Romance Chapter -->
+    <section id="story-chapter" class="panel gold-tint story-comic-panel">
+      <div class="panel-inner wide">
+        <div class="chapter-header rise" style="--d:.0s">
+          <span class="chapter-badge">SCENE II · OUR STORY</span>
+          <h2 class="tamil chapter-title">எங்கள் காதல் பயணம்</h2>
+          <p class="chapter-sub">Two souls walking together towards forever</p>
+        </div>
+
+        <div class="comic-showcase rise" style="--d:.15s">
+          <div class="comic-frame">
+            <span class="comic-tape t-left" aria-hidden="true"></span>
+            <span class="comic-tape t-right" aria-hidden="true"></span>
+            <img class="comic-art" src="./journey-comic.webp" alt="GnanaGanesh and Dharshini walking on Tiruchendur beach at sunset" loading="lazy" />
+            <div class="comic-caption-strip">
+              <span class="caption-marker">SCENE 02</span>
+              <p>Walking into forever, hand-in-hand along the sacred seashore of Tiruchendur</p>
+            </div>
+          </div>
+
+          <div class="comic-dialogues">
+            <div class="speech-bubble groom rise" style="--d:.25s">
+              <span class="avatar-tag">GnanaGanesh</span>
+              <p>"From our very first conversations, I saw in Dharshini a companion for a lifetime of joy and togetherness."</p>
+            </div>
+            <div class="speech-bubble bride rise" style="--d:.35s">
+              <span class="avatar-tag">Dharshini</span>
+              <p>"With every ocean sunrise at Tiruchendur, my heart is filled with gratitude for the journey we begin."</p>
+            </div>
+            <div class="comic-narrator rise" style="--d:.45s">
+              <span class="narrator-icon">✦</span>
+              <p class="tamil">திருவருளும் அன்பும் இணைந்த ஒரு இனிய தொடக்கம்...</p>
+              <p class="narrator-en">With the divine grace of Lord Murugan and the blessings of all our loved ones, our story blossoms into marriage.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="rsvp" class="panel cream">
-      <div class="panel-inner">
-        <div class="emblem-wrap rise" style="--d:.0s"><svg class="temple-emblem" aria-hidden="true"><use href="#emblem-garland" /></svg></div>
-        <div class="card">
-          <h2 class="rise" style="--d:.15s">Will you join us?</h2>
-          <p class="rise" style="--d:.25s">Please let us know you're coming — it helps us plan food &amp; seating.</p>
-          <div class="cta-row rise" style="--d:.35s">
-            <a class="btn primary" href="tel:+910000000000">Call GnanaGanesh's family</a>
-            <a class="btn" href="tel:+910000000000">Call Dharshini's family</a>
+    <!-- ACT III: Sacred Ceremonies & Celebration -->
+    <section id="agenda" class="panel maroon">
+      <div class="panel-inner wide">
+        <div class="chapter-header rise" style="--d:.0s">
+          <span class="chapter-badge">SCENE III · SACRED CEREMONIES</span>
+          <h2 class="tamil chapter-title">சுபமுகூர்த்த வைபவம்</h2>
+          <p class="chapter-sub">The sacred milestones of our wedding celebration</p>
+        </div>
+
+        <div class="ceremonies-grid">
+          <!-- Muhurtham Visual Comic Card -->
+          <div class="ceremony-comic-card rise" style="--d:.15s">
+            <div class="comic-frame-sm">
+              <img src="./muhurtham-comic.webp" alt="Sacred Thali-tying Muhurtham ceremony" loading="lazy" />
+              <div class="comic-tag">MUHURTHAM · 13 DEC 2026</div>
+            </div>
+            <div class="ceremony-details">
+              <h3 class="tamil">திருமாங்கல்ய தாரணம் (Muhurtham)</h3>
+              <p class="ceremony-time">Sunday, 13 Dec 2026 · 6:30 AM – 7:30 AM</p>
+              <p class="ceremony-venue">Shanmugar Mahal, Tiruchendur</p>
+              <p class="ceremony-desc">Kashi Yatra at 5:30 AM, followed by the auspicious Thali-tying ceremony under the mandapam amidst sacred Vedic hymns and traditional nadaswaram.</p>
+            </div>
           </div>
-          <p class="note rise" style="--d:.45s">Replace numbers with real phones. Optionally link a Google Form / WhatsApp.</p>
+
+          <!-- Reception Visual Comic Card -->
+          <div class="ceremony-comic-card rise" style="--d:.25s">
+            <div class="comic-frame-sm">
+              <img src="./reception-comic.webp" alt="Grand evening wedding reception stage celebration" loading="lazy" />
+              <div class="comic-tag">RECEPTION · 13 DEC 2026</div>
+            </div>
+            <div class="ceremony-details">
+              <h3 class="tamil">மணமக்கள் வரவேற்பு (Reception)</h3>
+              <p class="ceremony-time">Sunday, 13 Dec 2026 · 6:30 PM – 9:00 PM</p>
+              <p class="ceremony-venue">Sandhya Mahal, VMS Nagar South, Thoothukudi</p>
+              <p class="ceremony-desc">An evening of joyous celebration, congratulations, photography, and an exquisite South Indian royal dinner feast.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nichayathartham Card -->
+        <div class="engagement-strip card rise" style="--d:.35s">
+          <div class="eng-icon">💍</div>
+          <div class="eng-content">
+            <h4 class="tamil">நிச்சயதார்த்தம் (Engagement)</h4>
+            <p><strong>Saturday, 12 Dec 2026 · 6:30 PM – 7:30 PM</strong> at Shanmugar Mahal, Tiruchendur · Exchange of garlands &amp; lagna patrika followed by traditional dinner.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACT IV: The Destination & Venue -->
+    <section id="venue" class="panel cream venue-panel">
+      <div class="panel-inner wide">
+        <div class="chapter-header rise" style="--d:.0s">
+          <span class="chapter-badge">SCENE IV · VENUE &amp; LOCATION</span>
+          <h2 class="tamil chapter-title">திருமண மண்டப முகவரி</h2>
+          <p class="chapter-sub">Shanmugar Mahal, Tiruchendur · Coastal celebration venue</p>
+        </div>
+
+        <div class="venue-comic-grid rise" style="--d:.15s">
+          <!-- Left: Shanmugar Mahal Comic Frame -->
+          <div class="comic-frame venue-comic-frame">
+            <span class="comic-tape t-left" aria-hidden="true"></span>
+            <span class="comic-tape t-right" aria-hidden="true"></span>
+            <img class="comic-art" src="./venue-comic.webp" alt="Shanmugar Mahal wedding hall in Tiruchendur adorned with floral arches" loading="lazy" />
+            <div class="comic-caption-strip">
+              <span class="caption-marker">SCENE 04</span>
+              <p>Shanmugar Mahal, Tiruchendur · Adorned with auspicious marigold arches</p>
+            </div>
+          </div>
+
+          <!-- Right: Venue Map & Navigation Card -->
+          <div class="card venue-card">
+            <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+
+            <div class="venue-info">
+              <span class="venue-pill">Destination</span>
+              <h3 class="venue-name">Shanmugar Mahal</h3>
+              <p class="venue-addr">Tiruchendur, Thoothukudi District, Tamil Nadu 628215</p>
+              <p class="venue-landmark">Just 5 minutes from Arulmigu Subramaniya Swamy Temple &amp; the coastal beach.</p>
+            </div>
+
+            <div class="map-wrap">
+              <iframe title="Wedding venue map" loading="lazy"
+                src="https://www.google.com/maps?q=Shanmugar+Mahal+Tiruchendur&output=embed"></iframe>
+            </div>
+
+            <div class="cta-row venue-cta-row">
+              <a class="btn primary" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur" target="_blank" rel="noopener">
+                <span>📍 Open in Google Maps</span>
+              </a>
+              <button class="btn" type="button" data-scroll="#travel">Plan Travel &amp; Stay ↓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACT V: Travel Scrapbook & How to Plan -->
+    <section id="travel" class="panel maroon travel-panel">
+      <div class="panel-inner wide">
+        <div class="chapter-header rise" style="--d:.0s">
+          <span class="chapter-badge">SCENE V · TRAVEL GUIDE</span>
+          <h2 class="tamil chapter-title">பயண வழிகாட்டி</h2>
+          <p class="chapter-sub">How to reach Tiruchendur &amp; wedding guest accommodations</p>
+        </div>
+
+        <div class="travel-scrapbook rise" style="--d:.15s">
+          <!-- 1. Train Card -->
+          <div class="travel-comic-card">
+            <div class="travel-stamp">🚆</div>
+            <span class="transit-tag">By Train</span>
+            <h4>ரயில் பயணம்</h4>
+            <p><strong>Tiruchendur Station (TCN)</strong> is just 1.5 km away. Direct express trains from Chennai Egmore (Chendur Express), Madurai, and Tirunelveli. Autos available 24/7.</p>
+          </div>
+
+          <!-- 2. Bus Card -->
+          <div class="travel-comic-card">
+            <div class="travel-stamp">🚌</div>
+            <span class="transit-tag">By Bus</span>
+            <h4>பேருந்து வசதி</h4>
+            <p><strong>Tiruchendur Bus Stand</strong> connects seamlessly with Madurai, Tirunelveli, Thoothukudi, Nagercoil, and Chennai with frequent SETC and express buses.</p>
+          </div>
+
+          <!-- 3. Flight Card -->
+          <div class="travel-comic-card">
+            <div class="travel-stamp">✈️</div>
+            <span class="transit-tag">By Flight</span>
+            <h4>விமானப் பயணம்</h4>
+            <p><strong>Tuticorin Airport (TCR)</strong> is 38 km (~45 mins drive). <strong>Madurai Airport (IXM)</strong> is 165 km (~3 hrs scenic highway drive via NH 38).</p>
+          </div>
+
+          <!-- 4. Stay Card -->
+          <div class="travel-comic-card stay-card">
+            <div class="travel-stamp">🏨</div>
+            <span class="transit-tag">Guest Stay</span>
+            <h4>தங்குமிடம் &amp; உதவி</h4>
+            <p>Comfortable rooms arranged for family &amp; guests near the temple &amp; venue. Mention <strong>"GnanaGanesh–Dharshini Wedding"</strong> for seamless check-in assistance.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACT VI: Will You Join Us & Comic Speech -->
+    <section id="rsvp" class="panel cream rsvp-panel">
+      <div class="panel-inner">
+        <div class="chapter-header rise" style="--d:.0s">
+          <span class="chapter-badge">SCENE VI · RSVP &amp; BLESSINGS</span>
+          <h2 class="tamil chapter-title">வருகை பதிவு &amp; நல்வாழ்த்துகள்</h2>
+          <p class="chapter-sub">Let us know you're joining our celebration</p>
+        </div>
+
+        <div class="card rsvp-comic-card rise" style="--d:.15s">
+          <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
+          <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
+          <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
+          <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+
+          <div class="speech-bubble rsvp-bubble">
+            <span class="avatar-tag couple-tag">GnanaGanesh &amp; Dharshini</span>
+            <p>"Your presence, blessings, and joyful smiles will make our wedding day truly memorable. We eagerly await welcoming you and your family in Tiruchendur! 🪔"</p>
+          </div>
+
+          <div class="rsvp-cta-wrap">
+            <p class="rsvp-help-text">Tap below to message the couple directly or call the families:</p>
+            <div class="cta-row">
+              <a class="btn primary whatsapp-btn" href="https://wa.me/?text=Dear%20GnanaGanesh%20%26%20Dharshini%2C%20Heartiest%20Congratulations%20on%20your%20wedding!%20Wishing%20you%20a%20lifetime%20of%20eternal%20love%20and%20happiness.%20வாழ்க%20வளமுடன்!" target="_blank" rel="noopener">
+                <span>💬 Send WhatsApp Blessing</span>
+              </a>
+              <a class="btn" href="tel:+910000000000">📞 Call Groom's Family</a>
+              <a class="btn" href="tel:+910000000000">📞 Call Bride's Family</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -380,7 +602,26 @@
     <section id="countdown" class="panel maroon">
       <div class="panel-inner">
         <div class="emblem-wrap rise" style="--d:.0s"><svg class="temple-emblem" aria-hidden="true"><use href="#emblem-music" /></svg></div>
-        <div class="card">
+        
+        <!-- Interactive Shower Blessings Shrine -->
+        <div class="blessing-shrine card rise" style="--d:.1s">
+          <div class="blessing-header">
+            <span class="blessing-emoji">🌾</span>
+            <h3 class="tamil">அட்சதை &amp; மலர் மழை தூவ</h3>
+            <p class="blessing-sub">Tap below to shower sacred akshadhai &amp; jasmine petals over the couple</p>
+          </div>
+          <div class="blessing-counter-wrap">
+            <span class="blessing-count-number" id="blessingCount">1,842</span>
+            <span class="blessing-count-label">Blessings Showered with Love</span>
+          </div>
+          <button id="blessBtn" class="btn primary blessing-trigger-btn" type="button">
+            <span class="btn-sparkle">✨</span>
+            <span>Shower Akshadhai &amp; Bless / அட்சதை தூவ</span>
+          </button>
+          <div class="blessing-toast" id="blessingToast" aria-live="polite"></div>
+        </div>
+
+        <div class="card countdown-card rise" style="--d:.2s">
           <h2 class="rise" style="--d:.15s">Counting down to the Muhurtham</h2>
           <div class="timer rise" style="--d:.25s" role="timer" aria-live="off">
             <div><span id="d">–</span><small>Days</small></div>
@@ -400,6 +641,6 @@
     </section>
   </main>
 
-  <script src="./script.js"></script>
+  <script src="./script.js?v=3.0"></script>
 </body>
 </html>
