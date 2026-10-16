@@ -2694,5 +2694,64 @@ body.cinema-active .comic-art {
   }
 }
 
+/* ==========================================================================
+   INTERACTIVE MOUSE-MOVE SHOWER (CURSOR TRAIL OF PETALS & AKSHADHAI)
+   ========================================================================== */
+.cursor-shower-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+  overflow: hidden;
+}
+
+.cursor-shower-particle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  user-select: none;
+  font-size: var(--c-size, 1.15rem);
+  line-height: 1;
+  will-change: transform, opacity;
+  animation: cursorShowerFall var(--c-dur, 1.4s) cubic-bezier(0.2, 0.65, 0.35, 1) forwards;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.35));
+}
+
+.cursor-akshadhai-grain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 13px;
+  border-radius: 45% 45% 50% 50%;
+  background: linear-gradient(135deg, #fff2a3 0%, #ebb93a 50%, #c4820c 100%);
+  box-shadow: 0 0 10px rgba(255, 215, 64, 0.9), 0 2px 4px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+  animation: cursorShowerFall var(--c-dur, 1.3s) cubic-bezier(0.2, 0.65, 0.35, 1) forwards;
+}
+
+@keyframes cursorShowerFall {
+  0% {
+    transform: translate3d(var(--x), var(--y), 0) scale(0.4) rotate(0deg);
+    opacity: 1;
+  }
+  20% {
+    transform: translate3d(calc(var(--x) + var(--vx) * 0.45), calc(var(--y) + var(--vy) * 0.45), 0) scale(1.15) rotate(var(--rot1));
+    opacity: 1;
+  }
+  60% {
+    transform: translate3d(calc(var(--x) + var(--vx) + var(--sway)), calc(var(--y) + var(--drop) * 0.65), 0) scale(0.98) rotate(var(--rot2));
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(calc(var(--x) + var(--vx) - var(--sway) * 0.8), calc(var(--y) + var(--drop)), 0) scale(0.7) rotate(calc(var(--rot2) * 1.6));
+    opacity: 0;
+  }
+}
+
+
 
 

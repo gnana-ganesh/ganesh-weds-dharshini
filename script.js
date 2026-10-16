@@ -571,3 +571,92 @@ if (!reducedMotion) {
     }
   }
 }
+
+// ==========================================================================
+// INTERACTIVE MOUSE-MOVE SHOWER (CURSOR TRAIL OF PETALS & AKSHADHAI)
+// ==========================================================================
+(function initCursorShower() {
+  if (reducedMotion) return;
+
+  const container = document.getElementById("cursorShower") || document.body;
+  const flowerGlyphs = ["🌸", "🌹", "🌼", "🏵️", "🌺", "✨", "🌾"];
+  let lastX = 0;
+  let lastY = 0;
+  let lastTime = 0;
+  const MAX_ACTIVE_PARTICLES = 50;
+
+  function spawnParticle(x, y) {
+    if (container.children.length > MAX_ACTIVE_PARTICLES) {
+      container.removeChild(container.firstElementChild);
+    }
+
+    const isAkshadhai = Math.random() < 0.22;
+    const el = document.createElement("span");
+
+    if (isAkshadhai) {
+      el.className = "cursor-akshadhai-grain";
+    } else {
+      el.className = "cursor-shower-particle";
+      const glyph = flowerGlyphs[Math.floor(Math.random() * flowerGlyphs.length)];
+      el.textContent = glyph;
+      const size = (0.9 + Math.random() * 0.45).toFixed(2);
+      el.style.setProperty("--c-size", `${size}rem`);
+    }
+
+    const vx = ((Math.random() - 0.5) * 44).toFixed(1) + "px";
+    const vy = (-(Math.random() * 22 + 8)).toFixed(1) + "px";
+    const drop = (Math.random() * 85 + 110).toFixed(1) + "px";
+    const sway = ((Math.random() - 0.5) * 32).toFixed(1) + "px";
+    const rot1 = Math.round((Math.random() - 0.5) * 50) + "deg";
+    const rot2 = Math.round((Math.random() - 0.5) * 220) + "deg";
+    const dur = (1.2 + Math.random() * 0.4).toFixed(2) + "s";
+
+    el.style.setProperty("--x", `${x}px`);
+    el.style.setProperty("--y", `${y}px`);
+    el.style.setProperty("--vx", vx);
+    el.style.setProperty("--vy", vy);
+    el.style.setProperty("--drop", drop);
+    el.style.setProperty("--sway", sway);
+    el.style.setProperty("--rot1", rot1);
+    el.style.setProperty("--rot2", rot2);
+    el.style.setProperty("--c-dur", dur);
+
+    container.appendChild(el);
+    setTimeout(() => {
+      if (el.parentNode === container) {
+        container.removeChild(el);
+      }
+    }, 1600);
+  }
+
+  function handleMove(clientX, clientY) {
+    const now = performance.now();
+    const dist = Math.hypot(clientX - lastX, clientY - lastY);
+
+    // Only shower when moving with noticeable speed or distance
+    if (dist > 16 || (now - lastTime > 40 && dist > 5)) {
+      // If user moved briskly, interpolate a middle particle so trail is continuous
+      if (dist > 50) {
+        const midX = (lastX + clientX) / 2;
+        const midY = (lastY + clientY) / 2;
+        spawnParticle(midX, midY);
+      }
+      spawnParticle(clientX, clientY);
+
+      lastX = clientX;
+      lastY = clientY;
+      lastTime = now;
+    }
+  }
+
+  window.addEventListener("pointermove", (e) => {
+    handleMove(e.clientX, e.clientY);
+  }, { passive: true });
+
+  window.addEventListener("touchmove", (e) => {
+    if (e.touches && e.touches[0]) {
+      handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: true });
+})();
+
