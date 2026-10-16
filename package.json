@@ -1,0 +1,9 @@
+{
+  "name": "ganesh-weds-dharshini",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Wedding invitation site with a shared petal-shower counter API",
+  "dependencies": {
+    "@vercel/blob": "^1.1.1"
+  }
+}

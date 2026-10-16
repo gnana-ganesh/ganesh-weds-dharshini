@@ -177,12 +177,7 @@ function updateProgress() {
     const p = max > 0 ? Math.min(Math.max(window.scrollY / max, 0), 1) : 0;
     progress.style.width = (p * 100) + "%";
   }
-  if (!reducedMotion && templeArt) {
-    const sy = window.scrollY;
-    if (sy < window.innerHeight * 1.4) {
-      templeArt.style.transform = `scale(1.025) translateY(${sy * 0.16}px)`;
-    }
-  }
+
 }
 window.addEventListener("scroll", () => {
   if (!ticking) { ticking = true; requestAnimationFrame(updateProgress); }
@@ -209,126 +204,138 @@ if ("IntersectionObserver" in window) {
 }
 
 // ==========================================================================
-// CINEMATIC VIDEO WALKTHROUGH ENGINE (கதைப் பயணம்)
+// METHOD 3: CINEMATIC SCROLL FILM ENGINE (Unfolding Video on Scroll)
 // ==========================================================================
-const cinemaOverlay = document.getElementById("cinemaOverlay");
-const cinemaChapter = document.getElementById("cinemaChapter");
-const subTamil = document.getElementById("subTamil");
-const subEnglish = document.getElementById("subEnglish");
-const cinemaProgressBar = document.getElementById("cinemaProgressBar");
-const cinemaPlayPauseBtn = document.getElementById("cinemaPlayPauseBtn");
-const exitCinemaBtn = document.getElementById("exitCinemaBtn");
-const cinemaPrevBtn = document.getElementById("cinemaPrevBtn");
-const cinemaNextBtn = document.getElementById("cinemaNextBtn");
+const filmTrack = document.getElementById("scrollCinemaTrack");
+const filmLayers = Array.from(document.querySelectorAll(".film-layer"));
+const filmFrames = Array.from(document.querySelectorAll(".film-scene-frame"));
+const filmTimelineFill = document.getElementById("filmTimelineFill");
+const filmActName = document.getElementById("filmActName");
+const filmDots = Array.from(document.querySelectorAll(".film-cue-dot"));
 const playBtn = document.getElementById("playBtn");
 
-const cinemaScenes = [
-  {
-    targetId: "cover",
-    chapter: "PROLOGUE · THE SACRED SHORE OF TIRUCHENDUR",
-    tamil: "அருள்மிகு திருச்செந்தூர் அலைகடலின் ஓரம் சுப முகூர்த்த அழைப்பு...",
-    english: "Welcome to the wedding chronicle of GnanaGanesh & Dharshini at holy Tiruchendur...",
-    duration: 5000
-  },
-  {
-    targetId: "engagement",
-    chapter: "ACT I · THE ENGAGEMENT · 12 DEC (6:30 PM)",
-    tamil: "மாலை 6:30 மணிக்கு நிச்சயதார்த்த வைபவம் · சண்முகர் மஹால், திருச்செந்தூர்...",
-    english: "Act I: Auspicious ring exchange and lagna pathirikai at Shanmugar Mahal, Tiruchendur...",
-    duration: 5500
-  },
-  {
-    targetId: "muhurtham",
-    chapter: "ACT II · SACRED MARRIAGE · 13 DEC (6:30 AM)",
-    tamil: "காலை 6:30 மணிக்கு திருமாங்கல்ய தாரணம் · சண்முகர் மஹால், திருச்செந்தூர்...",
-    english: "Act II: Sacred Thali tying at Brahma Muhurtham sunrise amidst divine hymns and nadaswaram...",
-    duration: 6000
-  },
-  {
-    targetId: "reception",
-    chapter: "ACT III · RECEPTION · 13 DEC (6:30 PM)",
-    tamil: "மாலை 6:30 மணிக்கு மணமக்கள் வரவேற்பு விழா · தூத்துக்குடி...",
-    english: "Act III: Starlit reception celebration and royal banquet in the Pearl City of Thoothukudi...",
-    duration: 5500
-  },
-  {
-    targetId: "venue",
-    chapter: "ACT IV · VENUES & COASTAL ROUTE",
-    tamil: "திருச்செந்தூர் சண்முகர் மஹால் & தூத்துக்குடி...",
-    english: "Convenient travel and maps to celebrate with us in Tiruchendur and Thoothukudi...",
-    duration: 4800
-  },
-  {
-    targetId: "countdown",
-    chapter: "ACT V · SHOWER BLESSINGS & CELEBRATE",
-    tamil: "அன்போடு வந்து அட்சதை தூவி வாழ்த்துக!",
-    english: "Shower sacred akshadhai and jasmine flowers upon the couple as their new journey begins...",
-    duration: 6000
-  }
+const actTitles = [
+  "PROLOGUE · TIRUCHENDUR SHORE",
+  "ACT I · THE ENGAGEMENT (12 DEC)",
+  "ACT II · SACRED MUHURTHAM (13 DEC)",
+  "ACT III · RECEPTION GALA (13 DEC)"
 ];
 
-let cinemaActive = false;
-let currentSceneIdx = 0;
-let sceneTimer = null;
-let sceneStartTime = 0;
-let sceneRemainingTime = 0;
-let isPaused = false;
+const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
-function updateCinemaSubtitles(scene) {
-  if (!subTamil || !subEnglish || !cinemaChapter) return;
-  subTamil.style.opacity = "0";
-  subEnglish.style.opacity = "0";
-  setTimeout(() => {
-    cinemaChapter.textContent = scene.chapter;
-    subTamil.textContent = scene.tamil;
-    subEnglish.textContent = scene.english;
-    subTamil.style.opacity = "1";
-    subEnglish.style.opacity = "1";
-  }, 200);
+let currentFilmAct = 0;
+let filmAutoPlaying = false;
+let autoScrollAnimId = null;
 
-  if (cinemaProgressBar) {
-    const pct = ((currentSceneIdx + 1) / cinemaScenes.length) * 100;
-    cinemaProgressBar.style.width = pct + "%";
+function updateFilmProgress() {
+  if (!filmTrack) return;
+  const rect = filmTrack.getBoundingClientRect();
+  const trackHeight = filmTrack.offsetHeight - window.innerHeight;
+  if (trackHeight <= 0) return;
+
+  // Normalized progress from 0.0 to 1.0 within the cinema track
+  const progress = Math.min(Math.max(-rect.top / trackHeight, 0), 1);
+
+  // Update scrubber progress bar fill
+  if (filmTimelineFill) {
+    filmTimelineFill.style.width = (progress * 100) + "%";
   }
+
+  // 4 acts across the progress:
+  // Act 0: 0.00 – 0.24
+  // Act 1: 0.25 – 0.49
+  // Act 2: 0.50 – 0.74
+  // Act 3: 0.75 – 1.00
+  let activeIdx = 0;
+  if (progress < 0.24) activeIdx = 0;
+  else if (progress < 0.50) activeIdx = 1;
+  else if (progress < 0.75) activeIdx = 2;
+  else activeIdx = 3;
+
+  currentFilmAct = activeIdx;
+
+  // Relative phase within current act for subtle Ken Burns effect
+  const stepSize = 0.25;
+  const phase = (progress % stepSize) / stepSize; // 0.0 to 1.0
+
+  // Cross-fade backdrops & Ken Burns zoom
+  filmLayers.forEach((layer, idx) => {
+    if (idx === activeIdx) {
+      layer.classList.add("is-active");
+      if (!reducedMotion) {
+        const scale = 1.0 + phase * 0.06;
+        layer.style.transform = `scale(${scale})`;
+      }
+    } else {
+      layer.classList.remove("is-active");
+      layer.style.transform = "scale(1.0)";
+    }
+  });
+
+  // Cross-fade narrative cards
+  filmFrames.forEach((frame, idx) => {
+    if (idx === activeIdx) {
+      frame.classList.add("is-active");
+    } else {
+      frame.classList.remove("is-active");
+    }
+  });
+
+  // Update HUD act title & active dot
+  if (filmActName) {
+    filmActName.textContent = actTitles[activeIdx];
+  }
+  filmDots.forEach((dot, idx) => {
+    dot.classList.toggle("active", idx === activeIdx);
+  });
+
+  // Dynamic atmospheric body lighting
+  document.body.setAttribute("data-time-of-day", timeThemes[activeIdx]);
 }
 
-function showScene(idx) {
-  if (idx < 0) idx = 0;
-  if (idx >= cinemaScenes.length) {
-    exitCinemaMode();
+window.addEventListener("scroll", () => {
+  requestAnimationFrame(updateFilmProgress);
+}, { passive: true });
+updateFilmProgress();
+
+// Smooth Jump to specific Film Act (0, 1, 2, 3)
+function jumpToFilmAct(actIdx) {
+  stopAutoPlayFilm();
+  if (!filmTrack) return;
+  const trackHeight = filmTrack.offsetHeight - window.innerHeight;
+  const actTargets = [0.01, 0.35, 0.62, 0.88];
+  const targetTop = filmTrack.offsetTop + trackHeight * actTargets[Math.min(Math.max(actIdx, 0), 3)];
+
+  window.scrollTo({
+    top: targetTop,
+    behavior: reducedMotion ? "auto" : "smooth"
+  });
+}
+
+// Click on Scrubber Dots or Next Act Buttons
+document.addEventListener("click", (e) => {
+  const cueDot = e.target.closest("[data-target-act]");
+  if (cueDot) {
+    const act = parseInt(cueDot.dataset.targetAct, 10);
+    jumpToFilmAct(act);
     return;
   }
-  currentSceneIdx = idx;
-  const scene = cinemaScenes[idx];
-  const target = document.getElementById(scene.targetId);
-  if (target) {
-    target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+  const actJumpBtn = e.target.closest("[data-act-jump]");
+  if (actJumpBtn) {
+    const act = parseInt(actJumpBtn.dataset.actJump, 10);
+    jumpToFilmAct(act);
+    return;
   }
-  updateCinemaSubtitles(scene);
+});
 
-  if (sceneTimer) clearTimeout(sceneTimer);
-  sceneStartTime = Date.now();
-  sceneRemainingTime = scene.duration;
-
-  if (!isPaused) {
-    sceneTimer = setTimeout(() => {
-      showScene(currentSceneIdx + 1);
-    }, scene.duration);
-  }
-}
-
-function startCinemaMode(fromIdx = 0) {
-  cinemaActive = true;
-  document.body.classList.add("cinema-active");
+// Auto-Playback "Watch Wedding Film"
+function startAutoPlayFilm() {
+  filmAutoPlaying = true;
   if (playBtn) {
-    playBtn.innerHTML = "⏸ Pause Film";
+    playBtn.innerHTML = "⏸ Pause Story";
   }
-  if (cinemaPlayPauseBtn) {
-    cinemaPlayPauseBtn.textContent = "⏸";
-  }
-  isPaused = false;
 
-  // Auto-play ambient music if silent
+  // Ensure music plays during film walkthrough
   if (!playing && typeof startMusic === "function") {
     try {
       startMusic();
@@ -340,68 +347,63 @@ function startCinemaMode(fromIdx = 0) {
     } catch {}
   }
 
-  showScene(fromIdx);
+  // If already at or past the end of the film track, rewind to start
+  if (filmTrack) {
+    const rect = filmTrack.getBoundingClientRect();
+    if (rect.bottom < window.innerHeight * 0.5) {
+      window.scrollTo({ top: filmTrack.offsetTop, behavior: "smooth" });
+    }
+  }
+
+  let lastTime = performance.now();
+  const speed = 0.55; // pixels per ms (~33px per frame at 60fps)
+
+  function step(time) {
+    if (!filmAutoPlaying) return;
+    const delta = Math.min(time - lastTime, 40);
+    lastTime = time;
+
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (window.scrollY >= maxScroll - 5) {
+      stopAutoPlayFilm();
+      return;
+    }
+
+    window.scrollBy(0, delta * speed);
+    autoScrollAnimId = requestAnimationFrame(step);
+  }
+
+  autoScrollAnimId = requestAnimationFrame(step);
 }
 
-function exitCinemaMode() {
-  cinemaActive = false;
-  document.body.classList.remove("cinema-active");
-  if (sceneTimer) { clearTimeout(sceneTimer); sceneTimer = null; }
+function stopAutoPlayFilm() {
+  if (!filmAutoPlaying) return;
+  filmAutoPlaying = false;
+  if (autoScrollAnimId) {
+    cancelAnimationFrame(autoScrollAnimId);
+    autoScrollAnimId = null;
+  }
   if (playBtn) {
     playBtn.innerHTML = '<span class="play-icon-glow">▶</span> <span>Watch Wedding Film / கதைப் பயணம்</span>';
   }
 }
 
-function toggleCinemaPause() {
-  if (!cinemaActive) {
-    startCinemaMode(currentSceneIdx);
-    return;
-  }
-  if (!isPaused) {
-    isPaused = true;
-    if (sceneTimer) clearTimeout(sceneTimer);
-    const elapsed = Date.now() - sceneStartTime;
-    sceneRemainingTime = Math.max(1000, cinemaScenes[currentSceneIdx].duration - elapsed);
-    if (cinemaPlayPauseBtn) cinemaPlayPauseBtn.textContent = "▶";
-    if (playBtn) playBtn.innerHTML = "▶ Resume Film";
-  } else {
-    isPaused = false;
-    sceneStartTime = Date.now();
-    if (cinemaPlayPauseBtn) cinemaPlayPauseBtn.textContent = "⏸";
-    if (playBtn) playBtn.innerHTML = "⏸ Pause Film";
-    sceneTimer = setTimeout(() => {
-      showScene(currentSceneIdx + 1);
-    }, sceneRemainingTime);
-  }
-}
-
 if (playBtn) {
   playBtn.addEventListener("click", () => {
-    if (cinemaActive && !isPaused) {
-      toggleCinemaPause();
-    } else if (cinemaActive && isPaused) {
-      toggleCinemaPause();
+    if (filmAutoPlaying) {
+      stopAutoPlayFilm();
     } else {
-      startCinemaMode(0);
+      startAutoPlayFilm();
     }
   });
 }
 
-if (exitCinemaBtn) exitCinemaBtn.addEventListener("click", exitCinemaMode);
-if (cinemaPlayPauseBtn) cinemaPlayPauseBtn.addEventListener("click", toggleCinemaPause);
-if (cinemaNextBtn) cinemaNextBtn.addEventListener("click", () => showScene(currentSceneIdx + 1));
-if (cinemaPrevBtn) cinemaPrevBtn.addEventListener("click", () => showScene(currentSceneIdx - 1));
-
-const exploreBtn = document.getElementById("exploreBtn");
-if (exploreBtn) exploreBtn.addEventListener("click", () => {
-  exitCinemaMode();
-  const t = document.getElementById("invitation");
-  if (t) t.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
-});
-
-// Any user escape key exits cinema mode
+// User manual scroll / touch pauses auto-playback gently
+let userInteractionTimeout = null;
+window.addEventListener("wheel", () => { if (filmAutoPlaying) stopAutoPlayFilm(); }, { passive: true });
+window.addEventListener("touchmove", () => { if (filmAutoPlaying) stopAutoPlayFilm(); }, { passive: true });
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && cinemaActive) exitCinemaMode();
+  if (e.key === "Escape" && filmAutoPlaying) stopAutoPlayFilm();
 });
 
 // Smooth anchor buttons
@@ -409,31 +411,81 @@ document.addEventListener("click", (e) => {
   const t = e.target.closest("[data-scroll]");
   if (t) {
     e.preventDefault();
-    exitCinemaMode();
-    const target = document.querySelector(t.dataset.scroll);
-    if (target) target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    stopAutoPlayFilm();
+    const selector = t.dataset.scroll;
+    if (selector === "#muhurtham") {
+      jumpToFilmAct(2);
+      return;
+    }
+    if (selector === "#engagement") {
+      jumpToFilmAct(1);
+      return;
+    }
+    if (selector === "#reception") {
+      jumpToFilmAct(3);
+      return;
+    }
+    if (selector === "#cover") {
+      jumpToFilmAct(0);
+      return;
+    }
+    const target = document.querySelector(selector);
+    if (target) {
+      target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    }
   }
 });
 
 // ==========================================================================
-// INTERACTIVE SHOWER BLESSINGS (அட்சதை & மலர் மழை)
 // ==========================================================================
-const blessBtn = document.getElementById("blessBtn");
-const blessingCount = document.getElementById("blessingCount");
-const blessingToast = document.getElementById("blessingToast");
+// PETAL SHOWERS ON EVERY TAP + SHARED SERVER COUNT (அட்சதை & மலர் மழை)
+// ==========================================================================
+const showerCountEl = document.getElementById("showerCount");
+let showerTotal = null;
+let lastShowerAt = 0;
 
-let blessings = parseInt(localStorage.getItem("ganesh_dharshini_blessings") || "1842", 10);
-if (blessingCount) blessingCount.textContent = blessings.toLocaleString("en-IN");
+function renderShowerTotal() {
+  if (showerCountEl && showerTotal !== null) {
+    showerCountEl.textContent = showerTotal.toLocaleString("en-IN");
+  }
+}
 
-function triggerBlessingShower(originX, originY) {
+async function fetchShowerTotal() {
+  try {
+    const res = await fetch("/api/showers", { cache: "no-store" });
+    if (!res.ok) throw new Error("bad status");
+    const data = await res.json();
+    showerTotal = data.count;
+  } catch {
+    try {
+      showerTotal = parseInt(localStorage.getItem("gd_shower_total") || "0", 10) || 0;
+    } catch { showerTotal = 0; }
+  }
+  renderShowerTotal();
+}
+
+async function recordShower() {
+  showerTotal = (showerTotal === null ? 0 : showerTotal) + 1;
+  renderShowerTotal();
+  try {
+    const res = await fetch("/api/showers", { method: "POST", cache: "no-store" });
+    if (!res.ok) throw new Error("bad status");
+    const data = await res.json();
+    showerTotal = data.count;
+    renderShowerTotal();
+  } catch {
+    try { localStorage.setItem("gd_shower_total", String(showerTotal)); } catch {}
+  }
+}
+
+function triggerBlessingShower(originX, originY, count = 14) {
   if (reducedMotion) return;
-  const count = 38;
   const flowerGlyphs = ["🌸", "🌹", "🌼", "🌺", "🏵️"];
 
   for (let i = 0; i < count; i++) {
     const isPetal = i % 4 === 0;
     const el = document.createElement("span");
-    
+
     if (isPetal) {
       el.className = "blessing-rose-petal";
       el.textContent = flowerGlyphs[i % flowerGlyphs.length];
@@ -479,37 +531,20 @@ function playBlessingChime() {
   } catch {}
 }
 
-if (blessBtn) {
-  blessBtn.addEventListener("click", (e) => {
-    const rect = blessBtn.getBoundingClientRect();
-    const x = e.clientX || rect.left + rect.width / 2;
-    const y = e.clientY || rect.top + rect.height / 2;
+// Shower petals on every tap, anywhere on the page
+document.addEventListener("pointerdown", (e) => {
+  const now = Date.now();
+  if (now - lastShowerAt < 350) return;
+  lastShowerAt = now;
+  const x = (typeof e.clientX === "number" ? e.clientX : window.innerWidth / 2);
+  const y = (typeof e.clientY === "number" ? e.clientY : window.innerHeight / 2);
+  triggerBlessingShower(x, y);
+  playBlessingChime();
+  recordShower();
+});
 
-    triggerBlessingShower(x, y);
-    playBlessingChime();
-
-    blessings++;
-    localStorage.setItem("ganesh_dharshini_blessings", String(blessings));
-    if (blessingCount) {
-      blessingCount.textContent = blessings.toLocaleString("en-IN");
-      blessingCount.classList.remove("bump");
-      void blessingCount.offsetWidth;
-      blessingCount.classList.add("bump");
-    }
-
-    if (blessingToast) {
-      const msgs = [
-        "🌸 வாழ்க வளமுடன்! Thank you for showering your blessings!",
-        "✨ மங்கலம் பெருகுக! Your love and wishes mean the world to us!",
-        "💐 அன்பான நல்வாழ்த்துகளுக்கு மனமார்ந்த நன்றி!",
-        "🪔 May Lord Murugan bless you and your family!"
-      ];
-      blessingToast.textContent = msgs[Math.floor(Math.random() * msgs.length)];
-      blessingToast.classList.add("show");
-      setTimeout(() => blessingToast.classList.remove("show"), 3800);
-    }
-  });
-}
+fetchShowerTotal();
+setInterval(fetchShowerTotal, 30000);
 
 // Ambient floating petals (reference-style falling petal layer)
 if (!reducedMotion) {
