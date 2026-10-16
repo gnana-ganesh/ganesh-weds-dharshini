@@ -604,6 +604,10 @@ body.locked { overflow: hidden; }
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
 }
+.music-btn svg { width: 20px; height: 20px; display: block; }
+.music-btn .icon-flute { display: none; }
+.music-btn.is-playing .icon-flute { display: block; }
+.music-btn.is-playing .icon-mute { display: none; }
 
 /* Sealed-Envelope Opener */
 .opener {

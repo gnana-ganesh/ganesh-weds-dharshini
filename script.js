@@ -49,7 +49,7 @@ if (opener && openBtn && envelope) {
     try {
       startMusic();
       playing = true;
-      if (btn) { btn.setAttribute("aria-pressed", "true"); btn.innerHTML = "🔊 <span>Playing</span>"; }
+      if (btn) { btn.setAttribute("aria-pressed", "true"); btn.classList.add("is-playing"); }
     } catch {}
     if (reducedMotion) {
       revealSite();
@@ -159,7 +159,7 @@ function stopMusic() {
 if (btn) btn.addEventListener("click", () => {
   playing = !playing;
   btn.setAttribute("aria-pressed", String(playing));
-  btn.innerHTML = playing ? "🔊 <span>Playing</span>" : "🔇 <span>Music</span>";
+  btn.classList.toggle("is-playing", playing);
   if (playing) startMusic(); else stopMusic();
 });
 
@@ -335,7 +335,7 @@ function startCinemaMode(fromIdx = 0) {
       playing = true;
       if (btn) {
         btn.setAttribute("aria-pressed", "true");
-        btn.innerHTML = "🔊 <span>Playing</span>";
+        btn.classList.add("is-playing");
       }
     } catch {}
   }
