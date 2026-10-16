@@ -230,10 +230,6 @@
     </div>
 
     <div class="cinema-bottombar">
-      <div class="cinema-subtitles" id="cinemaSubtitles">
-        <p class="sub-tamil" id="subTamil">அருள்மிகு திருச்செந்தூர் அலைகடலின் ஓரம்...</p>
-        <p class="sub-english" id="subEnglish">At the holy coastal shrine of Tiruchendur, where the morning sun kisses the waves...</p>
-      </div>
       <div class="cinema-hud-controls">
         <button id="cinemaPrevBtn" class="cinema-ctrl-btn" type="button" aria-label="Previous Scene">⏮</button>
         <button id="cinemaPlayPauseBtn" class="cinema-ctrl-btn play-pause" type="button" aria-label="Pause Story">⏸</button>
@@ -252,6 +248,7 @@
   </div>
 
   <button id="musicBtn" class="music-btn" aria-pressed="false" aria-label="Toggle traditional music">🔇 <span>Music</span></button>
+  <audio id="bgMusic" src="./videoplayback_3azHH6jF.mp3" loop preload="auto"></audio>
   <div id="progress" class="progress" aria-hidden="true"></div>
 
   <main id="story" aria-label="Wedding invitation">
@@ -321,149 +318,184 @@
       </div>
     </section>
 
-    <!-- ACT I: The Sacred Invitation & Blessings Shrine -->
-    <section id="invitation" class="panel cream invitation-panel">
+    <!-- ACT I: The Auspicious Engagement (நிச்சயதார்த்தம்) · 12.12.2026 6:30 PM (Dusk / Twilight) -->
+    <section id="engagement" class="panel twilight engagement-panel" data-scene="1" data-time="twilight">
       <div class="panel-inner wide">
         <div class="chapter-header rise" style="--d:.0s">
-          <span class="chapter-badge">SCENE I · SACRED INVITATION</span>
-          <h2 class="tamil chapter-title">சுபமுகூர்த்த அழைப்பிதழ்</h2>
-          <p class="chapter-sub">With the divine grace of Lord Murugan &amp; ancestral blessings</p>
+          <div class="scene-badge"><span class="rec-dot"></span> SCENE I · 12 DEC 2026 · 6:30 PM · EVENING TWILIGHT</div>
+          <h2 class="tamil chapter-title">நிச்சயதார்த்தம் · The Engagement</h2>
+          <p class="chapter-sub">Saturday, 12 December 2026 · 6:30 PM – 7:30 PM · Shanmugar Mahal, Tiruchendur</p>
         </div>
 
-        <div class="invitation-comic-grid rise" style="--d:.15s">
-          <!-- Left: Sacred Shrine Comic Art Frame -->
-          <div class="comic-frame inv-comic-frame">
-            <span class="comic-tape t-left" aria-hidden="true"></span>
-            <span class="comic-tape t-right" aria-hidden="true"></span>
-            <img class="comic-art" src="./invitation-comic.webp" alt="Sacred Kalasam and glowing kuthuvilakku lamps blessing shrine" loading="lazy" />
-            <div class="comic-caption-strip">
-              <span class="caption-marker">SCENE 01</span>
-              <p>Sacred Kalasam &amp; Kuthuvilakku shrine invoking divine grace for the holy union</p>
+        <div class="video-scene-grid rise" style="--d:.15s">
+          <div class="video-frame-wrap">
+            <div class="comic-frame video-frame">
+              <span class="comic-tape t-left" aria-hidden="true"></span>
+              <span class="comic-tape t-right" aria-hidden="true"></span>
+              <img class="comic-art video-pan-slow" src="./invitation-comic.webp" alt="Sacred Kalasam and glowing brass oil lamps at dusk" loading="lazy" />
+              <div class="scene-overlay-tag">SHANMUGAR MAHAL · DUSK</div>
             </div>
           </div>
 
-          <!-- Right: Auspicious Family Invitation Card -->
-          <div class="card inv-card">
+          <div class="card scene-card">
             <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
             <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
             <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
             <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
-            
-            <div class="inv-emblem-row">
-              <svg class="temple-emblem small" aria-hidden="true"><use href="#emblem-kalasam" /></svg>
-              <p class="tamil inv-lead">அன்புடையீர் வணக்கம்!</p>
+
+            <div class="scene-lead">
+              <span class="scene-icon">💍</span>
+              <div>
+                <h3 class="tamil">நிச்சயதார்த்த வைபவம்</h3>
+                <p class="scene-meta">Saturday, 12 Dec 2026 · Evening 6:30 PM to 7:30 PM</p>
+              </div>
             </div>
-            
-            <p class="inv-body">
-              Together with their families, <strong>GnanaGanesh</strong> (S/o [Father] &amp; [Mother])
-              and <strong>Dharshini</strong> (D/o [Father] &amp; [Mother]) joyfully invite you
-              with family and friends to grace the auspicious occasion of their marriage and shower your heartfelt blessings.
+
+            <p class="scene-desc">
+              As dusk settles over the holy seashore of Tiruchendur and the sacred temple lamps are lit,
+              our families gather for the auspicious exchange of rings and the solemn reading of the Lagna Pathirikai,
+              commencing the sacred journey of marriage.
             </p>
 
-            <div class="families-comic-box">
-              <div class="family-scroll groom">
-                <span class="family-tag">Groom's Family</span>
-                <h4>மணமகன் இல்லத்தார்</h4>
-                <p>[Father GnanaGanesh's side]<br />[Mother]<br />[Native place]</p>
+            <div class="scene-highlights">
+              <div class="highlight-item">
+                <span class="hi-icon">🪔</span>
+                <span>Lagna Pathirikai Reading &amp; Ring Exchange</span>
               </div>
-              <div class="family-scroll bride">
-                <span class="family-tag">Bride's Family</span>
-                <h4>மணமகள் இல்லத்தார்</h4>
-                <p>[Father Dharshini's side]<br />[Mother]<br />[Native place]</p>
+              <div class="highlight-item">
+                <span class="hi-icon">🍽️</span>
+                <span>Traditional South Indian Evening Feast</span>
               </div>
             </div>
 
-            <div class="kolam-rule" aria-hidden="true"><span>❋</span> <span>◇</span> <span>❋</span></div>
-            <p class="inv-footnote tamil">தங்கள் நல்வரவை அன்புடன் எதிர்பார்க்கும் குடும்பத்தினர்</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ACT II: Graphic Novel / Comic Romance Chapter -->
-    <section id="story-chapter" class="panel gold-tint story-comic-panel">
-      <div class="panel-inner wide">
-        <div class="chapter-header rise" style="--d:.0s">
-          <span class="chapter-badge">SCENE II · OUR STORY</span>
-          <h2 class="tamil chapter-title">எங்கள் காதல் பயணம்</h2>
-          <p class="chapter-sub">Two souls walking together towards forever</p>
-        </div>
-
-        <div class="comic-showcase rise" style="--d:.15s">
-          <div class="comic-frame">
-            <span class="comic-tape t-left" aria-hidden="true"></span>
-            <span class="comic-tape t-right" aria-hidden="true"></span>
-            <img class="comic-art" src="./journey-comic.webp" alt="GnanaGanesh and Dharshini walking on Tiruchendur beach at sunset" loading="lazy" />
-            <div class="comic-caption-strip">
-              <span class="caption-marker">SCENE 02</span>
-              <p>Walking into forever, hand-in-hand along the sacred seashore of Tiruchendur</p>
-            </div>
-          </div>
-
-          <div class="comic-dialogues">
-            <div class="speech-bubble groom rise" style="--d:.25s">
-              <span class="avatar-tag">GnanaGanesh</span>
-              <p>"From our very first conversations, I saw in Dharshini a companion for a lifetime of joy and togetherness."</p>
-            </div>
-            <div class="speech-bubble bride rise" style="--d:.35s">
-              <span class="avatar-tag">Dharshini</span>
-              <p>"With every ocean sunrise at Tiruchendur, my heart is filled with gratitude for the journey we begin."</p>
-            </div>
-            <div class="comic-narrator rise" style="--d:.45s">
-              <span class="narrator-icon">✦</span>
-              <p class="tamil">திருவருளும் அன்பும் இணைந்த ஒரு இனிய தொடக்கம்...</p>
-              <p class="narrator-en">With the divine grace of Lord Murugan and the blessings of all our loved ones, our story blossoms into marriage.</p>
+            <div class="cta-row">
+              <a class="btn primary small" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur" target="_blank" rel="noopener">
+                <span>📍 Shanmugar Mahal, Tiruchendur</span>
+              </a>
+              <button class="btn small" type="button" data-scroll="#muhurtham">Next: Sacred Marriage ↓</button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ACT III: Sacred Ceremonies & Celebration -->
-    <section id="agenda" class="panel maroon">
+    <!-- ACT II: The Sacred Muhurtham (சுபமுகூர்த்தம்) · 13.12.2026 6:30 AM (Golden Sunrise Dawn) -->
+    <section id="muhurtham" class="panel sunrise muhurtham-panel" data-scene="2" data-time="sunrise">
       <div class="panel-inner wide">
         <div class="chapter-header rise" style="--d:.0s">
-          <span class="chapter-badge">SCENE III · SACRED CEREMONIES</span>
-          <h2 class="tamil chapter-title">சுபமுகூர்த்த வைபவம்</h2>
-          <p class="chapter-sub">The sacred milestones of our wedding celebration</p>
+          <div class="scene-badge"><span class="rec-dot"></span> SCENE II · 13 DEC 2026 · 6:30 AM · BRAHMA MUHURTHAM</div>
+          <h2 class="tamil chapter-title">திருமாங்கல்ய தாரணம் · Sacred Marriage</h2>
+          <p class="chapter-sub">Sunday, 13 December 2026 · 6:30 AM – 7:30 AM · Shanmugar Mahal, Tiruchendur</p>
         </div>
 
-        <div class="ceremonies-grid">
-          <!-- Muhurtham Visual Comic Card -->
-          <div class="ceremony-comic-card rise" style="--d:.15s">
-            <div class="comic-frame-sm">
-              <img src="./muhurtham-comic.webp" alt="Sacred Thali-tying Muhurtham ceremony" loading="lazy" />
-              <div class="comic-tag">MUHURTHAM · 13 DEC 2026</div>
-            </div>
-            <div class="ceremony-details">
-              <h3 class="tamil">திருமாங்கல்ய தாரணம் (Muhurtham)</h3>
-              <p class="ceremony-time">Sunday, 13 Dec 2026 · 6:30 AM – 7:30 AM</p>
-              <p class="ceremony-venue">Shanmugar Mahal, Tiruchendur</p>
-              <p class="ceremony-desc">Kashi Yatra at 5:30 AM, followed by the auspicious Thali-tying ceremony under the mandapam amidst sacred Vedic hymns and traditional nadaswaram.</p>
+        <div class="video-scene-grid reverse rise" style="--d:.15s">
+          <div class="video-frame-wrap">
+            <div class="comic-frame video-frame">
+              <span class="comic-tape t-left" aria-hidden="true"></span>
+              <span class="comic-tape t-right" aria-hidden="true"></span>
+              <img class="comic-art video-pan-slow" src="./muhurtham-comic.webp" alt="Sacred Thali tying Muhurtham ceremony" loading="lazy" />
+              <div class="scene-overlay-tag">SACRED MANDAPAM · SUNRISE</div>
             </div>
           </div>
 
-          <!-- Reception Visual Comic Card -->
-          <div class="ceremony-comic-card rise" style="--d:.25s">
-            <div class="comic-frame-sm">
-              <img src="./reception-comic.webp" alt="Grand evening wedding reception stage celebration" loading="lazy" />
-              <div class="comic-tag">RECEPTION · 13 DEC 2026</div>
+          <div class="card scene-card">
+            <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+
+            <div class="scene-lead">
+              <span class="scene-icon">🪔</span>
+              <div>
+                <h3 class="tamil">சுபமுகூர்த்த நன்னாளில்</h3>
+                <p class="scene-meta">Sunday, 13 Dec 2026 · Morning 6:30 AM to 7:30 AM</p>
+              </div>
             </div>
-            <div class="ceremony-details">
-              <h3 class="tamil">மணமக்கள் வரவேற்பு (Reception)</h3>
-              <p class="ceremony-time">Sunday, 13 Dec 2026 · 6:30 PM – 9:00 PM</p>
-              <p class="ceremony-venue">Sandhya Mahal, VMS Nagar South, Thoothukudi</p>
-              <p class="ceremony-desc">An evening of joyous celebration, congratulations, photography, and an exquisite South Indian royal dinner feast.</p>
+
+            <p class="scene-desc">
+              At the auspicious Brahma Muhurtham hour, with golden sunrise rays breaking over the Bay of Bengal,
+              GnanaGanesh lovingly ties the sacred Thirumangalyam around Dharshini's neck amidst the resonance of Thavil &amp; Nadaswaram,
+              sacred Vedic mantras, and showers of fragrant flowers.
+            </p>
+
+            <div class="scene-highlights">
+              <div class="highlight-item">
+                <span class="hi-icon">🌅</span>
+                <span>Kashi Yatra (5:30 AM) &amp; Maalai Maatral</span>
+              </div>
+              <div class="highlight-item">
+                <span class="hi-icon">🌾</span>
+                <span>Mangalya Dharanam &amp; Akshadhai Blessing</span>
+              </div>
+            </div>
+
+            <div class="cta-row">
+              <a class="btn primary small" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur" target="_blank" rel="noopener">
+                <span>📍 Shanmugar Mahal, Tiruchendur</span>
+              </a>
+              <button class="btn small" type="button" data-scroll="#reception">Next: Grand Reception ↓</button>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Nichayathartham Card -->
-        <div class="engagement-strip card rise" style="--d:.35s">
-          <div class="eng-icon">💍</div>
-          <div class="eng-content">
-            <h4 class="tamil">நிச்சயதார்த்தம் (Engagement)</h4>
-            <p><strong>Saturday, 12 Dec 2026 · 6:30 PM – 7:30 PM</strong> at Shanmugar Mahal, Tiruchendur · Exchange of garlands &amp; lagna patrika followed by traditional dinner.</p>
+    <!-- ACT III: The Grand Reception (மணமக்கள் வரவேற்பு) · 13.12.2026 6:30 PM (Starlit Coastal Night) -->
+    <section id="reception" class="panel night reception-panel" data-scene="3" data-time="night">
+      <div class="panel-inner wide">
+        <div class="chapter-header rise" style="--d:.0s">
+          <div class="scene-badge"><span class="rec-dot"></span> SCENE III · 13 DEC 2026 · 6:30 PM · STARLIT NIGHT</div>
+          <h2 class="tamil chapter-title">மணமக்கள் வரவேற்பு · Grand Reception</h2>
+          <p class="chapter-sub">Sunday, 13 December 2026 · 6:30 PM – 9:00 PM · Thoothukudi</p>
+        </div>
+
+        <div class="video-scene-grid rise" style="--d:.15s">
+          <div class="video-frame-wrap">
+            <div class="comic-frame video-frame">
+              <span class="comic-tape t-left" aria-hidden="true"></span>
+              <span class="comic-tape t-right" aria-hidden="true"></span>
+              <img class="comic-art video-pan-slow" src="./reception-comic.webp" alt="Grand evening reception stage under twinkling fairy lights" loading="lazy" />
+              <div class="scene-overlay-tag">THOOTHUKUDI · STARLIT GALA</div>
+            </div>
+          </div>
+
+          <div class="card scene-card">
+            <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
+            <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+
+            <div class="scene-lead">
+              <span class="scene-icon">✨</span>
+              <div>
+                <h3 class="tamil">மணமக்கள் வரவேற்பு விழா</h3>
+                <p class="scene-meta">Sunday, 13 Dec 2026 · Evening 6:30 PM to 9:00 PM</p>
+              </div>
+            </div>
+
+            <p class="scene-desc">
+              The celebrations move to the vibrant coastal Pearl City of Thoothukudi!
+              Join us for an enchanting starlit evening of heartfelt felicitations, music, joyous photography,
+              and a grand traditional South Indian royal banquet.
+            </p>
+
+            <div class="scene-highlights">
+              <div class="highlight-item">
+                <span class="hi-icon">🌟</span>
+                <span>Celebration, Greetings &amp; Photo Moments</span>
+              </div>
+              <div class="highlight-item">
+                <span class="hi-icon">🍲</span>
+                <span>Grand South Indian Royal Dinner Feast</span>
+              </div>
+            </div>
+
+            <div class="cta-row">
+              <a class="btn primary small" href="https://maps.google.com/?q=Thoothukudi+Tamil+Nadu" target="_blank" rel="noopener">
+                <span>📍 Thoothukudi Venue</span>
+              </a>
+              <button class="btn small" type="button" data-scroll="#venue">View All Venues &amp; Map ↓</button>
+            </div>
           </div>
         </div>
       </div>
@@ -473,9 +505,7 @@
     <section id="venue" class="panel cream venue-panel">
       <div class="panel-inner wide">
         <div class="chapter-header rise" style="--d:.0s">
-          <span class="chapter-badge">SCENE IV · VENUE &amp; LOCATION</span>
           <h2 class="tamil chapter-title">திருமண மண்டப முகவரி</h2>
-          <p class="chapter-sub">Shanmugar Mahal, Tiruchendur · Coastal celebration venue</p>
         </div>
 
         <div class="venue-comic-grid rise" style="--d:.15s">
@@ -484,10 +514,6 @@
             <span class="comic-tape t-left" aria-hidden="true"></span>
             <span class="comic-tape t-right" aria-hidden="true"></span>
             <img class="comic-art" src="./venue-comic.webp" alt="Shanmugar Mahal wedding hall in Tiruchendur adorned with floral arches" loading="lazy" />
-            <div class="comic-caption-strip">
-              <span class="caption-marker">SCENE 04</span>
-              <p>Shanmugar Mahal, Tiruchendur · Adorned with auspicious marigold arches</p>
-            </div>
           </div>
 
           <!-- Right: Venue Map & Navigation Card -->
@@ -498,10 +524,28 @@
             <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
 
             <div class="venue-info">
-              <span class="venue-pill">Destination</span>
-              <h3 class="venue-name">Shanmugar Mahal</h3>
-              <p class="venue-addr">Tiruchendur, Thoothukudi District, Tamil Nadu 628215</p>
-              <p class="venue-landmark">Just 5 minutes from Arulmigu Subramaniya Swamy Temple &amp; the coastal beach.</p>
+              <span class="venue-pill">Wedding Destinations</span>
+              <div class="venue-duo">
+                <div class="venue-loc-item">
+                  <span class="loc-badge">12 &amp; 13 DEC · ENGAGEMENT &amp; MUHURTHAM</span>
+                  <h3 class="venue-name">Shanmugar Mahal</h3>
+                  <p class="venue-addr">Tiruchendur, Thoothukudi District, Tamil Nadu 628215</p>
+                  <p class="venue-landmark">Just 5 mins from Arulmigu Subramaniya Swamy Temple &amp; the coastal beach.</p>
+                  <a class="btn primary small" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur" target="_blank" rel="noopener">
+                    <span>📍 Directions to Shanmugar Mahal</span>
+                  </a>
+                </div>
+
+                <div class="venue-loc-item">
+                  <span class="loc-badge">13 DEC · EVENING RECEPTION (6:30 PM)</span>
+                  <h3 class="venue-name">Thoothukudi Venue</h3>
+                  <p class="venue-addr">Thoothukudi (Pearl City), Tamil Nadu</p>
+                  <p class="venue-landmark">Conveniently located in Thoothukudi with ample guest parking.</p>
+                  <a class="btn primary small" href="https://maps.google.com/?q=Thoothukudi+Tamil+Nadu" target="_blank" rel="noopener">
+                    <span>📍 Directions to Thoothukudi</span>
+                  </a>
+                </div>
+              </div>
             </div>
 
             <div class="map-wrap">
@@ -510,23 +554,20 @@
             </div>
 
             <div class="cta-row venue-cta-row">
-              <a class="btn primary" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur" target="_blank" rel="noopener">
-                <span>📍 Open in Google Maps</span>
-              </a>
-              <button class="btn" type="button" data-scroll="#travel">Plan Travel &amp; Stay ↓</button>
+              <button class="btn" type="button" data-scroll="#travel">Transit &amp; Travel Guide ↓</button>
+              <button class="btn primary" type="button" data-scroll="#countdown">Shower Blessings ✨</button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ACT V: Travel Scrapbook & How to Plan -->
+    <!-- ACT V: Quick Transit & Guest Stay -->
     <section id="travel" class="panel maroon travel-panel">
       <div class="panel-inner wide">
         <div class="chapter-header rise" style="--d:.0s">
-          <span class="chapter-badge">SCENE V · TRAVEL GUIDE</span>
-          <h2 class="tamil chapter-title">பயண வழிகாட்டி</h2>
-          <p class="chapter-sub">How to reach Tiruchendur &amp; wedding guest accommodations</p>
+          <div class="scene-badge"><span class="rec-dot"></span> TRAVEL &amp; GUEST ASSISTANCE</div>
+          <h2 class="tamil chapter-title">பயண வழிகாட்டி · Transit Guide</h2>
         </div>
 
         <div class="travel-scrapbook rise" style="--d:.15s">
@@ -535,31 +576,23 @@
             <div class="travel-stamp">🚆</div>
             <span class="transit-tag">By Train</span>
             <h4>ரயில் பயணம்</h4>
-            <p><strong>Tiruchendur Station (TCN)</strong> is just 1.5 km away. Direct express trains from Chennai Egmore (Chendur Express), Madurai, and Tirunelveli. Autos available 24/7.</p>
+            <p><strong>Tiruchendur Station (TCN)</strong> is just 1.5 km away. Direct express trains from Chennai Egmore, Madurai, and Tirunelveli.</p>
           </div>
 
-          <!-- 2. Bus Card -->
-          <div class="travel-comic-card">
-            <div class="travel-stamp">🚌</div>
-            <span class="transit-tag">By Bus</span>
-            <h4>பேருந்து வசதி</h4>
-            <p><strong>Tiruchendur Bus Stand</strong> connects seamlessly with Madurai, Tirunelveli, Thoothukudi, Nagercoil, and Chennai with frequent SETC and express buses.</p>
-          </div>
-
-          <!-- 3. Flight Card -->
+          <!-- 2. Flight Card -->
           <div class="travel-comic-card">
             <div class="travel-stamp">✈️</div>
             <span class="transit-tag">By Flight</span>
             <h4>விமானப் பயணம்</h4>
-            <p><strong>Tuticorin Airport (TCR)</strong> is 38 km (~45 mins drive). <strong>Madurai Airport (IXM)</strong> is 165 km (~3 hrs scenic highway drive via NH 38).</p>
+            <p><strong>Tuticorin Airport (TCR)</strong> is 38 km (~45 mins). <strong>Madurai Airport (IXM)</strong> is 165 km (~3 hrs scenic highway drive).</p>
           </div>
 
-          <!-- 4. Stay Card -->
+          <!-- 3. Stay Card -->
           <div class="travel-comic-card stay-card">
             <div class="travel-stamp">🏨</div>
             <span class="transit-tag">Guest Stay</span>
             <h4>தங்குமிடம் &amp; உதவி</h4>
-            <p>Comfortable rooms arranged for family &amp; guests near the temple &amp; venue. Mention <strong>"GnanaGanesh–Dharshini Wedding"</strong> for seamless check-in assistance.</p>
+            <p>Comfortable rooms arranged for family &amp; guests near Shanmugar Mahal. Contact the family for immediate check-in assistance.</p>
           </div>
         </div>
       </div>
@@ -569,9 +602,7 @@
     <section id="rsvp" class="panel cream rsvp-panel">
       <div class="panel-inner">
         <div class="chapter-header rise" style="--d:.0s">
-          <span class="chapter-badge">SCENE VI · RSVP &amp; BLESSINGS</span>
           <h2 class="tamil chapter-title">வருகை பதிவு &amp; நல்வாழ்த்துகள்</h2>
-          <p class="chapter-sub">Let us know you're joining our celebration</p>
         </div>
 
         <div class="card rsvp-comic-card rise" style="--d:.15s">

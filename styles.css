@@ -141,32 +141,27 @@ body.locked { overflow: hidden; }
 
 .panel {
   position: relative; z-index: 1;
-  min-height: 100vh; min-height: 100svh;
+  min-height: auto;
   display: flex; align-items: center; justify-content: center;
-  padding: 4.5rem 1rem 4rem;
-  overflow: hidden;
+  padding: 4.5rem 1.2rem 4rem;
+  overflow: visible;
 }
-.panel-inner { width: 100%; max-width: 580px; margin: 0 auto; position: relative; z-index: 2; }
-.panel-inner.wide { max-width: 580px; }
+.panel-inner { width: 100%; max-width: 620px; margin: 0 auto; position: relative; z-index: 2; }
+.panel-inner.wide { max-width: 1080px; }
 
-/* Panel: Royal Temple Crimson Silk */
+/* Continuous Fluid Section Transitions */
 .panel.maroon {
   background:
-    radial-gradient(circle at 50% 18%, rgba(158, 35, 56, 0.35) 0%, transparent 68%),
-    radial-gradient(rgba(232, 199, 126, 0.12) 1.2px, transparent 1.8px),
-    linear-gradient(180deg, var(--maroon-dark) 0%, #150207 100%);
-  background-size: 100% 100%, 28px 28px, 100% 100%;
+    radial-gradient(circle at 50% 18%, rgba(158, 35, 56, 0.28) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(21, 2, 7, 0.85) 0%, rgba(38, 7, 14, 0.92) 50%, rgba(21, 2, 7, 0.85) 100%);
   color: #fff8eb;
 }
 
-/* Panel: Warm Temple Ivory & Sand */
 .panel.cream {
   background:
-    radial-gradient(circle at 50% -40px, #fff5dc 0%, transparent 60%),
-    radial-gradient(rgba(180, 140, 40, 0.08) 1.2px, transparent 1.8px),
-    #faf4e6;
-  background-size: 100% 100%, 28px 28px, 100% 100%;
-  color: var(--ink);
+    radial-gradient(circle at 50% 20%, rgba(255, 245, 220, 0.15) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(26, 11, 16, 0.9) 0%, rgba(36, 16, 22, 0.95) 50%, rgba(26, 11, 16, 0.9) 100%);
+  color: #fff8eb;
 }
 
 /* Scroll reveal */
@@ -1799,6 +1794,258 @@ body.cinema-active .comic-art {
     gap: 2.2rem;
     align-items: center;
   }
+  .video-scene-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.95fr;
+    gap: 2.4rem;
+    align-items: center;
+  }
+  .video-scene-grid.reverse {
+    grid-template-columns: 0.95fr 1.15fr;
+  }
+  .video-scene-grid.reverse .video-frame-wrap {
+    order: 2;
+  }
+  .video-scene-grid.reverse .scene-card {
+    order: 1;
+  }
+}
+
+/* ==========================================================================
+   DYNAMIC DAY & NIGHT LIGHTING THEMES (Matching Event Times)
+   ========================================================================== */
+/* Twilight: Engagement on 12.12.2026, 6:30 PM (Dusk) */
+.panel.twilight {
+  background: radial-gradient(circle at 60% 30%, #36171b 0%, #1f0b12 60%, #12050b 100%);
+  color: var(--cream);
+  position: relative;
+}
+.panel.twilight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(235, 140, 50, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Sunrise: Sacred Muhurtham on 13.12.2026, 6:30 AM (Dawn over Bay of Bengal) */
+.panel.sunrise {
+  background: radial-gradient(circle at 50% 20%, #4a191f 0%, #2e0e14 50%, #150509 100%);
+  color: var(--cream);
+  position: relative;
+}
+.panel.sunrise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(255, 200, 80, 0.15) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Night: Grand Reception on 13.12.2026, 6:30 PM (Starlit Coastal Night in Thoothukudi) */
+.panel.night {
+  background: radial-gradient(circle at 50% 10%, #0c152e 0%, #070c1d 50%, #03060f 100%);
+  color: #f7f9fc;
+  position: relative;
+}
+.panel.night::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(130, 180, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 230, 150, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   CONTINUOUS VIDEO FORMAT & MOTION COMIC STYLING
+   ========================================================================== */
+.video-scene-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  margin-top: 1.2rem;
+}
+
+.video-frame-wrap {
+  width: 100%;
+}
+
+.video-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(232, 199, 126, 0.35);
+  background: #000;
+  aspect-ratio: 16 / 9;
+}
+
+.video-pan-slow {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform-origin: center center;
+  animation: kenBurnsSlow 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes kenBurnsSlow {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.06) translate(-1.2%, -0.6%); }
+  100% { transform: scale(1.03) translate(0.8%, -1%); }
+}
+
+.scene-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-pale);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.rec-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff334b;
+  box-shadow: 0 0 8px #ff334b;
+  animation: recBlink 1.4s ease-in-out infinite;
+}
+
+@keyframes recBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(0.85); }
+}
+
+.scene-overlay-tag {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  border-left: 2px solid var(--gold-rich);
+  pointer-events: none;
+}
+
+.scene-card {
+  padding: 2rem 1.8rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.97) 0%, rgba(254, 250, 240, 0.95) 100%);
+  color: #261611;
+  border-radius: 12px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+}
+
+.night .scene-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 249, 252, 0.96) 100%);
+}
+
+.scene-lead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(147, 104, 20, 0.2);
+  padding-bottom: 0.8rem;
+}
+
+.scene-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.scene-lead h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #5c1420;
+}
+
+.scene-meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #8c5828;
+}
+
+.scene-desc {
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: #3b2823;
+  margin: 0 0 1.2rem;
+}
+
+.scene-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2b1712;
+  background: rgba(232, 191, 74, 0.12);
+  padding: 0.45rem 0.8rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--gold-rich);
+}
+
+.hi-icon {
+  font-size: 1.1rem;
+}
+
+/* Venue Duo Layout */
+.venue-duo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+  margin-top: 0.8rem;
+}
+
+@media (min-width: 600px) {
+  .venue-duo {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.venue-loc-item {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(232, 191, 74, 0.35);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.loc-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #a82338;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1806,6 +2053,7 @@ body.cinema-active .comic-art {
   .opener, .envelope, .letter, .env-flap, .seal-btn,
   .ambient-petal, .scroll-cue, .scroll-cue span,
   .temple-artwork, .sun-radiance, .wave-glow, .spark,
-  .temple-emblem, .date-sticker { animation: none !important; transition: none !important; }
+  .temple-emblem, .date-sticker, .video-pan-slow { animation: none !important; transition: none !important; }
   .rise { opacity: 1; transform: none; transition: none; }
 }
+

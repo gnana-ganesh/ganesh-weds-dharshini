@@ -260,6 +260,12 @@ if (opener && openBtn && envelope) {
   };
   openBtn.addEventListener("click", () => {
     openBtn.disabled = true;
+    // Guest track loops from the tap itself (user gesture unlocks audio)
+    try {
+      startMusic();
+      playing = true;
+      if (btn) { btn.setAttribute("aria-pressed", "true"); btn.innerHTML = "🔊 <span>Playing</span>"; }
+    } catch {}
     if (reducedMotion) {
       revealSite();
       setTimeout(() => opener.remove(), 100);
@@ -348,11 +354,29 @@ function stopDrone() {
   nodes.forEach(n => { try { n.stop(); } catch {} });
   nodes = [];
 }
+// Looped invitation track (guest-provided mp3). Starts on the seal tap;
+// the Music button toggles it. Synth drone is the fallback if it can't play.
+const loopTrack = document.getElementById("bgMusic");
+if (loopTrack) loopTrack.volume = 0.85;
+function startMusic() {
+  if (loopTrack) {
+    const p = loopTrack.play();
+    if (p && typeof p.catch === "function") {
+      p.catch(() => { try { startDrone(); } catch {} });
+    }
+  } else {
+    try { startDrone(); } catch {}
+  }
+}
+function stopMusic() {
+  try { if (loopTrack) loopTrack.pause(); } catch {}
+  try { stopDrone(); } catch {}
+}
 if (btn) btn.addEventListener("click", () => {
   playing = !playing;
   btn.setAttribute("aria-pressed", String(playing));
   btn.innerHTML = playing ? "🔊 <span>Playing</span>" : "🔇 <span>Music</span>";
-  if (playing) startDrone(); else stopDrone();
+  if (playing) startMusic(); else stopMusic();
 });
 
 // ---------- Continuous scroll story: progress, reveal, smooth anchors, Play tour ----------
@@ -410,45 +434,45 @@ const playBtn = document.getElementById("playBtn");
 const cinemaScenes = [
   {
     targetId: "cover",
-    chapter: "PROLOGUE · THE SACRED SHORE",
-    tamil: "அருள்மிகு திருச்செந்தூர் அலைகடலின் ஓரம்...",
-    english: "At the sacred coastal shrine of Tiruchendur, where the morning sun kisses the waves...",
-    duration: 5200
-  },
-  {
-    targetId: "invitation",
-    chapter: "ACT I · THE SACRED INVITATION",
-    tamil: "இரு குடும்பங்களின் அன்பான திருமண அழைப்பு...",
-    english: "With ancestral blessings and boundless joy, two families unite in celebration...",
-    duration: 5200
-  },
-  {
-    targetId: "story-chapter",
-    chapter: "ACT II · OUR STORY",
-    tamil: "எங்கள் இனிய காதல் பயணம்...",
-    english: "Two souls walking together, bound by destiny, shared laughter, and eternal devotion...",
-    duration: 5800
-  },
-  {
-    targetId: "agenda",
-    chapter: "ACT III · SACRED CEREMONIES",
-    tamil: "சுபமுகூர்த்த வைபவம் & மணமக்கள் வரவேற்பு...",
-    english: "From the sacred Thali-tying Muhurtham to the grand evening reception feast...",
-    duration: 6000
-  },
-  {
-    targetId: "venue",
-    chapter: "ACT IV · VENUE & LOCATION",
-    tamil: "திருச்செந்தூர் சண்முகர் மஹாலில்...",
-    english: "Join us at Shanmugar Mahal, Tiruchendur. We eagerly await your gracious arrival...",
+    chapter: "PROLOGUE · THE SACRED SHORE OF TIRUCHENDUR",
+    tamil: "அருள்மிகு திருச்செந்தூர் அலைகடலின் ஓரம் சுப முகூர்த்த அழைப்பு...",
+    english: "Welcome to the wedding chronicle of GnanaGanesh & Dharshini at holy Tiruchendur...",
     duration: 5000
   },
   {
+    targetId: "engagement",
+    chapter: "ACT I · THE ENGAGEMENT · 12 DEC (6:30 PM)",
+    tamil: "மாலை 6:30 மணிக்கு நிச்சயதார்த்த வைபவம் · சண்முகர் மஹால், திருச்செந்தூர்...",
+    english: "Act I: Auspicious ring exchange and lagna pathirikai at Shanmugar Mahal, Tiruchendur...",
+    duration: 5500
+  },
+  {
+    targetId: "muhurtham",
+    chapter: "ACT II · SACRED MARRIAGE · 13 DEC (6:30 AM)",
+    tamil: "காலை 6:30 மணிக்கு திருமாங்கல்ய தாரணம் · சண்முகர் மஹால், திருச்செந்தூர்...",
+    english: "Act II: Sacred Thali tying at Brahma Muhurtham sunrise amidst divine hymns and nadaswaram...",
+    duration: 6000
+  },
+  {
+    targetId: "reception",
+    chapter: "ACT III · GRAND RECEPTION · 13 DEC (6:30 PM)",
+    tamil: "மாலை 6:30 மணிக்கு மணமக்கள் வரவேற்பு விழா · தூத்துக்குடி...",
+    english: "Act III: Starlit reception celebration and royal banquet in the Pearl City of Thoothukudi...",
+    duration: 5500
+  },
+  {
+    targetId: "venue",
+    chapter: "ACT IV · VENUES & COASTAL ROUTE",
+    tamil: "திருச்செந்தூர் சண்முகர் மஹால் & தூத்துக்குடி...",
+    english: "Convenient travel and maps to celebrate with us in Tiruchendur and Thoothukudi...",
+    duration: 4800
+  },
+  {
     targetId: "countdown",
-    chapter: "ACT V · BLESSINGS & FINALE",
+    chapter: "ACT V · SHOWER BLESSINGS & CELEBRATE",
     tamil: "அன்போடு வந்து அட்சதை தூவி வாழ்த்துக!",
-    english: "Shower your heartfelt blessings upon us as we begin our sacred married life together...",
-    duration: 6500
+    english: "Shower sacred akshadhai and jasmine flowers upon the couple as their new journey begins...",
+    duration: 6000
   }
 ];
 
@@ -513,10 +537,10 @@ function startCinemaMode(fromIdx = 0) {
   }
   isPaused = false;
 
-  // Auto-play ambient drone/music if silent
-  if (!playing && typeof startDrone === "function") {
+  // Auto-play ambient music if silent
+  if (!playing && typeof startMusic === "function") {
     try {
-      startDrone();
+      startMusic();
       playing = true;
       if (btn) {
         btn.setAttribute("aria-pressed", "true");
