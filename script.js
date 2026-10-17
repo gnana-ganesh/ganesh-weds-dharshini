@@ -295,9 +295,19 @@ function stopDrone() {
 // Looped invitation track (guest-provided mp3). Starts on the seal tap;
 // the Music button toggles it. Synth drone is the fallback if it can't play.
 const loopTrack = document.getElementById("bgMusic");
-if (loopTrack) loopTrack.volume = 0.85;
+if (loopTrack) {
+  loopTrack.volume = 0.85;
+  loopTrack.loop = true;
+  loopTrack.addEventListener("ended", () => {
+    try {
+      loopTrack.currentTime = 0;
+      loopTrack.play();
+    } catch (e) {}
+  });
+}
 function startMusic() {
   if (loopTrack) {
+    loopTrack.loop = true;
     const p = loopTrack.play();
     if (p && typeof p.catch === "function") {
       p.catch(() => { try { startDrone(); } catch {} });
