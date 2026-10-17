@@ -1,5 +1,119 @@
 
 
+// ---------- Auspicious Wedding Preloader ----------
+(function initSitePreloader() {
+  const preloader = document.getElementById("sitePreloader");
+  if (!preloader) return;
+
+  const bar = document.getElementById("preloaderBar");
+  const percentEl = document.getElementById("preloaderPercent");
+  const statusEl = document.getElementById("preloaderStatus");
+
+  let currentPercent = 0;
+  let targetPercent = 25;
+  let isDone = false;
+  const startTime = Date.now();
+  const MIN_DISPLAY_MS = 1400; // Auspicious breath so users experience the royal prologue
+  const MAX_WAIT_MS = 3800;    // Failsafe so user is never blocked on slow connections
+
+  const statusMessages = [
+    { at: 0, text: "மங்கல அழைப்பிதழ் தயாராகிறது..." },
+    { at: 45, text: "இசையும் காட்சிகளும் இணைகின்றன..." },
+    { at: 85, text: "அழைப்பு தயார் · மங்கலம் நிறைக!" }
+  ];
+
+  function updateStatus(val) {
+    if (!statusEl) return;
+    for (let i = statusMessages.length - 1; i >= 0; i--) {
+      if (val >= statusMessages[i].at) {
+        statusEl.textContent = statusMessages[i].text;
+        break;
+      }
+    }
+  }
+
+  function setProgress(val) {
+    currentPercent = Math.min(100, Math.max(currentPercent, Math.round(val)));
+    if (bar) bar.style.width = `${currentPercent}%`;
+    if (percentEl) percentEl.textContent = `${currentPercent}%`;
+    if (preloader) preloader.setAttribute("aria-valuenow", currentPercent);
+    updateStatus(currentPercent);
+  }
+
+  // Smooth interpolation ticker
+  const interval = setInterval(() => {
+    if (currentPercent < targetPercent) {
+      const step = Math.max(1, Math.ceil((targetPercent - currentPercent) * 0.18));
+      setProgress(currentPercent + step);
+    }
+    if (currentPercent >= 100 && isDone) {
+      clearInterval(interval);
+      finish();
+    }
+  }, 35);
+
+  function finish() {
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+    setTimeout(() => {
+      setProgress(100);
+      if (statusEl) statusEl.textContent = "அழைப்பு தயார் · மங்கலம் நிறைக!";
+      setTimeout(() => {
+        preloader.classList.add("is-loaded");
+        setTimeout(() => {
+          try { preloader.remove(); } catch (e) { preloader.style.display = "none"; }
+        }, 800);
+      }, 250);
+    }, remaining);
+  }
+
+  function complete() {
+    if (isDone) return;
+    isDone = true;
+    targetPercent = 100;
+  }
+
+  // Stage 1: DOM readiness
+  if (document.readyState === "interactive" || document.readyState === "complete") {
+    targetPercent = Math.max(targetPercent, 50);
+  } else {
+    document.addEventListener("DOMContentLoaded", () => {
+      targetPercent = Math.max(targetPercent, 50);
+    });
+  }
+
+  // Stage 2: Fonts loaded
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      targetPercent = Math.max(targetPercent, 70);
+    }).catch(() => {});
+  }
+
+  // Stage 3: Key image preloads (seal & background poster)
+  const keyImages = ["./seal.jpg", "./tiruchendur-comic-landscape.webp?v=4.0"];
+  let loadedImages = 0;
+  keyImages.forEach(src => {
+    const img = new Image();
+    img.onload = img.onerror = () => {
+      loadedImages++;
+      targetPercent = Math.max(targetPercent, 70 + Math.round((loadedImages / keyImages.length) * 20));
+    };
+    img.src = src;
+  });
+
+  // Stage 4: Window complete load
+  if (document.readyState === "complete") {
+    complete();
+  } else {
+    window.addEventListener("load", () => {
+      complete();
+    });
+  }
+
+  // Hard safety timeout
+  setTimeout(complete, MAX_WAIT_MS);
+})();
+
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 
