@@ -590,9 +590,33 @@ body.locked { overflow: hidden; }
 .map-wrap { margin-top: 0.8rem; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
 .map-wrap iframe { width: 100%; height: 210px; border: 0; display: block; }
 
-.finale { text-align: center; margin-top: 1.4rem; color: var(--gold-soft); }
-.finale p { margin: 0.4rem 0; font-family: var(--font-display); font-size: 1.1rem; }
-.finale .small { font-size: 0.85rem; opacity: 0.8; font-family: var(--font-body); }
+.finale { text-align: center; margin-top: 2rem; color: var(--gold-soft); }
+.finale p { margin: 0.35rem 0; font-family: var(--font-display); font-size: 1.1rem; }
+.finale .finale-wish { color: #fdf5e6; font-size: 1.15rem; }
+.finale .finale-love {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: #fff6e5;
+  margin: 0.9rem 0 0.5rem;
+  line-height: 1.4;
+}
+.finale-couple-names {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, #fff9ea 0%, #e8be48 60%, #ffd978 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  margin-top: 0.2rem;
+}
+.finale-blessing {
+  font-size: 1.35rem !important;
+  color: var(--gold-rich) !important;
+  margin-top: 0.45rem !important;
+}
+.finale .small { font-size: 0.85rem; opacity: 0.8; font-family: var(--font-body); margin-top: 0.75rem; }
 
 /* Chrome Navigation & Audio */
 .progress {
