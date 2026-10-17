@@ -2135,7 +2135,7 @@ body.cinema-active .comic-art {
    ========================================================================== */
 .scroll-cinema-track {
   position: relative;
-  height: 520vh; /* Smooth generous scroll timeline across all chapters at 0.85x speed */
+  height: 600vh; /* Smooth generous scroll timeline across all chapters at 0.60x speed */
   background: #060103;
   margin: 0;
   padding: 0;
@@ -2992,8 +2992,13 @@ body.opened .film-dock {
    COMBINED WELCOME & COUNTDOWN UNIFIED FINALE
    ========================================================================== */
 .countdown-welcome-panel {
+  position: relative;
   padding-top: 3.5rem;
   padding-bottom: 4rem;
+  background:
+    linear-gradient(180deg, rgba(8, 2, 8, 0.42) 0%, rgba(20, 5, 14, 0.72) 38%, rgba(10, 2, 8, 0.92) 100%),
+    url("./reception-last-frame.webp") center top / cover no-repeat;
+  background-attachment: scroll;
 }
 
 .countdown-welcome-card {

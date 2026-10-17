@@ -414,8 +414,8 @@ const actTitles = [
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
-// Initialize 3 video reels: muted, inline, primed, slowed by 15% for majestic cinematic romance
-const FILM_PLAYBACK_RATE = 0.85;
+// Initialize 3 video reels: muted, inline, primed, slowed down by another 30% (0.60x speed) for royal slow-motion grace
+const FILM_PLAYBACK_RATE = 0.60;
 let dur1 = 10.0;
 let dur2 = 5.77;
 let dur3 = 10.0;
@@ -829,9 +829,15 @@ function startAutoPlayFilm() {
       if (videoLayer2) videoLayer2.style.opacity = "0";
       if (videoLayer3) videoLayer3.style.opacity = "1";
 
-      // Reached the end of the film
+      // Reached the end of the film — hold on final frame of reception video
       if (t3 >= Math.min(maxReel3T, 9.6) - 0.15 || overallProg >= 0.995) {
         stopAutoPlayFilm();
+        if (video3) {
+          try {
+            video3.pause();
+            video3.currentTime = Math.min(maxReel3T, 9.6) - 0.06;
+          } catch (e) {}
+        }
         const countdownEl = document.getElementById("countdown");
         if (countdownEl) {
           countdownEl.scrollIntoView({ behavior: "smooth" });
