@@ -911,7 +911,7 @@ body.movie-playing .film-timeline-wrap {
   border-radius: 999px;
   overflow: hidden;
   position: relative;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) inset;
 }
 
@@ -925,30 +925,7 @@ body.movie-playing .film-timeline-wrap {
 }
 
 .preloader-status-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: min(280px, 76vw);
-  font-size: clamp(0.72rem, 2.2vw, 0.8rem);
-  color: var(--gold-soft);
-  opacity: 0.9;
-}
-
-.preloader-status {
-  font-family: var(--font-tamil);
-  font-size: 0.76rem;
-  letter-spacing: 0.02em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.preloader-percent {
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.04em;
-  margin-left: 0.5rem;
+  display: none !important;
 }
 
 /* Sealed-Envelope Opener */
