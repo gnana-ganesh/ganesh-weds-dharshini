@@ -414,8 +414,8 @@ const actTitles = [
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
-// Initialize 3 video reels: muted, inline, primed, slowed down by another 30% (0.60x speed) for royal slow-motion grace
-const FILM_PLAYBACK_RATE = 0.60;
+// Initialize 3 video reels: muted, inline, primed, slowed down by another 50% (0.30x speed) for ultra slow-motion cinematic grace
+const FILM_PLAYBACK_RATE = 0.30;
 let dur1 = 10.0;
 let dur2 = 5.77;
 let dur3 = 10.0;
