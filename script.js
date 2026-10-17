@@ -139,13 +139,16 @@ function playFilmVideos() {
   const v2 = document.getElementById("filmVideo2");
   if (v1) {
     v1.muted = true;
-    const p1 = v1.play();
-    if (p1 && typeof p1.catch === "function") p1.catch(() => {});
+    try {
+      v1.pause();
+      if (v1.currentTime < 2.0 || v1.currentTime > 5.0) {
+        v1.currentTime = 2.85;
+      }
+    } catch (e) {}
   }
   if (v2) {
     v2.muted = true;
-    const p2 = v2.play();
-    if (p2 && typeof p2.catch === "function") p2.catch(() => {});
+    try { v2.pause(); } catch (e) {}
   }
 }
 
@@ -296,15 +299,82 @@ let dur2 = 10.0;
   v.addEventListener("loadedmetadata", () => {
     if (idx === 0 && v.duration && !isNaN(v.duration)) dur1 = v.duration;
     if (idx === 1 && v.duration && !isNaN(v.duration)) dur2 = v.duration;
+    try {
+      v.pause();
+      if (idx === 0) v.currentTime = 2.85;
+    } catch (e) {}
   });
   try {
     v.load();
-    v.currentTime = 0.001;
+    v.pause();
+    v.currentTime = idx === 0 ? 2.85 : 0.001;
   } catch (e) {}
 });
 
-// Scrubbing and playback state
-let targetTime1 = 0;
+// Video frame seeking state machine for scroll-embedded video scrubbing
+let isSeeking1 = false;
+let pendingTime1 = null;
+let isSeeking2 = false;
+let pendingTime2 = null;
+
+function applyVideo1Time(t) {
+  if (!video1) return;
+  const clamped = Math.max(0, Math.min(t, dur1 || 10));
+  if (isSeeking1) {
+    pendingTime1 = clamped;
+    return;
+  }
+  if (Math.abs(video1.currentTime - clamped) > 0.02) {
+    isSeeking1 = true;
+    try {
+      video1.currentTime = clamped;
+    } catch (e) {
+      isSeeking1 = false;
+    }
+  }
+}
+
+function applyVideo2Time(t) {
+  if (!video2) return;
+  const clamped = Math.max(0, Math.min(t, dur2 || 10));
+  if (isSeeking2) {
+    pendingTime2 = clamped;
+    return;
+  }
+  if (Math.abs(video2.currentTime - clamped) > 0.02) {
+    isSeeking2 = true;
+    try {
+      video2.currentTime = clamped;
+    } catch (e) {
+      isSeeking2 = false;
+    }
+  }
+}
+
+if (video1) {
+  video1.addEventListener("seeked", () => {
+    isSeeking1 = false;
+    if (pendingTime1 !== null) {
+      const next = pendingTime1;
+      pendingTime1 = null;
+      applyVideo1Time(next);
+    }
+  });
+}
+
+if (video2) {
+  video2.addEventListener("seeked", () => {
+    isSeeking2 = false;
+    if (pendingTime2 !== null) {
+      const next = pendingTime2;
+      pendingTime2 = null;
+      applyVideo2Time(next);
+    }
+  });
+}
+
+// Scrubbing and playback state (start with standing couple at 2.85s)
+let targetTime1 = 2.85;
 let targetTime2 = 0;
 let currentFilmAct = 0;
 let filmAutoPlaying = false;
@@ -344,12 +414,12 @@ function updateFilmProgress() {
   }
 
   // 4 acts across the progress:
-  // Act 0: 0.00 – 0.24 (Shore & Couple)
-  // Act 1: 0.24 – 0.50 (Engagement)
-  // Act 2: 0.50 – 0.75 (Muhurtham)
-  // Act 3: 0.75 – 1.00 (Reception)
+  // Act 0: 0.00 – 0.22 (Standing Couple on Shore)
+  // Act 1: 0.22 – 0.50 (Engagement Mandapam)
+  // Act 2: 0.50 – 0.75 (Sacred Muhurtham)
+  // Act 3: 0.75 – 1.00 (Reception Gala)
   let activeIdx = 0;
-  if (progress < 0.24) activeIdx = 0;
+  if (progress < 0.22) activeIdx = 0;
   else if (progress < 0.50) activeIdx = 1;
   else if (progress < 0.75) activeIdx = 2;
   else activeIdx = 3;
@@ -378,9 +448,16 @@ function updateFilmProgress() {
 
   // --- REEL 1 & REEL 2 VIDEO SYNCHRONIZATION ---
   if (progress < 0.50) {
-    // REEL 1: 0.00 to 0.50 -> scrubs video1 (0s to dur1)
-    const p1 = Math.min(Math.max(progress / 0.50, 0), 1);
-    targetTime1 = p1 * dur1;
+    // REEL 1: 0.00 to 0.50
+    // Act 0: Cover & Standing Couple Walk (0.00 to 0.22): 2.85s to 5.0s
+    // Act 1: Engagement Mandapam (0.22 to 0.50): 5.2s to 9.8s
+    if (progress < 0.22) {
+      const pCover = Math.min(Math.max(progress / 0.22, 0), 1);
+      targetTime1 = 2.85 + pCover * (5.0 - 2.85);
+    } else {
+      const pEngage = Math.min(Math.max((progress - 0.22) / 0.28, 0), 1);
+      targetTime1 = 5.2 + pEngage * (9.8 - 5.2);
+    }
 
     // Crossfade into Video 2 near the boundary (0.44 to 0.50)
     if (progress > 0.44) {
@@ -398,9 +475,16 @@ function updateFilmProgress() {
       }
     }
   } else {
-    // REEL 2: 0.50 to 1.00 -> scrubs video2 (0s to dur2)
-    const p2 = Math.min(Math.max((progress - 0.50) / 0.50, 0), 1);
-    targetTime2 = p2 * dur2;
+    // REEL 2: 0.50 to 1.00
+    // Act 2: Sacred Muhurtham (0.50 to 0.75): 0.0s to 4.9s
+    // Act 3: Reception Gala (0.75 to 1.00): 5.0s to 9.8s
+    if (progress < 0.75) {
+      const pMuhurtham = Math.min(Math.max((progress - 0.50) / 0.25, 0), 1);
+      targetTime2 = pMuhurtham * 4.9;
+    } else {
+      const pReception = Math.min(Math.max((progress - 0.75) / 0.25, 0), 1);
+      targetTime2 = 5.0 + pReception * (9.8 - 5.0);
+    }
 
     // Crossfade from Video 1 near the boundary (0.50 to 0.56)
     if (progress < 0.56) {
@@ -417,6 +501,14 @@ function updateFilmProgress() {
         videoLayer1.classList.remove("is-active");
       }
     }
+  }
+
+  // Directly seek video frame based on scroll progress
+  if (progress < 0.56) {
+    applyVideo1Time(targetTime1);
+  }
+  if (progress > 0.44) {
+    applyVideo2Time(targetTime2);
   }
 
   // --- NARRATIVE SCENE CARD PROGRESSION ---
@@ -487,91 +579,25 @@ function updateFilmProgress() {
   });
 }
 
-// Track active scrolling vs resting
-let isUserScrolling = false;
-let scrollEndTimer = null;
-
-window.addEventListener("scroll", () => {
-  isUserScrolling = true;
-  clearTimeout(scrollEndTimer);
-  scrollEndTimer = setTimeout(() => {
-    isUserScrolling = false;
-  }, 220);
-  requestAnimationFrame(updateFilmProgress);
-}, { passive: true });
-
-// Continuous smooth video playback & intelligent scene loop engine
+// Continuous video state enforcement: strictly paused when not scrolling, frame locked to scroll
 function videoScrubLoop() {
   if (!filmAutoPlaying) {
-    if (currentFilmAct < 2) {
-      // REEL 1 is active (Act 0: Shore / Act 1: Engagement)
-      if (video1) {
-        if (video1.paused) {
-          video1.muted = true;
-          video1.play().catch(() => {});
-        }
-        if (video2 && !video2.paused && currentFilmAct === 0) {
-          try { video2.pause(); } catch (e) {}
-        }
+    // Both videos MUST remain paused at all times when user is not auto-playing
+    if (video1 && !video1.paused) {
+      try { video1.pause(); } catch (e) {}
+    }
+    if (video2 && !video2.paused) {
+      try { video2.pause(); } catch (e) {}
+    }
 
-        if (isUserScrolling) {
-          // While user is scrubbing, keep video frame aligned with scrollport
-          const diff1 = targetTime1 - video1.currentTime;
-          if (Math.abs(diff1) > 0.45 && !video1.seeking) {
-            try {
-              if (typeof video1.fastSeek === "function") video1.fastSeek(targetTime1);
-              else video1.currentTime = targetTime1;
-            } catch (e) {}
-          }
-        } else {
-          // Living ambient playback: loop within active act's scene
-          if (currentFilmAct === 0) {
-            // Act 0: Seashore sunrise & couple walk (0.0s to 4.4s)
-            if (video1.currentTime >= 4.4 || video1.currentTime < 0.0) {
-              video1.currentTime = 0.05;
-            }
-          } else if (currentFilmAct === 1) {
-            // Act 1: Mandapam ring exchange & feast (4.5s to 9.8s)
-            if (video1.currentTime >= 9.8 || video1.currentTime < 4.4) {
-              video1.currentTime = 4.5;
-            }
-          }
-        }
+    // Keep active video in sync with target scroll time if not currently seeking
+    if (currentFilmAct < 2) {
+      if (video1 && Math.abs(video1.currentTime - targetTime1) > 0.03 && !isSeeking1) {
+        applyVideo1Time(targetTime1);
       }
     } else {
-      // REEL 2 is active (Act 2: Muhurtham / Act 3: Reception)
-      if (video2) {
-        if (video2.paused) {
-          video2.muted = true;
-          video2.play().catch(() => {});
-        }
-        if (video1 && !video1.paused && currentFilmAct === 3) {
-          try { video1.pause(); } catch (e) {}
-        }
-
-        if (isUserScrolling) {
-          // While user is scrubbing, keep video frame aligned with scrollport
-          const diff2 = targetTime2 - video2.currentTime;
-          if (Math.abs(diff2) > 0.45 && !video2.seeking) {
-            try {
-              if (typeof video2.fastSeek === "function") video2.fastSeek(targetTime2);
-              else video2.currentTime = targetTime2;
-            } catch (e) {}
-          }
-        } else {
-          // Living ambient playback: loop within active act's scene
-          if (currentFilmAct === 2) {
-            // Act 2: Sacred dawn homam fire & Thali tying (0.0s to 4.8s)
-            if (video2.currentTime >= 4.8 || video2.currentTime < 0.0) {
-              video2.currentTime = 0.05;
-            }
-          } else if (currentFilmAct === 3) {
-            // Act 3: Starlit reception stage & celebrations (4.9s to 9.8s)
-            if (video2.currentTime >= 9.8 || video2.currentTime < 4.8) {
-              video2.currentTime = 4.9;
-            }
-          }
-        }
+      if (video2 && Math.abs(video2.currentTime - targetTime2) > 0.03 && !isSeeking2) {
+        applyVideo2Time(targetTime2);
       }
     }
   }
@@ -673,6 +699,8 @@ function stopAutoPlayFilm() {
     cancelAnimationFrame(autoScrollAnimId);
     autoScrollAnimId = null;
   }
+  if (video1) { try { video1.pause(); } catch (e) {} }
+  if (video2) { try { video2.pause(); } catch (e) {} }
   if (playBtn) {
     playBtn.innerHTML = '<span class="play-icon-glow">▶</span> <span>Watch Wedding Film / கதைப் பயணம்</span>';
   }

@@ -2223,184 +2223,34 @@ body.cinema-active .comic-art {
   pointer-events: none;
 }
 
-/* 2. Interactive Scrubber & Director HUD */
-.film-hud {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  gap: 1.1rem;
-  background: rgba(14, 3, 6, 0.85);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(232, 199, 126, 0.5);
-  padding: 0.55rem 1.3rem;
-  border-radius: 999px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 24px rgba(217, 164, 65, 0.22);
-  max-width: 94vw;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.film-hud-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  white-space: nowrap;
-}
-
-.film-act-name {
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--gold-pale);
-  text-transform: uppercase;
-}
-
-.film-timecode {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: #fceac2;
-  letter-spacing: 0.08em;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 0.14rem 0.5rem;
-  border-radius: 999px;
-  border: 1px solid rgba(232, 199, 126, 0.35);
-  text-shadow: 0 0 6px rgba(217, 164, 65, 0.5);
-}
-
+/* 2. Interactive Scrubber & Letterbox (Completely hidden per user instruction) */
+.film-hud,
+.film-letterbox-bar,
 .film-timeline-wrap {
-  display: flex;
-  align-items: center;
+  display: none !important;
 }
 
-.film-timeline {
-  position: relative;
-  width: 140px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.film-timeline-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #d9a441, #f8e71c);
-  border-radius: 999px;
-  box-shadow: 0 0 10px #f8e71c;
-  pointer-events: none;
-  transition: width 0.08s linear;
-}
-
-.film-cue-dot {
-  position: relative;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #3b171f;
-  border: 2px solid rgba(232, 199, 126, 0.6);
-  cursor: pointer;
-  padding: 0;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-  z-index: 2;
-}
-
-.film-cue-dot:hover {
-  transform: scale(1.3);
-  border-color: #fff;
-}
-
-.film-cue-dot.active {
-  background: #f8e71c;
-  border-color: #fff;
-  transform: scale(1.25);
-  box-shadow: 0 0 12px rgba(248, 231, 28, 0.85);
-}
-
-.film-hud-toggle-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(232, 199, 126, 0.45);
-  color: #fff9ed;
-  font-family: var(--font-body);
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition: background 0.2s, border-color 0.2s, transform 0.2s;
-  white-space: nowrap;
-}
-
-.film-hud-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #f8e71c;
-  transform: translateY(-1px);
-}
-
-.film-hud-toggle-btn.is-active {
-  background: rgba(217, 164, 65, 0.35);
-  border-color: #f8e71c;
-  color: #fff;
-}
-
-.film-scroll-hint {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.72rem;
-  color: rgba(255, 248, 235, 0.85);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.hint-arrow {
-  animation: bounceDown 1.5s ease-in-out infinite;
-  color: var(--gold-rich);
-  font-size: 0.85rem;
-}
-
-/* 3. Foreground Narrative Scene Cards */
+/* 3. Foreground Narrative Scene Cards (Positioned so bride & groom's faces are never covered) */
 .film-stage-content {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 10;
   width: 100%;
-  max-width: 1080px;
-  padding: 1rem 1rem 4.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
-  transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
 .film-stage-content.cards-hidden .film-scene-frame {
   opacity: 0 !important;
   pointer-events: none !important;
-  transform: translateY(40px) scale(0.95) !important;
 }
 
 .film-scene-frame {
   position: absolute;
+  inset: 0;
   width: 100%;
-  max-width: 680px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  height: 100%;
   opacity: 0;
-  transform: translateY(40px) scale(0.95);
   pointer-events: none;
   transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
@@ -2408,258 +2258,111 @@ body.cinema-active .comic-art {
 
 .film-scene-frame.is-active {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
-}
-
-.film-scene-frame.frame-0 {
-  max-width: 680px;
-}
-
-.film-card {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 249, 238, 0.94) 100%);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1.5px solid rgba(217, 164, 65, 0.5);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42), 0 0 26px rgba(217, 164, 65, 0.18);
-  max-height: 78vh;
-  overflow-y: auto;
-  border-radius: 14px;
 }
 
 /* ==========================================================================
-   CINEMATIC MOVIE TITLE PREMIERE SCREEN (ACT 0)
+   ACT 0: COVER / CINEMATIC MOVIE PREMIERE (TOP & BOTTOM FLOATING ACCENTS)
+   Middle space is completely open so standing bride & groom are 100% visible
    ========================================================================== */
-.cinema-premiere-card {
-  position: relative;
+.film-scene-frame.frame-0 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(16px, 3.5vh, 34px) clamp(16px, 4vw, 36px);
+}
+
+.cinema-cover-header {
   width: 100%;
-  max-width: 660px;
-  background: linear-gradient(150deg, rgba(20, 5, 10, 0.88) 0%, rgba(35, 8, 16, 0.84) 50%, rgba(12, 3, 6, 0.92) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1.5px solid rgba(232, 199, 126, 0.6);
-  border-radius: 20px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(217, 164, 65, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  padding: 1.8rem 1.6rem 1.6rem;
+  max-width: 820px;
   text-align: center;
-  color: #fff9ed;
-  max-height: 85vh;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(217, 164, 65, 0.5) transparent;
+  pointer-events: auto;
+  z-index: 12;
 }
 
-/* Corner Golden Filigree Accents */
-.gold-corner {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  pointer-events: none;
-}
-.gold-corner.tl {
-  top: 8px; left: 8px;
-  border-top: 2px solid var(--gold-pale);
-  border-left: 2px solid var(--gold-pale);
-}
-.gold-corner.tr {
-  top: 8px; right: 8px;
-  border-top: 2px solid var(--gold-pale);
-  border-right: 2px solid var(--gold-pale);
-}
-.gold-corner.bl {
-  bottom: 8px; left: 8px;
-  border-bottom: 2px solid var(--gold-pale);
-  border-left: 2px solid var(--gold-pale);
-}
-.gold-corner.br {
-  bottom: 8px; right: 8px;
-  border-bottom: 2px solid var(--gold-pale);
-  border-right: 2px solid var(--gold-pale);
-}
-
-/* Divine Tamil Invocation Banner */
 .cinema-divine-banner {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.2rem;
 }
+
 .cinema-om {
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   color: var(--gold-rich);
-  text-shadow: 0 0 10px rgba(217, 164, 65, 0.6);
+  text-shadow: 0 0 12px rgba(217, 164, 65, 0.7);
 }
+
 .cinema-mantra {
   font-family: var(--font-tamil);
-  font-size: 0.95rem;
+  font-size: clamp(0.95rem, 2.2vw, 1.2rem);
   font-weight: 600;
   letter-spacing: 0.05em;
   color: var(--gold-pale);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-}
-.cinema-blessing-text {
-  font-size: 0.82rem;
-  font-style: italic;
-  color: rgba(255, 248, 235, 0.82);
-  margin: 0.15rem 0 0.75rem;
-  letter-spacing: 0.03em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
 }
 
-/* Arched Royal Cameo of Couple */
-.cinema-cameo-frame {
-  position: relative;
-  display: inline-block;
-  margin: 0.2rem auto 0.75rem;
-}
-.cameo-arch {
-  width: 140px;
-  height: 155px;
-  border-radius: 70px 70px 14px 14px;
-  overflow: hidden;
-  border: 2.5px solid var(--gold-rich);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(217, 164, 65, 0.4);
-  position: relative;
-  background: #2a0b12;
-}
-.cameo-couple-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 15%;
-  display: block;
-  transition: transform 0.4s ease;
-}
-.cinema-cameo-frame:hover .cameo-couple-img {
-  transform: scale(1.05);
-}
-.cameo-ribbon {
-  position: absolute;
-  bottom: -9px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #8a2130, #5c1420);
-  border: 1px solid var(--gold-pale);
-  border-radius: 999px;
-  padding: 0.18rem 0.9rem;
-  font-family: var(--font-tamil);
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #fff9ed;
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-  letter-spacing: 0.04em;
-}
-
-/* Grand Movie Title Names */
-.cinema-title-wrap {
-  margin: 0.5rem 0 0.85rem;
-}
-.cinema-main-title {
-  margin: 0;
-  line-height: 1.15;
-}
-.cinema-main-title .title-name {
-  display: block;
+.cinema-cover-title {
+  margin: 0.2rem 0;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5.5vw, 2.75rem);
+  font-size: clamp(2.4rem, 6.2vw, 4.2rem);
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
   color: #fff;
+  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.9), 0 0 32px rgba(217, 164, 65, 0.5);
+}
+
+.cinema-cover-title .title-name {
+  display: inline-block;
   background: linear-gradient(180deg, #ffffff 15%, #fceac2 55%, #dfb55c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.7));
-}
-.cinema-main-title .title-connector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-  margin: 0.1rem 0;
-}
-.cinema-main-title .connector-line {
-  flex: 1;
-  max-width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(232, 199, 126, 0.7), transparent);
-}
-.cinema-main-title .connector-weds {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.15rem;
-  color: var(--gold-pale);
-  font-weight: 400;
-  letter-spacing: 0.05em;
 }
 
-/* 3-Act Celebration Marquee Strip */
-.cinema-marquee {
-  display: grid;
-  grid-template-columns: 1fr auto 1.15fr auto 1fr;
-  align-items: center;
-  gap: 0.4rem;
-  background: rgba(10, 2, 4, 0.68);
-  border: 1px solid rgba(232, 199, 126, 0.35);
-  border-radius: 12px;
-  padding: 0.65rem 0.75rem;
-  margin: 0.4rem 0 1rem;
+.cinema-cover-title .title-weds {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.55em;
+  color: var(--gold-pale);
+  -webkit-text-fill-color: var(--gold-pale);
+  margin: 0 0.5rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
 }
-.marquee-item {
+
+.cinema-cover-sub {
+  font-size: clamp(0.85rem, 1.9vw, 1.12rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--gold-pale);
+  margin: 0.2rem 0 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+}
+
+/* Cover Footer: Actions docked cleanly at the bottom edge below couple's feet */
+.cinema-cover-footer {
+  width: 100%;
+  max-width: 680px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.65rem;
   text-align: center;
-  cursor: pointer;
-  padding: 0.4rem 0.45rem;
-  border-radius: 8px;
-  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-  border: 1px solid transparent;
-}
-.marquee-item:hover {
-  background: rgba(232, 199, 126, 0.16);
-  border-color: rgba(232, 199, 126, 0.4);
-  transform: translateY(-2px);
-}
-.marquee-item.highlight-act {
-  background: rgba(122, 31, 43, 0.6);
-  border: 1px solid rgba(232, 199, 126, 0.55);
-  box-shadow: 0 0 14px rgba(217, 164, 65, 0.2);
-}
-.mq-badge {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--gold-pale);
-  text-transform: uppercase;
-}
-.mq-date {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #fff;
-  margin: 0.15rem 0 0.1rem;
-  white-space: nowrap;
-}
-.mq-venue {
-  font-size: 0.68rem;
-  color: rgba(255, 248, 235, 0.74);
-  white-space: nowrap;
-}
-.marquee-sep {
-  color: var(--gold-rich);
-  opacity: 0.7;
-  font-size: 0.75rem;
+  pointer-events: auto;
+  z-index: 12;
 }
 
-/* Premiere Action Controls */
 .cinema-cta-bar {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
   flex-wrap: wrap;
-  margin-bottom: 0.85rem;
 }
+
 .cinema-play-cta {
   display: inline-flex;
   align-items: center;
@@ -2670,15 +2373,17 @@ body.cinema-active .comic-art {
   border-radius: 999px;
   background: linear-gradient(135deg, #d9a441 0%, #b88628 100%);
   color: #2b0b12;
-  box-shadow: 0 6px 20px rgba(217, 164, 65, 0.45);
+  box-shadow: 0 6px 22px rgba(217, 164, 65, 0.5);
   border: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .cinema-play-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(217, 164, 65, 0.6);
+  box-shadow: 0 8px 26px rgba(217, 164, 65, 0.65);
 }
+
 .cinema-unfold-cta {
   display: inline-flex;
   align-items: center;
@@ -2686,126 +2391,179 @@ body.cinema-active .comic-art {
   padding: 0.72rem 1.35rem;
   font-size: 0.92rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(232, 199, 126, 0.45);
+  background: rgba(18, 4, 8, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 199, 126, 0.5);
   color: #fff;
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .cinema-unfold-cta:hover {
-  background: rgba(232, 199, 126, 0.18);
+  background: rgba(232, 199, 126, 0.2);
   border-color: var(--gold-pale);
   transform: translateY(-2px);
 }
 
-/* Fast Nav Pills */
 .cinema-pill-nav {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-  margin-bottom: 0.65rem;
 }
+
 .cinema-pill {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(232, 199, 126, 0.3);
+  background: rgba(18, 4, 8, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(232, 199, 126, 0.4);
   border-radius: 999px;
-  padding: 0.32rem 0.85rem;
-  font-size: 0.76rem;
+  padding: 0.35rem 0.95rem;
+  font-size: 0.78rem;
   font-weight: 500;
-  color: rgba(255, 248, 235, 0.88);
+  color: rgba(255, 248, 235, 0.92);
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .cinema-pill:hover {
   border-color: var(--gold-pale);
-  background: rgba(232, 199, 126, 0.18);
+  background: rgba(232, 199, 126, 0.22);
   color: #fff;
   transform: translateY(-1px);
 }
 
 .cinema-scroll-hint {
-  font-size: 0.76rem;
-  color: rgba(255, 248, 235, 0.65);
-  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(255, 248, 235, 0.85);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  margin: 0.2rem 0 0;
 }
+
 .cinema-scroll-hint span {
   animation: bounceDown 1.6s infinite ease-in-out;
   display: inline-block;
   color: var(--gold-rich);
 }
 
+/* ==========================================================================
+   ACTS 1, 2, 3: LOWER-THIRD NARRATIVE PRESENTATION
+   Docked at the bottom third of the viewport so the couple's faces, garlands,
+   and smiles in the upper 70% of the screen are NEVER covered!
+   ========================================================================== */
+.film-scene-frame.frame-1,
+.film-scene-frame.frame-2,
+.film-scene-frame.frame-3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: clamp(14px, 3vh, 32px) clamp(14px, 3vw, 28px);
+}
+
+.film-scene-frame .panel-inner.wide {
+  width: 100%;
+  max-width: 660px;
+  margin: 0;
+  padding: 0;
+}
+
+.cinema-lower-third {
+  width: 100%;
+  background: linear-gradient(150deg, rgba(20, 5, 10, 0.9) 0%, rgba(35, 8, 16, 0.86) 50%, rgba(12, 3, 6, 0.94) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(232, 199, 126, 0.55);
+  border-radius: 18px;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), 0 0 24px rgba(217, 164, 65, 0.18);
+  padding: 1rem 1.4rem;
+  color: #fff9ed;
+  pointer-events: auto;
+  max-height: clamp(180px, 32vh, 260px);
+  overflow-y: auto;
+  text-align: left;
+}
+
+.cinema-lower-third .chapter-title {
+  font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+  color: var(--gold-pale);
+  margin: 0 0 0.35rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.cinema-lower-third .scene-lead {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.cinema-lower-third .scene-icon {
+  font-size: 1.35rem;
+}
+
+.cinema-lower-third .scene-meta {
+  font-size: 0.88rem;
+  color: rgba(255, 248, 235, 0.92);
+  margin: 0;
+  font-weight: 500;
+}
+
+.cinema-lower-third .scene-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.85rem;
+  margin-bottom: 0.65rem;
+  font-size: 0.82rem;
+  color: rgba(255, 248, 235, 0.88);
+}
+
+.cinema-lower-third .highlight-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.22rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid rgba(232, 199, 126, 0.25);
+}
+
+.cinema-lower-third .cta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
 @media (max-width: 600px) {
-  .film-hud {
-    bottom: 12px;
-    padding: 0.35rem 0.75rem;
-    gap: 0.5rem;
-    max-width: 96vw;
+  .cinema-cover-title {
+    font-size: 2.1rem;
   }
-  .film-act-name {
-    font-size: 0.65rem;
-    max-width: 110px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .cinema-cover-sub {
+    font-size: 0.8rem;
   }
-  .film-timecode {
-    display: none;
+  .cinema-lower-third {
+    padding: 0.85rem 1rem;
+    max-height: 36vh;
   }
-  .film-timeline {
-    width: 70px;
+  .cinema-lower-third .chapter-title {
+    font-size: 1.05rem;
   }
-  .film-cue-dot {
-    width: 11px;
-    height: 11px;
-  }
-  .film-hud-toggle-btn {
-    padding: 0.2rem 0.5rem;
-    font-size: 0.64rem;
-  }
-  .film-scroll-hint {
-    display: none;
-  }
-  .film-scene-frame {
-    padding: 0 0.5rem;
-  }
-  .film-scene-frame .hero-card,
-  .film-card {
-    max-height: 82vh;
-    padding: 1.4rem 1.1rem;
-  }
-  .cinema-premiere-card {
-    padding: 1.3rem 0.95rem 1.1rem;
-    max-height: 82vh;
-  }
-  .cameo-arch {
-    width: 112px;
-    height: 128px;
-    border-radius: 56px 56px 10px 10px;
-  }
-  .cinema-main-title .title-name {
-    font-size: 1.72rem;
-  }
-  .cinema-marquee {
-    grid-template-columns: 1fr;
-    gap: 0.55rem;
-    padding: 0.55rem;
-  }
-  .marquee-sep {
-    display: none;
-  }
-  .marquee-item {
-    padding: 0.3rem;
+  .cinema-lower-third .scene-meta {
+    font-size: 0.78rem;
   }
   .cinema-cta-bar {
     flex-direction: column;
     width: 100%;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
   .cinema-play-cta,
   .cinema-unfold-cta {
     width: 100%;
     justify-content: center;
+    padding: 0.65rem 1.2rem;
+    font-size: 0.88rem;
   }
 }
 
@@ -3040,4 +2798,163 @@ body.cinema-active .comic-art {
   background: var(--gold-rich);
   color: #2b0b14;
   font-weight: 700;
+}
+
+/* ==========================================================================
+   COMBINED WELCOME & COUNTDOWN UNIFIED FINALE
+   ========================================================================== */
+.countdown-welcome-panel {
+  padding-top: 3.5rem;
+  padding-bottom: 4rem;
+}
+
+.countdown-welcome-card {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 2.2rem 1.8rem;
+}
+
+.countdown-welcome-card .rsvp-bubble {
+  max-width: 580px;
+  margin: 0 auto 1.2rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(232, 199, 126, 0.55);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.countdown-welcome-card .rsvp-bubble p {
+  color: #fff6e5;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.countdown-divider {
+  text-align: center;
+  color: var(--gold-rich);
+  margin: 1.4rem 0 1.3rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  opacity: 0.85;
+}
+
+.countdown-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+  color: var(--gold-pale);
+  text-align: center;
+  margin: 0 0 1.1rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.countdown-welcome-card .timer {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.countdown-welcome-card .note {
+  margin-top: 0.85rem;
+  font-size: 0.9rem;
+  color: #f7e6c4;
+}
+
+/* Wedding Locations & Venue Summary in Countdown End Card */
+.venue-summary-block {
+  margin-top: 1.2rem;
+  text-align: left;
+}
+
+.venue-summary-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+  color: var(--gold-pale);
+  text-align: center;
+  margin: 0 0 1.2rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.venue-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.venue-summary-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.venue-summary-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-rich);
+}
+
+.venue-summary-badge {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--gold-pale);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.venue-summary-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0 0 0.3rem;
+}
+
+.venue-summary-events {
+  font-size: 0.84rem;
+  color: var(--gold-soft);
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.venue-summary-addr {
+  font-size: 0.82rem;
+  color: rgba(255, 248, 235, 0.85);
+  margin: 0 0 0.3rem;
+  line-height: 1.4;
+}
+
+.venue-summary-landmark {
+  font-size: 0.78rem;
+  color: rgba(255, 248, 235, 0.65);
+  font-style: italic;
+  margin: 0 0 0.85rem;
+}
+
+.venue-map-link {
+  margin-top: auto;
+  align-self: flex-start;
+  text-decoration: none;
+}
+
+.venue-summary-map {
+  margin-top: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  overflow: hidden;
+}
+
+.venue-summary-map iframe {
+  width: 100%;
+  height: 220px;
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .venue-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
 }
