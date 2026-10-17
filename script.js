@@ -249,6 +249,7 @@ const envelope = document.getElementById("envelope");
 function playFilmVideos() {
   const v1 = document.getElementById("filmVideo1");
   const v2 = document.getElementById("filmVideo2");
+  const v3 = document.getElementById("filmVideo3");
   if (v1) {
     v1.muted = true;
     try {
@@ -260,7 +261,11 @@ function playFilmVideos() {
   }
   if (v2) {
     v2.muted = true;
-    try { v2.pause(); } catch (e) {}
+    try { v2.pause(); v2.currentTime = 0.001; } catch (e) {}
+  }
+  if (v3) {
+    v3.muted = true;
+    try { v3.pause(); v3.currentTime = 0.001; } catch (e) {}
   }
 }
 
@@ -273,11 +278,9 @@ function revealSite() {
   if (cover) cover.classList.add("in");
   if (typeof updateFilmProgress === "function") updateFilmProgress();
   // When seal is broken, immediately start playing the wedding film first
-  setTimeout(() => {
-    if (typeof startAutoPlayFilm === "function") {
-      startAutoPlayFilm();
-    }
-  }, 400);
+  if (typeof startAutoPlayFilm === "function") {
+    startAutoPlayFilm();
+  }
   if (location.hash) {
     const t = document.querySelector(location.hash);
     if (t) setTimeout(() => t.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" }), 150);
@@ -303,6 +306,7 @@ if (opener && openBtn && envelope) {
   };
   openBtn.addEventListener("click", () => {
     openBtn.disabled = true;
+    userInteractionAllowedAfter = Date.now() + 3200;
     playFilmVideos();
     // Guest track loops from the tap itself (user gesture unlocks audio)
     try {
@@ -383,13 +387,15 @@ if ("IntersectionObserver" in window) {
 }
 
 // ==========================================================================
-// CINEMATIC SCROLL FILM ENGINE: DUAL-REEL STORYTELLING ON SCROLL
+// CINEMATIC SCROLL FILM ENGINE: TRIPLE-REEL STORYTELLING ON SCROLL
 // ==========================================================================
 const filmTrack = document.getElementById("scrollCinemaTrack");
 const video1 = document.getElementById("filmVideo1");
 const video2 = document.getElementById("filmVideo2");
+const video3 = document.getElementById("filmVideo3");
 const videoLayer1 = document.getElementById("videoLayer1");
 const videoLayer2 = document.getElementById("videoLayer2");
+const videoLayer3 = document.getElementById("videoLayer3");
 const filmStageContent = document.querySelector(".film-stage-content");
 const filmFrames = Array.from(document.querySelectorAll(".film-scene-frame"));
 const filmTimelineFill = document.getElementById("filmTimelineFill");
@@ -403,15 +409,16 @@ const actTitles = [
   "REEL 1 · TIRUCHENDUR SHORE",
   "REEL 1 · ACT I: ENGAGEMENT",
   "REEL 2 · ACT II: SACRED MUHURTHAM",
-  "REEL 2 · ACT III: RECEPTION GALA"
+  "REEL 3 · ACT III: RECEPTION GALA"
 ];
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
-// Initialize both video reels: muted, inline, primed
+// Initialize 3 video reels: muted, inline, primed
 let dur1 = 10.0;
-let dur2 = 10.0;
-[video1, video2].forEach((v, idx) => {
+let dur2 = 5.77;
+let dur3 = 10.0;
+[video1, video2, video3].forEach((v, idx) => {
   if (!v) return;
   v.muted = true;
   v.playsInline = true;
@@ -420,6 +427,7 @@ let dur2 = 10.0;
   v.addEventListener("loadedmetadata", () => {
     if (idx === 0 && v.duration && !isNaN(v.duration)) dur1 = v.duration;
     if (idx === 1 && v.duration && !isNaN(v.duration)) dur2 = v.duration;
+    if (idx === 2 && v.duration && !isNaN(v.duration)) dur3 = v.duration;
     try {
       v.pause();
       if (idx === 0) v.currentTime = 2.85;
@@ -435,11 +443,14 @@ let dur2 = 10.0;
 // Scrubbing and playback state (start with standing couple at 2.85s)
 let targetTime1 = 2.85;
 let targetTime2 = 0;
+let targetTime3 = 0;
 let currentFilmAct = 0;
 let filmAutoPlaying = false;
 let autoPlayAnimId = null;
-let isAutoScrolling = false;
 let cardsHidden = false;
+let userInteractionAllowedAfter = 0;
+let touchStartX = 0;
+let touchStartY = 0;
 
 // Toggle Focus Mode (Hide/Show Narrative Cards to admire full-screen film)
 if (filmFocusBtn && filmStageContent) {
@@ -473,14 +484,14 @@ function renderFilmUI(progress) {
   }
 
   // 4 acts across progress:
-  // Act 0: 0.00 – 0.22 (Standing Couple on Shore)
-  // Act 1: 0.22 – 0.50 (Engagement Mandapam)
-  // Act 2: 0.50 – 0.75 (Sacred Muhurtham)
-  // Act 3: 0.75 – 1.00 (Reception Gala)
+  // Act 0: 0.00 – 0.20 (Standing Couple on Shore)
+  // Act 1: 0.20 – 0.44 (Engagement Mandapam)
+  // Act 2: 0.44 – 0.72 (Sacred Muhurtham)
+  // Act 3: 0.72 – 1.00 (Reception Gala)
   let activeIdx = 0;
-  if (progress < 0.22) activeIdx = 0;
-  else if (progress < 0.50) activeIdx = 1;
-  else if (progress < 0.75) activeIdx = 2;
+  if (progress < 0.20) activeIdx = 0;
+  else if (progress < 0.44) activeIdx = 1;
+  else if (progress < 0.72) activeIdx = 2;
   else activeIdx = 3;
 
   currentFilmAct = activeIdx;
@@ -498,7 +509,7 @@ function renderFilmUI(progress) {
 
   // Update Timecode in HUD
   if (filmTimecode) {
-    const totalSecs = progress * (dur1 + dur2);
+    const totalSecs = progress * (dur1 + dur2 + dur3);
     const m = Math.floor(totalSecs / 60);
     const s = Math.floor(totalSecs % 60);
     const ms = Math.floor((totalSecs % 1) * 10);
@@ -510,50 +521,50 @@ function renderFilmUI(progress) {
     let opacity = 0;
     let translateY = 24; // px
     if (idx === 0) {
-      // Act 0: Cover (0.00 to 0.22)
+      // Act 0: Cover (0.00 to 0.20)
       if (progress < 0.14) {
         opacity = 1;
         translateY = 0;
-      } else if (progress < 0.22) {
-        const t = (progress - 0.14) / 0.08;
+      } else if (progress < 0.20) {
+        const t = (progress - 0.14) / 0.06;
         opacity = 1 - t;
         translateY = -t * 24;
       }
     } else if (idx === 1) {
-      // Act 1: Engagement (0.22 to 0.50)
-      if (progress >= 0.18 && progress < 0.26) {
-        const t = (progress - 0.18) / 0.08;
+      // Act 1: Engagement (0.20 to 0.44)
+      if (progress >= 0.18 && progress < 0.24) {
+        const t = (progress - 0.18) / 0.06;
         opacity = t;
         translateY = (1 - t) * 24;
-      } else if (progress >= 0.26 && progress < 0.44) {
+      } else if (progress >= 0.24 && progress < 0.38) {
         opacity = 1;
         translateY = 0;
-      } else if (progress >= 0.44 && progress < 0.50) {
-        const t = (progress - 0.44) / 0.06;
+      } else if (progress >= 0.38 && progress < 0.44) {
+        const t = (progress - 0.38) / 0.06;
         opacity = 1 - t;
         translateY = -t * 24;
       }
     } else if (idx === 2) {
-      // Act 2: Sacred Muhurtham (0.50 to 0.75)
-      if (progress >= 0.46 && progress < 0.54) {
-        const t = (progress - 0.46) / 0.08;
+      // Act 2: Sacred Muhurtham (0.44 to 0.72)
+      if (progress >= 0.42 && progress < 0.48) {
+        const t = (progress - 0.42) / 0.06;
         opacity = t;
         translateY = (1 - t) * 24;
-      } else if (progress >= 0.54 && progress < 0.69) {
+      } else if (progress >= 0.48 && progress < 0.66) {
         opacity = 1;
         translateY = 0;
-      } else if (progress >= 0.69 && progress < 0.76) {
-        const t = (progress - 0.69) / 0.07;
+      } else if (progress >= 0.66 && progress < 0.72) {
+        const t = (progress - 0.66) / 0.06;
         opacity = 1 - t;
         translateY = -t * 24;
       }
     } else if (idx === 3) {
-      // Act 3: Reception (0.75 to 1.00)
-      if (progress >= 0.72 && progress < 0.78) {
-        const t = (progress - 0.72) / 0.06;
+      // Act 3: Reception (0.72 to 1.00)
+      if (progress >= 0.70 && progress < 0.76) {
+        const t = (progress - 0.70) / 0.06;
         opacity = t;
         translateY = (1 - t) * 24;
-      } else if (progress >= 0.78 && progress < 0.94) {
+      } else if (progress >= 0.76 && progress < 0.94) {
         opacity = 1;
         translateY = 0;
       } else if (progress >= 0.94) {
@@ -601,28 +612,46 @@ function updateFilmProgress() {
 
   renderFilmUI(progress);
 
-  // Crossfade video layers around 0.50 mark
-  if (progress < 0.44) {
+  // Smooth crossfade across the 3 video layers
+  if (progress < 0.38) {
     if (videoLayer1) videoLayer1.style.opacity = "1";
     if (videoLayer2) videoLayer2.style.opacity = "0";
-  } else if (progress > 0.56) {
+    if (videoLayer3) videoLayer3.style.opacity = "0";
+  } else if (progress < 0.44) {
+    const t = (progress - 0.38) / 0.06;
+    if (videoLayer1) videoLayer1.style.opacity = String((1 - t).toFixed(3));
+    if (videoLayer2) videoLayer2.style.opacity = String(t.toFixed(3));
+    if (videoLayer3) videoLayer3.style.opacity = "0";
+  } else if (progress < 0.66) {
     if (videoLayer1) videoLayer1.style.opacity = "0";
     if (videoLayer2) videoLayer2.style.opacity = "1";
+    if (videoLayer3) videoLayer3.style.opacity = "0";
+  } else if (progress < 0.72) {
+    const t = (progress - 0.66) / 0.06;
+    if (videoLayer1) videoLayer1.style.opacity = "0";
+    if (videoLayer2) videoLayer2.style.opacity = String((1 - t).toFixed(3));
+    if (videoLayer3) videoLayer3.style.opacity = String(t.toFixed(3));
   } else {
-    const t = (progress - 0.44) / 0.12;
-    if (videoLayer1) videoLayer1.style.opacity = String(1 - t);
-    if (videoLayer2) videoLayer2.style.opacity = String(t);
+    if (videoLayer1) videoLayer1.style.opacity = "0";
+    if (videoLayer2) videoLayer2.style.opacity = "0";
+    if (videoLayer3) videoLayer3.style.opacity = "1";
   }
 
   // If user is manually scrolling, gently scrub video frames to current position
   if (!filmAutoPlaying) {
-    if (progress < 0.56 && video1) {
-      const t1 = 2.85 + Math.min(Math.max(progress / 0.50, 0), 1) * (9.6 - 2.85);
+    if (progress < 0.46 && video1) {
+      const t1 = 2.85 + Math.min(Math.max(progress / 0.44, 0), 1) * (9.6 - 2.85);
       scrubVideoTo(video1, t1);
     }
-    if (progress > 0.44 && video2) {
-      const t2 = Math.min(Math.max((progress - 0.50) / 0.50, 0), 1) * 9.6;
+    if (progress >= 0.38 && progress < 0.74 && video2) {
+      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 5.77;
+      const t2 = Math.min(Math.max((progress - 0.44) / 0.28, 0), 1) * maxReel2T;
       scrubVideoTo(video2, t2);
+    }
+    if (progress >= 0.66 && video3) {
+      const maxReel3T = (dur3 && dur3 > 1.0) ? dur3 : 10.0;
+      const t3 = Math.min(Math.max((progress - 0.72) / 0.28, 0), 1) * Math.min(maxReel3T, 9.6);
+      scrubVideoTo(video3, t3);
     }
   }
 }
@@ -653,35 +682,50 @@ function startAutoPlayFilm() {
   const trackHeight = filmTrack.offsetHeight - window.innerHeight;
   let currentProg = Math.min(Math.max(-rect.top / trackHeight, 0), 1);
 
-  // If at the end, restart from beginning
-  if (currentProg >= 0.95) {
+  // If near the end, restart from beginning
+  if (currentProg >= 0.96) {
     currentProg = 0;
     if (video1) video1.currentTime = 2.85;
     if (video2) video2.currentTime = 0;
-    isAutoScrolling = true;
+    if (video3) video3.currentTime = 0;
     window.scrollTo({ top: filmTrack.offsetTop, behavior: "instant" });
-    isAutoScrolling = false;
   }
 
-  let inReel2 = currentProg >= 0.50;
+  let activeReel = 1;
+  if (currentProg < 0.44) activeReel = 1;
+  else if (currentProg < 0.72) activeReel = 2;
+  else activeReel = 3;
 
-  if (!inReel2) {
+  if (activeReel === 1) {
     if (videoLayer1) videoLayer1.style.opacity = "1";
     if (videoLayer2) videoLayer2.style.opacity = "0";
+    if (videoLayer3) videoLayer3.style.opacity = "0";
     if (video1) {
       if (video1.currentTime < 2.5 || video1.currentTime >= 9.6) {
         video1.currentTime = 2.85;
       }
       video1.play().catch(() => {});
     }
-  } else {
+  } else if (activeReel === 2) {
     if (videoLayer1) videoLayer1.style.opacity = "0";
     if (videoLayer2) videoLayer2.style.opacity = "1";
+    if (videoLayer3) videoLayer3.style.opacity = "0";
     if (video2) {
-      if (video2.currentTime >= 9.6) {
+      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 5.77;
+      if (video2.currentTime >= maxReel2T - 0.2) {
         video2.currentTime = 0;
       }
       video2.play().catch(() => {});
+    }
+  } else {
+    if (videoLayer1) videoLayer1.style.opacity = "0";
+    if (videoLayer2) videoLayer2.style.opacity = "0";
+    if (videoLayer3) videoLayer3.style.opacity = "1";
+    if (video3) {
+      if (video3.currentTime >= 9.5) {
+        video3.currentTime = 0;
+      }
+      video3.play().catch(() => {});
     }
   }
 
@@ -690,47 +734,79 @@ function startAutoPlayFilm() {
 
     let overallProg = 0;
 
-    if (!inReel2) {
+    if (activeReel === 1) {
       // REEL 1 PLAYBACK (Act 0 & Act 1)
       const t1 = video1 ? video1.currentTime : 2.85;
       const progReel1 = Math.min(Math.max((t1 - 2.85) / (9.6 - 2.85), 0), 1);
-      overallProg = progReel1 * 0.50;
+      overallProg = progReel1 * 0.44;
 
-      // Silky crossfade transition into Reel 2 between 8.6s and 9.6s
-      if (t1 >= 8.6) {
+      // Smooth crossfade into Reel 2 between 8.8s and 9.6s
+      if (t1 >= 8.8) {
         if (video2 && video2.paused) {
-          video2.currentTime = 0.05;
+          video2.currentTime = 0.02;
           video2.play().catch(() => {});
         }
-        const fade = Math.min(Math.max((t1 - 8.6) / 1.0, 0), 1);
+        const fade = Math.min(Math.max((t1 - 8.8) / 0.8, 0), 1);
         if (videoLayer1) videoLayer1.style.opacity = String((1 - fade).toFixed(3));
         if (videoLayer2) videoLayer2.style.opacity = String(fade.toFixed(3));
+        if (videoLayer3) videoLayer3.style.opacity = "0";
       } else {
         if (videoLayer1) videoLayer1.style.opacity = "1";
         if (videoLayer2) videoLayer2.style.opacity = "0";
+        if (videoLayer3) videoLayer3.style.opacity = "0";
       }
 
-      // Seamless handoff to Reel 2
-      if (t1 >= 9.6) {
-        inReel2 = true;
+      if (t1 >= 9.58) {
+        activeReel = 2;
         if (video1) video1.pause();
         if (videoLayer1) videoLayer1.style.opacity = "0";
         if (videoLayer2) videoLayer2.style.opacity = "1";
-        if (video2 && video2.paused) {
-          video2.play().catch(() => {});
+        if (video2 && video2.paused) video2.play().catch(() => {});
+      }
+    } else if (activeReel === 2) {
+      // REEL 2 PLAYBACK (Act 2: Sacred Muhurtham)
+      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 5.77;
+      const t2 = video2 ? video2.currentTime : 0;
+      const progReel2 = Math.min(Math.max(t2 / maxReel2T, 0), 1);
+      overallProg = 0.44 + progReel2 * 0.28;
+
+      // Smooth crossfade into Reel 3 during last 0.8s of Reel 2
+      const fadeStart2 = Math.max(maxReel2T - 0.8, 0.5);
+      if (t2 >= fadeStart2) {
+        if (video3 && video3.paused) {
+          video3.currentTime = 0.02;
+          video3.play().catch(() => {});
         }
+        const fade = Math.min(Math.max((t2 - fadeStart2) / 0.8, 0), 1);
+        if (videoLayer1) videoLayer1.style.opacity = "0";
+        if (videoLayer2) videoLayer2.style.opacity = String((1 - fade).toFixed(3));
+        if (videoLayer3) videoLayer3.style.opacity = String(fade.toFixed(3));
+      } else {
+        if (videoLayer1) videoLayer1.style.opacity = "0";
+        if (videoLayer2) videoLayer2.style.opacity = "1";
+        if (videoLayer3) videoLayer3.style.opacity = "0";
+      }
+
+      if (t2 >= maxReel2T - 0.12) {
+        activeReel = 3;
+        if (video2) video2.pause();
+        if (videoLayer2) videoLayer2.style.opacity = "0";
+        if (videoLayer3) videoLayer3.style.opacity = "1";
+        if (video3 && video3.paused) video3.play().catch(() => {});
       }
     } else {
-      // REEL 2 PLAYBACK (Act 2: Muhurtham & Act 3: Reception)
-      const t2 = video2 ? video2.currentTime : 0;
-      const progReel2 = Math.min(Math.max(t2 / 9.6, 0), 1);
-      overallProg = 0.50 + progReel2 * 0.50;
+      // REEL 3 PLAYBACK (Act 3: Reception Gala)
+      const maxReel3T = (dur3 && dur3 > 1.0) ? dur3 : 10.0;
+      const t3 = video3 ? video3.currentTime : 0;
+      const progReel3 = Math.min(Math.max(t3 / Math.min(maxReel3T, 9.6), 0), 1);
+      overallProg = 0.72 + progReel3 * 0.28;
 
       if (videoLayer1) videoLayer1.style.opacity = "0";
-      if (videoLayer2) videoLayer2.style.opacity = "1";
+      if (videoLayer2) videoLayer2.style.opacity = "0";
+      if (videoLayer3) videoLayer3.style.opacity = "1";
 
       // Reached the end of the film
-      if (t2 >= 9.5 || overallProg >= 0.99) {
+      if (t3 >= Math.min(maxReel3T, 9.6) - 0.15 || overallProg >= 0.995) {
         stopAutoPlayFilm();
         const countdownEl = document.getElementById("countdown");
         if (countdownEl) {
@@ -745,9 +821,7 @@ function startAutoPlayFilm() {
 
     // Keep page scroll position synchronized with the film
     const targetScrollY = filmTrack.offsetTop + overallProg * trackHeight;
-    isAutoScrolling = true;
     window.scrollTo(0, targetScrollY);
-    setTimeout(() => { isAutoScrolling = false; }, 0);
 
     autoPlayAnimId = requestAnimationFrame(autoPlayStep);
   }
@@ -765,27 +839,54 @@ function stopAutoPlayFilm() {
   }
   if (video1) { try { video1.pause(); } catch (e) {} }
   if (video2) { try { video2.pause(); } catch (e) {} }
+  if (video3) { try { video3.pause(); } catch (e) {} }
   updatePlaybackUI(false);
 }
 
-// User interactions (wheel, touch, keys) gently switch to manual mode
-["wheel", "touchstart", "touchmove"].forEach((evt) => {
-  window.addEventListener(evt, () => {
-    if (filmAutoPlaying) {
+// User interactions (wheel, touch swipe, keys) pause autoplay
+window.addEventListener("wheel", (e) => {
+  if (!filmAutoPlaying) return;
+  if (Date.now() < userInteractionAllowedAfter) return;
+  if (Math.abs(e.deltaY) > 3 || Math.abs(e.deltaX) > 3) {
+    stopAutoPlayFilm();
+  }
+}, { passive: true });
+
+window.addEventListener("touchstart", (e) => {
+  if (e.touches && e.touches[0]) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+window.addEventListener("touchmove", (e) => {
+  if (!filmAutoPlaying) return;
+  if (Date.now() < userInteractionAllowedAfter) return;
+  if (e.touches && e.touches[0]) {
+    const dx = Math.abs(e.touches[0].clientX - touchStartX);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY);
+    if (dx > 8 || dy > 8) {
       stopAutoPlayFilm();
     }
-  }, { passive: true });
-});
+  }
+}, { passive: true });
+
+const NAV_KEYS = new Set([
+  "ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " ", "Spacebar", "Escape"
+]);
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && filmAutoPlaying) stopAutoPlayFilm();
+  if (!filmAutoPlaying) return;
+  if (Date.now() < userInteractionAllowedAfter) return;
+  if (NAV_KEYS.has(e.key)) {
+    stopAutoPlayFilm();
+  }
 });
 
+// Window scroll listener: only syncs progress when in manual mode.
+// Programmatic scrolling will NEVER pause autoplay.
 window.addEventListener("scroll", () => {
-  if (!isAutoScrolling) {
-    if (filmAutoPlaying) {
-      stopAutoPlayFilm();
-    }
+  if (!filmAutoPlaying) {
     requestAnimationFrame(updateFilmProgress);
   }
 }, { passive: true });
@@ -797,7 +898,7 @@ function jumpToFilmAct(actIdx) {
   stopAutoPlayFilm();
   if (!filmTrack) return;
   const trackHeight = filmTrack.offsetHeight - window.innerHeight;
-  const actTargets = [0.01, 0.35, 0.60, 0.86];
+  const actTargets = [0.01, 0.30, 0.56, 0.84];
   const targetTop = filmTrack.offsetTop + trackHeight * actTargets[Math.min(Math.max(actIdx, 0), 3)];
 
   window.scrollTo({
