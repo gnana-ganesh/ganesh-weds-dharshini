@@ -2837,6 +2837,177 @@ body.cinema-active .comic-art {
   }
 }
 
+/* ==========================================================================
+   CALENDAR INVITE MODAL DIALOG
+   ========================================================================== */
+.cal-dialog {
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: 440px;
+  width: 90vw;
+  margin: auto;
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(232, 199, 126, 0.4);
+  color: #fff9ed;
+  z-index: 1000;
+  overflow: visible;
+}
 
+.cal-dialog::backdrop {
+  background: rgba(14, 2, 6, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 
+.cal-dialog-card {
+  background: linear-gradient(150deg, #2c0b14 0%, #1a040a 100%);
+  border: 1.5px solid var(--gold-rich);
+  border-radius: 20px;
+  padding: 1.5rem 1.4rem;
+  position: relative;
+  box-shadow: 0 0 24px rgba(217, 164, 65, 0.15) inset;
+}
 
+.cal-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.cal-dialog-icon {
+  font-size: 1.8rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(232, 199, 126, 0.15);
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cal-dialog-title-wrap {
+  flex: 1;
+}
+
+.cal-dialog-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: #fff4d8;
+  font-weight: 600;
+}
+
+.cal-dialog-sub {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: var(--gold-pale);
+  opacity: 0.85;
+}
+
+.cal-dialog-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(232, 199, 126, 0.3);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.cal-dialog-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.08);
+}
+
+.cal-event-summary {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(232, 199, 126, 0.35);
+  border-radius: 12px;
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.84rem;
+  color: #ffecc2;
+}
+
+.cal-meta-item strong {
+  color: #fff;
+}
+
+.cal-dialog-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.cal-opt-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(232, 199, 126, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: #fff8eb;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.cal-opt-item:hover {
+  background: rgba(232, 199, 126, 0.15);
+  border-color: var(--gold-rich);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.cal-opt-logo {
+  font-size: 1.45rem;
+  flex-shrink: 0;
+}
+
+.cal-opt-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cal-opt-info strong {
+  font-size: 0.96rem;
+  color: #fff9ea;
+}
+
+.cal-opt-info small {
+  font-size: 0.75rem;
+  color: #eedbc2;
+  opacity: 0.85;
+}
+
+.cal-opt-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 199, 126, 0.4);
+  background: rgba(232, 199, 126, 0.12);
+  color: var(--gold-pale);
+  white-space: nowrap;
+}
+
+.cal-opt-item:hover .cal-opt-tag {
+  background: var(--gold-rich);
+  color: #2b0b14;
+  font-weight: 700;
+}

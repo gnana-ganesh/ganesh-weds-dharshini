@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//GnanaGanesh weds Dharshini//Wedding Invitation//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wedding-ganesh-weds-dharshini-20261213@gnanaganesh.in
+DTSTAMP:20261017T040000Z
+DTSTART:20261213T010000Z
+DTEND:20261213T030000Z
+SUMMARY:GnanaGanesh weds Dharshini — Sacred Muhurtham
+DESCRIPTION:With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nTime: Sunday, 13 Dec 2026, 6:30 AM – 8:30 AM IST\nVenue: Shanmugar Mahal, Tiruchendur\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in
+LOCATION:Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT24H
+ACTION:DISPLAY
+DESCRIPTION:Reminder: GnanaGanesh weds Dharshini Wedding Tomorrow!
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT2H
+ACTION:DISPLAY
+DESCRIPTION:Reminder: GnanaGanesh weds Dharshini Muhurtham in 2 hours!
+END:VALARM
+END:VEVENT
+END:VCALENDAR

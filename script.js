@@ -30,23 +30,53 @@ function tick() {
 tick();
 setInterval(tick, 1000);
 
-// Add to Calendar (.ics download, works on mobile)
+// Add to Calendar — Direct invite creation across Google, Apple & Outlook
 const calBtn = document.getElementById("calBtn");
-if (calBtn) calBtn.addEventListener("click", () => {
-  const start = WEDDING_DATE.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const end = new Date(WEDDING_DATE.getTime() + 1 * 36e5).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "BEGIN:VEVENT",
-    `DTSTART:${start}`, `DTEND:${end}`,
-    "SUMMARY:GnanaGanesh weds Dharshini — Muhurtham",
-    "LOCATION:Shanmugar Mahal\\, Tiruchendur",
-    "DESCRIPTION:Wedding invitation — ganesh-weds-dharshini.gnanaganesh.in",
-    "END:VEVENT", "END:VCALENDAR"].join("\r\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
-  a.download = "ganesh-weds-dharshini.ics";
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
+const calDialog = document.getElementById("calDialog");
+const calCloseBtn = document.getElementById("calCloseBtn");
+const gcalOption = document.getElementById("gcalOption");
+const outlookOption = document.getElementById("outlookOption");
+
+if (calBtn && calDialog) {
+  const gcalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+    "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
+    "&dates=20261213T010000Z/20261213T030000Z" +
+    "&details=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+    "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215");
+
+  const outlookUrl = "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
+    "&startdt=2026-12-13T01:00:00Z" +
+    "&enddt=2026-12-13T03:00:00Z" +
+    "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
+    "&body=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+    "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215");
+
+  if (gcalOption) gcalOption.href = gcalUrl;
+  if (outlookOption) outlookOption.href = outlookUrl;
+
+  calBtn.addEventListener("click", () => {
+    if (typeof calDialog.showModal === "function") {
+      calDialog.showModal();
+    } else {
+      window.open(gcalUrl, "_blank", "noopener");
+    }
+  });
+
+  if (calCloseBtn) {
+    calCloseBtn.addEventListener("click", () => calDialog.close());
+  }
+
+  calDialog.addEventListener("click", (e) => {
+    const rect = calDialog.getBoundingClientRect();
+    const isInDialog = (
+      rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+      rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+    );
+    if (!isInDialog) {
+      calDialog.close();
+    }
+  });
+}
 
 // Traditional-style drone (no audio file needed).
 // Tanpura-like Sa–Pa–Sa using WebAudio oscillators. Starts only on user tap.
