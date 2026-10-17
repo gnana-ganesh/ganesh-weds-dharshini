@@ -334,6 +334,10 @@ function updateFilmProgress() {
   // Normalized progress from 0.0 to 1.0 within the cinema track
   const progress = Math.min(Math.max(-rect.top / trackHeight, 0), 1);
 
+  // Toggle in-cinema state on body to hide distracting site progress bar during movie scenes
+  const inCinema = rect.top <= 80 && rect.bottom >= window.innerHeight * 0.15;
+  document.body.classList.toggle("in-cinema", inCinema);
+
   // Update scrubber progress bar fill
   if (filmTimelineFill) {
     filmTimelineFill.style.width = (progress * 100) + "%";
@@ -483,34 +487,91 @@ function updateFilmProgress() {
   });
 }
 
-// Continuous smooth video seeking loop via RAF
+// Track active scrolling vs resting
+let isUserScrolling = false;
+let scrollEndTimer = null;
+
+window.addEventListener("scroll", () => {
+  isUserScrolling = true;
+  clearTimeout(scrollEndTimer);
+  scrollEndTimer = setTimeout(() => {
+    isUserScrolling = false;
+  }, 220);
+  requestAnimationFrame(updateFilmProgress);
+}, { passive: true });
+
+// Continuous smooth video playback & intelligent scene loop engine
 function videoScrubLoop() {
   if (!filmAutoPlaying) {
-    if (video1 && video1.readyState >= 2 && !video1.seeking) {
-      const diff1 = targetTime1 - video1.currentTime;
-      if (Math.abs(diff1) > 0.035) {
-        const nextTime1 = video1.currentTime + diff1 * 0.35;
-        try {
-          if (typeof video1.fastSeek === "function") {
-            video1.fastSeek(nextTime1);
-          } else {
-            video1.currentTime = nextTime1;
-          }
-        } catch (e) {}
-      }
-    }
+    if (currentFilmAct < 2) {
+      // REEL 1 is active (Act 0: Shore / Act 1: Engagement)
+      if (video1) {
+        if (video1.paused) {
+          video1.muted = true;
+          video1.play().catch(() => {});
+        }
+        if (video2 && !video2.paused && currentFilmAct === 0) {
+          try { video2.pause(); } catch (e) {}
+        }
 
-    if (video2 && video2.readyState >= 2 && !video2.seeking) {
-      const diff2 = targetTime2 - video2.currentTime;
-      if (Math.abs(diff2) > 0.035) {
-        const nextTime2 = video2.currentTime + diff2 * 0.35;
-        try {
-          if (typeof video2.fastSeek === "function") {
-            video2.fastSeek(nextTime2);
-          } else {
-            video2.currentTime = nextTime2;
+        if (isUserScrolling) {
+          // While user is scrubbing, keep video frame aligned with scrollport
+          const diff1 = targetTime1 - video1.currentTime;
+          if (Math.abs(diff1) > 0.45 && !video1.seeking) {
+            try {
+              if (typeof video1.fastSeek === "function") video1.fastSeek(targetTime1);
+              else video1.currentTime = targetTime1;
+            } catch (e) {}
           }
-        } catch (e) {}
+        } else {
+          // Living ambient playback: loop within active act's scene
+          if (currentFilmAct === 0) {
+            // Act 0: Seashore sunrise & couple walk (0.0s to 4.4s)
+            if (video1.currentTime >= 4.4 || video1.currentTime < 0.0) {
+              video1.currentTime = 0.05;
+            }
+          } else if (currentFilmAct === 1) {
+            // Act 1: Mandapam ring exchange & feast (4.5s to 9.8s)
+            if (video1.currentTime >= 9.8 || video1.currentTime < 4.4) {
+              video1.currentTime = 4.5;
+            }
+          }
+        }
+      }
+    } else {
+      // REEL 2 is active (Act 2: Muhurtham / Act 3: Reception)
+      if (video2) {
+        if (video2.paused) {
+          video2.muted = true;
+          video2.play().catch(() => {});
+        }
+        if (video1 && !video1.paused && currentFilmAct === 3) {
+          try { video1.pause(); } catch (e) {}
+        }
+
+        if (isUserScrolling) {
+          // While user is scrubbing, keep video frame aligned with scrollport
+          const diff2 = targetTime2 - video2.currentTime;
+          if (Math.abs(diff2) > 0.45 && !video2.seeking) {
+            try {
+              if (typeof video2.fastSeek === "function") video2.fastSeek(targetTime2);
+              else video2.currentTime = targetTime2;
+            } catch (e) {}
+          }
+        } else {
+          // Living ambient playback: loop within active act's scene
+          if (currentFilmAct === 2) {
+            // Act 2: Sacred dawn homam fire & Thali tying (0.0s to 4.8s)
+            if (video2.currentTime >= 4.8 || video2.currentTime < 0.0) {
+              video2.currentTime = 0.05;
+            }
+          } else if (currentFilmAct === 3) {
+            // Act 3: Starlit reception stage & celebrations (4.9s to 9.8s)
+            if (video2.currentTime >= 9.8 || video2.currentTime < 4.8) {
+              video2.currentTime = 4.9;
+            }
+          }
+        }
       }
     }
   }
@@ -557,6 +618,7 @@ document.addEventListener("click", (e) => {
 // Auto-Playback "Watch Wedding Film"
 function startAutoPlayFilm() {
   filmAutoPlaying = true;
+  document.body.classList.add("movie-playing");
   if (playBtn) {
     playBtn.innerHTML = "⏸ Pause Story";
   }
@@ -606,6 +668,7 @@ function startAutoPlayFilm() {
 function stopAutoPlayFilm() {
   if (!filmAutoPlaying) return;
   filmAutoPlaying = false;
+  document.body.classList.remove("movie-playing");
   if (autoScrollAnimId) {
     cancelAnimationFrame(autoScrollAnimId);
     autoScrollAnimId = null;

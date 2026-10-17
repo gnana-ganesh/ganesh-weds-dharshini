@@ -595,7 +595,37 @@ body.locked { overflow: hidden; }
 .finale .small { font-size: 0.85rem; opacity: 0.8; font-family: var(--font-body); }
 
 /* Chrome Navigation & Audio */
-.progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--gold-rich); z-index: 40; box-shadow: 0 0 8px rgba(232, 199, 126, 0.8); }
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: var(--gold-rich);
+  z-index: 40;
+  box-shadow: 0 0 8px rgba(232, 199, 126, 0.8);
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+/* Hide top progress bar when movie is playing or inside cinema film */
+body.movie-playing .progress,
+body.in-cinema .progress {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Hide timeline scrubber progress bar during auto-playback for pure movie experience */
+body.movie-playing .film-timeline-wrap {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  transition: opacity 0.3s ease, max-width 0.35s ease;
+}
 .music-btn {
   position: fixed; top: 12px; right: 12px; z-index: 100;
   background: rgba(38, 5, 14, 0.92); color: #ffeec2;
