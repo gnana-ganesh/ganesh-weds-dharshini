@@ -1113,7 +1113,23 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// ==========================================================================
+// Silent Backend View Counter (stored in backend only, not exposed anywhere in the UI)
+(function trackViewSilently() {
+  try {
+    const isNewSession = !sessionStorage.getItem("gd_view_counted");
+    if (isNewSession) {
+      sessionStorage.setItem("gd_view_counted", "1");
+    }
+    fetch("/api/views", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isNewSession }),
+      cache: "no-store",
+      keepalive: true
+    }).catch(() => { });
+  } catch (e) { }
+})();
+
 // ==========================================================================
 // PETAL SHOWERS ON EVERY TAP + SHARED SERVER COUNT (அட்சதை & மலர் மழை)
 // ==========================================================================
