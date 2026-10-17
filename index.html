@@ -21,7 +21,7 @@
   <link rel="preload" as="image" type="image/webp" href="./couple-comic.webp?v=4.0" />
   <link rel="preload" as="video" type="video/mp4" href="./gemini_generated_video_75411d9a.mp4" />
   <link rel="preload" as="video" type="video/mp4" href="./gemini_generated_video_e04013cf.mp4" />
-  <link rel="stylesheet" href="./styles.css?v=5.0" />
+  <link rel="stylesheet" href="./styles.css?v=7.0" />
 </head>
 
 <body class="locked">
@@ -562,6 +562,48 @@
   <!-- Interactive Cursor Flower & Akshadhai Shower Layer -->
   <div id="cursorShower" class="cursor-shower-layer" aria-hidden="true"></div>
 
+  <!-- Experience / Autoplay Choice Dialog shown after opening seal -->
+  <dialog id="autoplayDialog" class="cal-dialog autoplay-dialog" aria-labelledby="autoplayTitle">
+    <div class="cal-dialog-card autoplay-dialog-card">
+      <div class="cal-dialog-header">
+        <div class="cal-dialog-icon autoplay-film-icon" aria-hidden="true">🎬</div>
+        <div class="cal-dialog-title-wrap">
+          <h3 id="autoplayTitle" class="cal-dialog-title">Welcome to Our Wedding</h3>
+          <p class="cal-dialog-sub">திருமணக் கதைப் பயணம் · GnanaGanesh weds Dharshini</p>
+        </div>
+        <button type="button" class="cal-dialog-close" id="autoplayCloseBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <p class="autoplay-dialog-intro">
+        How would you like to experience the wedding invitation?
+      </p>
+
+      <div class="autoplay-options-list">
+        <button type="button" class="autoplay-opt-btn primary-opt" id="startAutoplayBtn">
+          <span class="autoplay-opt-icon">▶</span>
+          <div class="autoplay-opt-info">
+            <strong>Watch Wedding Film (Autoplay)</strong>
+            <small>Sit back as celebrations scroll &amp; unfold automatically with music</small>
+          </div>
+          <span class="autoplay-opt-badge">Recommended</span>
+        </button>
+
+        <button type="button" class="autoplay-opt-btn secondary-opt" id="exploreManualBtn">
+          <span class="autoplay-opt-icon">📜</span>
+          <div class="autoplay-opt-info">
+            <strong>Explore at Your Own Pace</strong>
+            <small>Scroll manually through ceremonies, dates &amp; venue details</small>
+          </div>
+          <span class="autoplay-opt-badge">Manual</span>
+        </button>
+      </div>
+
+      <p class="autoplay-hint-note">
+        <span>💡 You can pause, restart the film, or scroll manually anytime.</span>
+      </p>
+    </div>
+  </dialog>
+
   <!-- Add to Calendar Direct Invite Dialog -->
   <dialog id="calDialog" class="cal-dialog" aria-labelledby="calDialogTitle">
     <div class="cal-dialog-card">
@@ -611,7 +653,7 @@
     </div>
   </dialog>
 
-  <script src="./script.js?v=6.0"></script>
+  <script src="./script.js?v=7.0"></script>
 </body>
 
 </html>

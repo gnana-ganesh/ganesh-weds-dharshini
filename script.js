@@ -78,6 +78,81 @@ if (calBtn && calDialog) {
   });
 }
 
+// Autoplay Choice Dialog — Prompt guest right after opening the sacred seal
+const autoplayDialog = document.getElementById("autoplayDialog");
+const startAutoplayBtn = document.getElementById("startAutoplayBtn");
+const exploreManualBtn = document.getElementById("exploreManualBtn");
+const autoplayCloseBtn = document.getElementById("autoplayCloseBtn");
+
+function showAutoplayPrompt() {
+  if (!autoplayDialog) return;
+  // If guest is already actively scrolling down the page, don't interrupt
+  if (window.scrollY > 150) return;
+  try {
+    if (typeof autoplayDialog.showModal === "function") {
+      autoplayDialog.showModal();
+    } else {
+      autoplayDialog.setAttribute("open", "");
+    }
+  } catch (e) {
+    try { autoplayDialog.setAttribute("open", ""); } catch (err) {}
+  }
+}
+
+function closeAutoplayPrompt() {
+  if (!autoplayDialog) return;
+  try {
+    if (typeof autoplayDialog.close === "function") {
+      autoplayDialog.close();
+    } else {
+      autoplayDialog.removeAttribute("open");
+    }
+  } catch (e) {
+    try { autoplayDialog.removeAttribute("open"); } catch (err) {}
+  }
+}
+
+if (startAutoplayBtn) {
+  startAutoplayBtn.addEventListener("click", () => {
+    closeAutoplayPrompt();
+    startAutoPlayFilm();
+  });
+}
+
+if (exploreManualBtn) {
+  exploreManualBtn.addEventListener("click", () => {
+    closeAutoplayPrompt();
+  });
+}
+
+if (autoplayCloseBtn) {
+  autoplayCloseBtn.addEventListener("click", () => {
+    closeAutoplayPrompt();
+  });
+}
+
+if (autoplayDialog) {
+  autoplayDialog.addEventListener("click", (e) => {
+    const rect = autoplayDialog.getBoundingClientRect();
+    const isInDialog = (
+      rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+      rect.left <= e.clientX && e.clientX <= rect.left + rect.width
+    );
+    if (!isInDialog) {
+      closeAutoplayPrompt();
+    }
+  });
+}
+
+// Gentle dismiss if guest starts scrolling with mouse wheel or finger touch
+window.addEventListener("wheel", () => {
+  if (autoplayDialog && autoplayDialog.open) closeAutoplayPrompt();
+}, { passive: true });
+
+window.addEventListener("touchmove", () => {
+  if (autoplayDialog && autoplayDialog.open) closeAutoplayPrompt();
+}, { passive: true });
+
 // Traditional-style drone (no audio file needed).
 // Tanpura-like Sa–Pa–Sa using WebAudio oscillators. Starts only on user tap.
 let ctx = null, nodes = [], playing = false;
@@ -198,7 +273,10 @@ if (opener && openBtn && envelope) {
     } catch {}
     if (reducedMotion) {
       revealSite();
-      setTimeout(() => opener.remove(), 100);
+      setTimeout(() => {
+        try { opener.remove(); } catch (e) {}
+        showAutoplayPrompt();
+      }, 100);
       return;
     }
     envelope.classList.add("unsealed");       // seal pops visually
@@ -206,7 +284,10 @@ if (opener && openBtn && envelope) {
     setTimeout(() => { envelope.classList.add("letter-out"); }, 1050); // card slides out
     setTimeout(() => { envelope.classList.add("expand"); burst(); }, 1950); // card -> temple scene
     setTimeout(revealSite, 2650);
-    setTimeout(() => opener.remove(), 3450);
+    setTimeout(() => {
+      try { opener.remove(); } catch (e) {}
+      showAutoplayPrompt();
+    }, 3250);
   });
 } else {
   document.body.classList.remove("locked");

@@ -2801,6 +2801,159 @@ body.cinema-active .comic-art {
 }
 
 /* ==========================================================================
+   AUTOPLAY EXPERIENCE DIALOG (SHOWN AFTER OPENING SEAL)
+   ========================================================================== */
+.autoplay-dialog {
+  max-width: 460px;
+  width: 92vw;
+}
+
+.autoplay-dialog-card {
+  padding: 1.6rem 1.4rem;
+  background: linear-gradient(150deg, #2c0b14 0%, #150207 100%);
+  border: 1.5px solid var(--gold-rich);
+  border-radius: 20px;
+  box-shadow: 0 0 32px rgba(217, 164, 65, 0.22) inset, 0 24px 60px rgba(0, 0, 0, 0.85);
+}
+
+.autoplay-film-icon {
+  background: linear-gradient(135deg, rgba(217, 164, 65, 0.3) 0%, rgba(200, 16, 46, 0.3) 100%);
+  border: 1px solid var(--gold-rich);
+  animation: pulseGoldGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseGoldGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(217, 164, 65, 0.3); }
+  50% { box-shadow: 0 0 18px rgba(217, 164, 65, 0.7); }
+}
+
+.autoplay-dialog-intro {
+  margin: 0.2rem 0 1.15rem;
+  font-size: 0.92rem;
+  color: #ffecc8;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.autoplay-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.autoplay-opt-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  text-align: left;
+  width: 100%;
+  border-radius: 14px;
+  padding: 0.95rem 1.05rem;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #fff8eb;
+  font-family: inherit;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.autoplay-opt-btn.primary-opt {
+  background: linear-gradient(135deg, rgba(232, 199, 126, 0.22) 0%, rgba(200, 16, 46, 0.38) 100%);
+  border: 1.5px solid var(--gold-rich);
+  box-shadow: 0 4px 18px rgba(217, 164, 65, 0.2);
+}
+
+.autoplay-opt-btn.primary-opt:hover {
+  background: linear-gradient(135deg, rgba(232, 199, 126, 0.38) 0%, rgba(200, 16, 46, 0.55) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(217, 164, 65, 0.4);
+  border-color: #fff2c4;
+}
+
+.autoplay-opt-btn.secondary-opt {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(232, 199, 126, 0.32);
+}
+
+.autoplay-opt-btn.secondary-opt:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--gold-rich);
+  transform: translateY(-2px);
+}
+
+.autoplay-opt-icon {
+  font-size: 1.35rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(232, 199, 126, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffd778;
+}
+
+.primary-opt .autoplay-opt-icon {
+  background: rgba(217, 164, 65, 0.25);
+  border-color: var(--gold-rich);
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 215, 120, 0.8);
+}
+
+.autoplay-opt-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.autoplay-opt-info strong {
+  font-size: 0.96rem;
+  color: #fff9ea;
+  font-weight: 600;
+}
+
+.autoplay-opt-info small {
+  font-size: 0.76rem;
+  color: #eedbc2;
+  opacity: 0.88;
+  line-height: 1.35;
+}
+
+.autoplay-opt-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.primary-opt .autoplay-opt-badge {
+  background: var(--gold-rich);
+  color: #2b0b14;
+}
+
+.secondary-opt .autoplay-opt-badge {
+  background: rgba(232, 199, 126, 0.12);
+  border: 1px solid rgba(232, 199, 126, 0.35);
+  color: var(--gold-pale);
+}
+
+.autoplay-hint-note {
+  font-size: 0.76rem;
+  color: #eedbc2;
+  opacity: 0.8;
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
    COMBINED WELCOME & COUNTDOWN UNIFIED FINALE
    ========================================================================== */
 .countdown-welcome-panel {
