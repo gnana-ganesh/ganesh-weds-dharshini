@@ -111,6 +111,7 @@ function revealSite() {
   window.scrollTo({ top: 0 });
   const cover = document.getElementById("cover");
   if (cover) cover.classList.add("in");
+  if (typeof updateFilmProgress === "function") updateFilmProgress();
   if (location.hash) {
     const t = document.querySelector(location.hash);
     if (t) setTimeout(() => t.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" }), 150);
