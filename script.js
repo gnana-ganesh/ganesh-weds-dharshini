@@ -266,7 +266,28 @@ if (opener && openBtn && envelope) {
       setTimeout(() => s.remove(), 2400);
     }
   };
+  const enterFullScreen = () => {
+    try {
+      const docEl = document.documentElement;
+      const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+      if (isFullscreen) return;
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen().catch(() => {});
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      } else if (docEl.webkitRequestFullScreen) {
+        docEl.webkitRequestFullScreen();
+      } else if (docEl.mozRequestFullScreen) {
+        docEl.mozRequestFullScreen();
+      } else if (docEl.msRequestFullscreen) {
+        docEl.msRequestFullscreen();
+      }
+    } catch (e) {
+      // Graceful fallback for browsers where fullscreen is restricted
+    }
+  };
   openBtn.addEventListener("click", () => {
+    enterFullScreen();
     openBtn.disabled = true;
     userInteractionAllowedAfter = Date.now() + 3200;
     playFilmVideos();
@@ -484,7 +505,7 @@ function renderFilmUI(progress) {
   // Update floating event navigation menu visibility & active states
   const filmEventMenu = document.getElementById("filmEventMenu");
   if (filmEventMenu) {
-    if (progress >= 0.12) {
+    if (progress >= 0.12 && progress < 0.98) {
       filmEventMenu.classList.add("is-visible");
     } else {
       filmEventMenu.classList.remove("is-visible");
