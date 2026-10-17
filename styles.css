@@ -2959,48 +2959,6 @@ body.cinema-active .comic-art {
   font-weight: 700;
 }
 
-/* ==========================================================================
-   FLOATING RIGHT-BOTTOM CONTROLLER DOCK: SCROLL UP HINT & PLAY/PAUSE
-   ========================================================================== */
-.film-dock {
-  position: fixed;
-  bottom: 24px;
-  bottom: max(24px, env(safe-area-inset-bottom, 24px));
-  right: 24px;
-  right: max(24px, env(safe-area-inset-right, 24px));
-  left: auto;
-  transform: translateY(0);
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(24, 4, 9, 0.9);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1.5px solid var(--gold-rich);
-  border-radius: 999px;
-  padding: 4px;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.75), 0 0 16px rgba(217, 164, 65, 0.25);
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s ease;
-  pointer-events: auto;
-  user-select: none;
-}
-
-/* Hidden while opener envelope is sealed */
-body.locked .film-dock {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(24px);
-}
-
-body.opened .film-dock {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
 /* Scroll hint on first page (disappears upon scrolling/swiping up) */
 .cover-scroll-hint {
   display: inline-flex;
@@ -3042,69 +3000,7 @@ body.opened .film-dock {
   50% { transform: translateY(-4px); }
 }
 
-.dock-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  outline: none;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.2s ease,
-              box-shadow 0.2s ease,
-              border-color 0.2s ease;
-  white-space: nowrap;
-}
 
-.dock-play-btn {
-  background: linear-gradient(135deg, #e8be48 0%, #c48c22 100%);
-  color: #26050b;
-  box-shadow: 0 3px 12px rgba(217, 164, 65, 0.45);
-}
-
-.dock-play-btn:hover {
-  background: linear-gradient(135deg, #f5d475 0%, #d49c2a 100%);
-  transform: scale(1.05);
-  box-shadow: 0 5px 18px rgba(217, 164, 65, 0.65);
-}
-
-.dock-play-btn.is-playing {
-  background: linear-gradient(135deg, #e63946 0%, #a8122a 100%);
-  color: #ffffff;
-  box-shadow: 0 3px 14px rgba(230, 57, 70, 0.5);
-}
-
-.dock-play-btn.is-playing:hover {
-  background: linear-gradient(135deg, #ff4d5e 0%, #be1834 100%);
-  box-shadow: 0 5px 20px rgba(230, 57, 70, 0.7);
-}
-
-.dock-btn-icon {
-  font-size: 0.92rem;
-  line-height: 1;
-}
-
-.dock-btn-label {
-  letter-spacing: 0.03em;
-}
-
-@media (max-width: 480px) {
-  .film-dock {
-    bottom: max(16px, env(safe-area-inset-bottom, 16px));
-    right: max(16px, env(safe-area-inset-right, 16px));
-    padding: 3px;
-  }
-  .dock-btn {
-    padding: 7px 15px;
-    font-size: 0.82rem;
-  }
-}
 
 /* ==========================================================================
    COMBINED WELCOME & COUNTDOWN UNIFIED FINALE

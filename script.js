@@ -144,49 +144,12 @@ if (calDialog) {
   });
 }
 
-// Floating Right-Bottom Controller Dock: Scroll Up Hint & Play/Pause
-const filmDock = document.getElementById("filmDock");
-const dockPlayBtn = document.getElementById("dockPlayBtn");
-const dockScrollText = document.getElementById("dockScrollText");
-
 function updatePlaybackUI(isPlaying) {
-  if (dockPlayBtn) {
-    const icon = dockPlayBtn.querySelector(".dock-btn-icon");
-    const label = dockPlayBtn.querySelector(".dock-btn-label");
-    if (icon) icon.textContent = isPlaying ? "⏸" : "▶";
-    if (label) label.textContent = isPlaying ? "Pause" : "Play";
-    dockPlayBtn.classList.toggle("is-playing", isPlaying);
-    dockPlayBtn.setAttribute("aria-label", isPlaying ? "Pause story" : "Play wedding film automatically");
-  }
   if (playBtn) {
     playBtn.innerHTML = isPlaying
       ? "⏸ Pause Story"
       : '<span class="play-icon-glow">▶</span> <span>Watch Wedding Film / கதைப் பயணம்</span>';
   }
-  if (filmDock) {
-    filmDock.classList.toggle("is-playing", isPlaying);
-  }
-}
-
-if (dockPlayBtn) {
-  dockPlayBtn.addEventListener("click", () => {
-    if (filmAutoPlaying) {
-      stopAutoPlayFilm();
-    } else {
-      startAutoPlayFilm();
-    }
-  });
-}
-
-if (dockScrollText) {
-  dockScrollText.addEventListener("click", () => {
-    if (filmAutoPlaying) {
-      stopAutoPlayFilm();
-    }
-    // Smooth scroll nudge down into the next section
-    const nudge = Math.min(window.innerHeight * 0.75, 520);
-    window.scrollBy({ top: nudge, behavior: reducedMotion ? "auto" : "smooth" });
-  });
 }
 
 // Traditional-style drone (no audio file needed).
@@ -972,15 +935,6 @@ if (playBtn) {
   });
 }
 
-if (dockPlayBtn) {
-  dockPlayBtn.addEventListener("click", () => {
-    if (filmAutoPlaying) {
-      stopAutoPlayFilm();
-    } else {
-      startAutoPlayFilm();
-    }
-  });
-}
 
 // Smooth anchor buttons
 document.addEventListener("click", (e) => {
