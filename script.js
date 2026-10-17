@@ -376,10 +376,9 @@ const actTitles = [
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
-// Initialize 3 video reels: muted, inline, primed
-// Reels 1 & 2 (Engagement & Marriage) set to 0.33x speed; Reception video (Reel 3) made 20% faster at 0.40x speed
-const FILM_PLAYBACK_RATE = 0.33;
-const RECEPTION_PLAYBACK_RATE = 0.40; // 20% faster than 0.33x (0.33 * 1.20 = 0.396 ≈ 0.40x)
+// Initialize 3 video reels: muted, inline, primed, sped up by 10% across all chapters
+const FILM_PLAYBACK_RATE = 0.36; // 10% faster than 0.33x (0.33 * 1.10 = 0.363 ≈ 0.36x)
+const RECEPTION_PLAYBACK_RATE = 0.44; // 10% faster than 0.40x (0.40 * 1.10 = 0.44x)
 let dur1 = 10.0;
 let dur2 = 5.77;
 let dur3 = 10.0;

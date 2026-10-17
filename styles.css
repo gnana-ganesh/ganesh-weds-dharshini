@@ -2135,7 +2135,7 @@ body.cinema-active .comic-art {
    ========================================================================== */
 .scroll-cinema-track {
   position: relative;
-  height: 800vh; /* Smooth generous scroll timeline across all chapters at 0.33x speed */
+  height: 800vh; /* Smooth generous scroll timeline across all chapters at 0.36x / 0.44x speed */
   background: #060103;
   margin: 0;
   padding: 0;
