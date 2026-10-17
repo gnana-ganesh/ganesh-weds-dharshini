@@ -2135,7 +2135,7 @@ body.cinema-active .comic-art {
    ========================================================================== */
 .scroll-cinema-track {
   position: relative;
-  height: 480vh; /* Smooth generous scroll timeline across all 4 chapters */
+  height: 520vh; /* Smooth generous scroll timeline across all chapters at 0.85x speed */
   background: #060103;
   margin: 0;
   padding: 0;
@@ -2155,7 +2155,7 @@ body.cinema-active .comic-art {
   perspective: 1200px;
 }
 
-/* 1. Background Video Projection Layers (Reel 1 & Reel 2) */
+/* 1. Background Video Projection Layers (Reels 1, 2, 3 with buttery smooth hardware-composited dissolves) */
 .film-backdrops {
   position: absolute;
   inset: 0;
@@ -2171,9 +2171,20 @@ body.cinema-active .comic-art {
   height: 100%;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: opacity;
   z-index: 1;
+}
+
+#videoLayer1 {
+  z-index: 1;
+}
+
+#videoLayer2 {
+  z-index: 2;
+}
+
+#videoLayer3 {
+  z-index: 3;
 }
 
 .film-video-layer.is-active {

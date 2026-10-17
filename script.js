@@ -83,19 +83,19 @@ const CALENDAR_EVENTS = {
     sub: "GnanaGanesh weds Dharshini · Wedding Reception",
     dateHtml: "🗓️ <strong>Sunday, 13 Dec 2026</strong>",
     timeHtml: "⏰ <strong>6:30 PM – 9:30 PM IST</strong>",
-    locHtml: "📍 <strong>Sandhya Mahal, Thoothukudi</strong>",
+    locHtml: "📍 <strong>Santhiya Mahal, Thoothukudi</strong>",
     icsFile: "./reception.ics",
     gcalUrl: "https://calendar.google.com/calendar/render?action=TEMPLATE" +
       "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Wedding Reception") +
       "&dates=20261213T130000Z/20261213T160000Z" +
-      "&details=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Sandhya Mahal, Thoothukudi") +
-      "&location=" + encodeURIComponent("Sandhya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu"),
+      "&details=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Santhiya Mahal, Thoothukudi") +
+      "&location=" + encodeURIComponent("Santhiya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu"),
     outlookUrl: "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
       "&startdt=2026-12-13T13:00:00Z" +
       "&enddt=2026-12-13T16:00:00Z" +
       "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Wedding Reception") +
-      "&body=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Sandhya Mahal, Thoothukudi") +
-      "&location=" + encodeURIComponent("Sandhya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu")
+      "&body=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Santhiya Mahal, Thoothukudi") +
+      "&location=" + encodeURIComponent("Santhiya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu")
   }
 };
 
@@ -414,7 +414,8 @@ const actTitles = [
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
-// Initialize 3 video reels: muted, inline, primed
+// Initialize 3 video reels: muted, inline, primed, slowed by 15% for majestic cinematic romance
+const FILM_PLAYBACK_RATE = 0.85;
 let dur1 = 10.0;
 let dur2 = 5.77;
 let dur3 = 10.0;
@@ -422,9 +423,12 @@ let dur3 = 10.0;
   if (!v) return;
   v.muted = true;
   v.playsInline = true;
+  v.defaultPlaybackRate = FILM_PLAYBACK_RATE;
+  v.playbackRate = FILM_PLAYBACK_RATE;
   v.setAttribute("playsinline", "");
   v.setAttribute("webkit-playsinline", "");
   v.addEventListener("loadedmetadata", () => {
+    v.playbackRate = FILM_PLAYBACK_RATE;
     if (idx === 0 && v.duration && !isNaN(v.duration)) dur1 = v.duration;
     if (idx === 1 && v.duration && !isNaN(v.duration)) dur2 = v.duration;
     if (idx === 2 && v.duration && !isNaN(v.duration)) dur3 = v.duration;
@@ -433,8 +437,17 @@ let dur3 = 10.0;
       if (idx === 0) v.currentTime = 2.85;
     } catch (e) {}
   });
+  v.addEventListener("play", () => {
+    v.playbackRate = FILM_PLAYBACK_RATE;
+  });
+  v.addEventListener("ratechange", () => {
+    if (filmAutoPlaying && Math.abs(v.playbackRate - FILM_PLAYBACK_RATE) > 0.02) {
+      v.playbackRate = FILM_PLAYBACK_RATE;
+    }
+  });
   try {
     v.load();
+    v.playbackRate = FILM_PLAYBACK_RATE;
     v.pause();
     v.currentTime = idx === 0 ? 2.85 : 0.001;
   } catch (e) {}
@@ -612,14 +625,14 @@ function updateFilmProgress() {
 
   renderFilmUI(progress);
 
-  // Smooth crossfade across the 3 video layers
+  // Smooth layered crossfade across the 3 video layers (top layer dissolves over 100% opaque bottom layer)
   if (progress < 0.38) {
     if (videoLayer1) videoLayer1.style.opacity = "1";
     if (videoLayer2) videoLayer2.style.opacity = "0";
     if (videoLayer3) videoLayer3.style.opacity = "0";
   } else if (progress < 0.44) {
     const t = (progress - 0.38) / 0.06;
-    if (videoLayer1) videoLayer1.style.opacity = String((1 - t).toFixed(3));
+    if (videoLayer1) videoLayer1.style.opacity = "1";
     if (videoLayer2) videoLayer2.style.opacity = String(t.toFixed(3));
     if (videoLayer3) videoLayer3.style.opacity = "0";
   } else if (progress < 0.66) {
@@ -629,7 +642,7 @@ function updateFilmProgress() {
   } else if (progress < 0.72) {
     const t = (progress - 0.66) / 0.06;
     if (videoLayer1) videoLayer1.style.opacity = "0";
-    if (videoLayer2) videoLayer2.style.opacity = String((1 - t).toFixed(3));
+    if (videoLayer2) videoLayer2.style.opacity = "1";
     if (videoLayer3) videoLayer3.style.opacity = String(t.toFixed(3));
   } else {
     if (videoLayer1) videoLayer1.style.opacity = "0";
@@ -656,7 +669,7 @@ function updateFilmProgress() {
   }
 }
 
-// Buttery-smooth hardware-accelerated Auto-Playback:
+// Buttery-smooth hardware-accelerated Auto-Playback at 0.85x speed:
 // Videos actually play natively at 60fps, crossfade seamlessly, and smoothly drive the film journey
 function startAutoPlayFilm() {
   if (filmAutoPlaying) return;
@@ -704,6 +717,7 @@ function startAutoPlayFilm() {
       if (video1.currentTime < 2.5 || video1.currentTime >= 9.6) {
         video1.currentTime = 2.85;
       }
+      video1.playbackRate = FILM_PLAYBACK_RATE;
       video1.play().catch(() => {});
     }
   } else if (activeReel === 2) {
@@ -715,6 +729,7 @@ function startAutoPlayFilm() {
       if (video2.currentTime >= maxReel2T - 0.2) {
         video2.currentTime = 0;
       }
+      video2.playbackRate = FILM_PLAYBACK_RATE;
       video2.play().catch(() => {});
     }
   } else {
@@ -725,6 +740,7 @@ function startAutoPlayFilm() {
       if (video3.currentTime >= 9.5) {
         video3.currentTime = 0;
       }
+      video3.playbackRate = FILM_PLAYBACK_RATE;
       video3.play().catch(() => {});
     }
   }
@@ -740,14 +756,15 @@ function startAutoPlayFilm() {
       const progReel1 = Math.min(Math.max((t1 - 2.85) / (9.6 - 2.85), 0), 1);
       overallProg = progReel1 * 0.44;
 
-      // Smooth crossfade into Reel 2 between 8.8s and 9.6s
-      if (t1 >= 8.8) {
+      // Luxurious 1.4s smooth crossfade into Reel 2 between 8.15s and 9.55s
+      if (t1 >= 8.15) {
         if (video2 && video2.paused) {
-          video2.currentTime = 0.02;
+          video2.currentTime = 0.04;
+          video2.playbackRate = FILM_PLAYBACK_RATE;
           video2.play().catch(() => {});
         }
-        const fade = Math.min(Math.max((t1 - 8.8) / 0.8, 0), 1);
-        if (videoLayer1) videoLayer1.style.opacity = String((1 - fade).toFixed(3));
+        const fade = Math.min(Math.max((t1 - 8.15) / 1.40, 0), 1);
+        if (videoLayer1) videoLayer1.style.opacity = "1";
         if (videoLayer2) videoLayer2.style.opacity = String(fade.toFixed(3));
         if (videoLayer3) videoLayer3.style.opacity = "0";
       } else {
@@ -756,12 +773,15 @@ function startAutoPlayFilm() {
         if (videoLayer3) videoLayer3.style.opacity = "0";
       }
 
-      if (t1 >= 9.58) {
+      if (t1 >= 9.55) {
         activeReel = 2;
         if (video1) video1.pause();
         if (videoLayer1) videoLayer1.style.opacity = "0";
         if (videoLayer2) videoLayer2.style.opacity = "1";
-        if (video2 && video2.paused) video2.play().catch(() => {});
+        if (video2 && video2.paused) {
+          video2.playbackRate = FILM_PLAYBACK_RATE;
+          video2.play().catch(() => {});
+        }
       }
     } else if (activeReel === 2) {
       // REEL 2 PLAYBACK (Act 2: Sacred Muhurtham)
@@ -770,16 +790,17 @@ function startAutoPlayFilm() {
       const progReel2 = Math.min(Math.max(t2 / maxReel2T, 0), 1);
       overallProg = 0.44 + progReel2 * 0.28;
 
-      // Smooth crossfade into Reel 3 during last 0.8s of Reel 2
-      const fadeStart2 = Math.max(maxReel2T - 0.8, 0.5);
+      // Luxurious 1.4s smooth crossfade into Reel 3 during last 1.4s of Reel 2
+      const fadeStart2 = Math.max(maxReel2T - 1.40, 0.5);
       if (t2 >= fadeStart2) {
         if (video3 && video3.paused) {
-          video3.currentTime = 0.02;
+          video3.currentTime = 0.04;
+          video3.playbackRate = FILM_PLAYBACK_RATE;
           video3.play().catch(() => {});
         }
-        const fade = Math.min(Math.max((t2 - fadeStart2) / 0.8, 0), 1);
+        const fade = Math.min(Math.max((t2 - fadeStart2) / 1.35, 0), 1);
         if (videoLayer1) videoLayer1.style.opacity = "0";
-        if (videoLayer2) videoLayer2.style.opacity = String((1 - fade).toFixed(3));
+        if (videoLayer2) videoLayer2.style.opacity = "1";
         if (videoLayer3) videoLayer3.style.opacity = String(fade.toFixed(3));
       } else {
         if (videoLayer1) videoLayer1.style.opacity = "0";
@@ -787,12 +808,15 @@ function startAutoPlayFilm() {
         if (videoLayer3) videoLayer3.style.opacity = "0";
       }
 
-      if (t2 >= maxReel2T - 0.12) {
+      if (t2 >= maxReel2T - 0.08) {
         activeReel = 3;
         if (video2) video2.pause();
         if (videoLayer2) videoLayer2.style.opacity = "0";
         if (videoLayer3) videoLayer3.style.opacity = "1";
-        if (video3 && video3.paused) video3.play().catch(() => {});
+        if (video3 && video3.paused) {
+          video3.playbackRate = FILM_PLAYBACK_RATE;
+          video3.play().catch(() => {});
+        }
       }
     } else {
       // REEL 3 PLAYBACK (Act 3: Reception Gala)
