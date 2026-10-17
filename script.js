@@ -376,21 +376,24 @@ const actTitles = [
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
-// Initialize 3 video reels: muted, inline, primed, set to 0.33x speed (10% faster than 0.30x) for graceful slow motion
+// Initialize 3 video reels: muted, inline, primed
+// Reels 1 & 2 (Engagement & Marriage) set to 0.33x speed; Reception video (Reel 3) made 20% faster at 0.40x speed
 const FILM_PLAYBACK_RATE = 0.33;
+const RECEPTION_PLAYBACK_RATE = 0.40; // 20% faster than 0.33x (0.33 * 1.20 = 0.396 ≈ 0.40x)
 let dur1 = 10.0;
 let dur2 = 5.77;
 let dur3 = 10.0;
 [video1, video2, video3].forEach((v, idx) => {
   if (!v) return;
+  const reelRate = (idx === 2) ? RECEPTION_PLAYBACK_RATE : FILM_PLAYBACK_RATE;
   v.muted = true;
   v.playsInline = true;
-  v.defaultPlaybackRate = FILM_PLAYBACK_RATE;
-  v.playbackRate = FILM_PLAYBACK_RATE;
+  v.defaultPlaybackRate = reelRate;
+  v.playbackRate = reelRate;
   v.setAttribute("playsinline", "");
   v.setAttribute("webkit-playsinline", "");
   v.addEventListener("loadedmetadata", () => {
-    v.playbackRate = FILM_PLAYBACK_RATE;
+    v.playbackRate = reelRate;
     if (idx === 0 && v.duration && !isNaN(v.duration)) dur1 = v.duration;
     if (idx === 1 && v.duration && !isNaN(v.duration)) dur2 = v.duration;
     if (idx === 2 && v.duration && !isNaN(v.duration)) dur3 = v.duration;
@@ -400,16 +403,16 @@ let dur3 = 10.0;
     } catch (e) {}
   });
   v.addEventListener("play", () => {
-    v.playbackRate = FILM_PLAYBACK_RATE;
+    v.playbackRate = reelRate;
   });
   v.addEventListener("ratechange", () => {
-    if (filmAutoPlaying && Math.abs(v.playbackRate - FILM_PLAYBACK_RATE) > 0.02) {
-      v.playbackRate = FILM_PLAYBACK_RATE;
+    if (filmAutoPlaying && Math.abs(v.playbackRate - reelRate) > 0.02) {
+      v.playbackRate = reelRate;
     }
   });
   try {
     v.load();
-    v.playbackRate = FILM_PLAYBACK_RATE;
+    v.playbackRate = reelRate;
     v.pause();
     v.currentTime = idx === 0 ? 2.85 : 0.001;
   } catch (e) {}
@@ -719,7 +722,7 @@ function startAutoPlayFilm() {
       if (video3.currentTime >= 9.5) {
         video3.currentTime = 0;
       }
-      video3.playbackRate = FILM_PLAYBACK_RATE;
+      video3.playbackRate = RECEPTION_PLAYBACK_RATE;
       video3.play().catch(() => {});
     }
   }
@@ -774,7 +777,7 @@ function startAutoPlayFilm() {
       if (t2 >= fadeStart2) {
         if (video3 && video3.paused) {
           video3.currentTime = 0.04;
-          video3.playbackRate = FILM_PLAYBACK_RATE;
+          video3.playbackRate = RECEPTION_PLAYBACK_RATE;
           video3.play().catch(() => {});
         }
         const fade = Math.min(Math.max((t2 - fadeStart2) / 1.35, 0), 1);
@@ -793,7 +796,7 @@ function startAutoPlayFilm() {
         if (videoLayer2) videoLayer2.style.opacity = "0";
         if (videoLayer3) videoLayer3.style.opacity = "1";
         if (video3 && video3.paused) {
-          video3.playbackRate = FILM_PLAYBACK_RATE;
+          video3.playbackRate = RECEPTION_PLAYBACK_RATE;
           video3.play().catch(() => {});
         }
       }
