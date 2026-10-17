@@ -1541,19 +1541,6 @@ body.cinema-active .comic-art {
   }
 }
 
-/* WhatsApp CTA Button */
-.whatsapp-btn {
-  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important;
-  color: #fff !important;
-  border: 1.5px solid #70e69d !important;
-  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4) !important;
-  font-weight: 600;
-}
-
-.whatsapp-btn:hover {
-  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.6) !important;
-  transform: translateY(-2px);
-}
 
 /* ==========================================================================
    COMIC LAYOUTS FOR ALL PAGES
@@ -2084,12 +2071,12 @@ body.cinema-active .comic-art {
 }
 
 /* ==========================================================================
-   METHOD 3: MULTI-LAYER CINEMATIC SCROLL FILM (Unfolding Video on Scroll)
+   CINEMATIC SCROLL FILM: UNROLLING THE WEDDING STORY USING 2 REEL VIDEOS
    ========================================================================== */
 .scroll-cinema-track {
   position: relative;
-  height: 420vh; /* 4 scenes smoothly spaced */
-  background: #090204;
+  height: 480vh; /* Smooth generous scroll timeline across all 4 chapters */
+  background: #060103;
   margin: 0;
   padding: 0;
 }
@@ -2108,7 +2095,7 @@ body.cinema-active .comic-art {
   perspective: 1200px;
 }
 
-/* 1. Background Video Projection Layers */
+/* 1. Background Video Projection Layers (Reel 1 & Reel 2) */
 .film-backdrops {
   position: absolute;
   inset: 0;
@@ -2117,53 +2104,84 @@ body.cinema-active .comic-art {
   z-index: 1;
 }
 
-.film-layer {
+.film-video-layer {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   opacity: 0;
-  transform: scale(1.0);
-  transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.12s linear;
-  will-change: opacity, transform;
+  transition: opacity 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: opacity;
+  z-index: 1;
 }
 
-.film-layer.is-active {
+.film-video-layer.is-active {
   opacity: 1;
 }
 
-.film-bg-img {
+.film-bg-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 100%;
   height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
   object-fit: cover;
-  object-position: center 30%;
-  filter: brightness(0.85) contrast(1.08);
+  object-position: center center;
+  display: block;
+  filter: brightness(0.92) contrast(1.08) saturate(1.12);
+}
+
+/* Cinematic Letterbox Scope Bars */
+.film-letterbox-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(14px, 2.6vh, 30px);
+  background: #060103;
+  z-index: 8;
+  pointer-events: none;
+}
+.film-letterbox-bar.top {
+  top: 0;
+  border-bottom: 1px solid rgba(232, 199, 126, 0.3);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.85);
+}
+.film-letterbox-bar.bottom {
+  bottom: 0;
+  border-top: 1px solid rgba(232, 199, 126, 0.3);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.85);
 }
 
 /* Atmosphere & Lighting across the 4 Acts */
 .twilight-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 60%, rgba(245, 140, 50, 0.22) 0%, rgba(30, 8, 16, 0.65) 85%);
+  background: radial-gradient(circle at 50% 60%, rgba(245, 140, 50, 0.2) 0%, rgba(30, 8, 16, 0.55) 85%);
   pointer-events: none;
 }
 
 .sunrise-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 60% 35%, rgba(255, 215, 90, 0.25) 0%, rgba(45, 12, 18, 0.6) 85%);
+  background: radial-gradient(circle at 60% 35%, rgba(255, 215, 90, 0.22) 0%, rgba(45, 12, 18, 0.52) 85%);
   pointer-events: none;
 }
 
 .night-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 20%, rgba(110, 170, 255, 0.18) 0%, rgba(5, 8, 22, 0.75) 85%);
+  background: radial-gradient(circle at 50% 20%, rgba(110, 170, 255, 0.16) 0%, rgba(5, 8, 22, 0.68) 85%);
   pointer-events: none;
 }
 
 .film-vignette {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(10, 2, 4, 0.6) 80%, rgba(8, 1, 3, 0.95) 100%);
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(10, 2, 4, 0.55) 80%, rgba(6, 1, 3, 0.92) 100%);
   z-index: 2;
   pointer-events: none;
 }
@@ -2184,15 +2202,15 @@ body.cinema-active .comic-art {
   z-index: 30;
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  background: rgba(14, 3, 6, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(232, 199, 126, 0.45);
+  gap: 1.1rem;
+  background: rgba(14, 3, 6, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(232, 199, 126, 0.5);
   padding: 0.55rem 1.3rem;
   border-radius: 999px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 20px rgba(217, 164, 65, 0.2);
-  max-width: 92vw;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 24px rgba(217, 164, 65, 0.22);
+  max-width: 94vw;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -2209,6 +2227,19 @@ body.cinema-active .comic-art {
   letter-spacing: 0.14em;
   color: var(--gold-pale);
   text-transform: uppercase;
+}
+
+.film-timecode {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #fceac2;
+  letter-spacing: 0.08em;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.14rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 199, 126, 0.35);
+  text-shadow: 0 0 6px rgba(217, 164, 65, 0.5);
 }
 
 .film-timeline-wrap {
@@ -2265,6 +2296,35 @@ body.cinema-active .comic-art {
   box-shadow: 0 0 12px rgba(248, 231, 28, 0.85);
 }
 
+.film-hud-toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(232, 199, 126, 0.45);
+  color: #fff9ed;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.film-hud-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #f8e71c;
+  transform: translateY(-1px);
+}
+
+.film-hud-toggle-btn.is-active {
+  background: rgba(217, 164, 65, 0.35);
+  border-color: #f8e71c;
+  color: #fff;
+}
+
 .film-scroll-hint {
   display: flex;
   align-items: center;
@@ -2292,6 +2352,13 @@ body.cinema-active .comic-art {
   align-items: center;
   justify-content: center;
   height: 100%;
+  transition: opacity 0.4s ease;
+}
+
+.film-stage-content.cards-hidden .film-scene-frame {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(40px) scale(0.95) !important;
 }
 
 .film-scene-frame {
@@ -2642,11 +2709,29 @@ body.cinema-active .comic-art {
 @media (max-width: 600px) {
   .film-hud {
     bottom: 12px;
-    padding: 0.4rem 0.85rem;
-    gap: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    gap: 0.5rem;
+    max-width: 96vw;
+  }
+  .film-act-name {
+    font-size: 0.65rem;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .film-timecode {
+    display: none;
   }
   .film-timeline {
-    width: 90px;
+    width: 70px;
+  }
+  .film-cue-dot {
+    width: 11px;
+    height: 11px;
+  }
+  .film-hud-toggle-btn {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.64rem;
   }
   .film-scroll-hint {
     display: none;

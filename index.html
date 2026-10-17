@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GnanaGanesh weds Dharshini — Wedding Invitation</title>
-  <meta name="description" content="With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their wedding. Venue, agenda, countdown and travel details inside." />
+  <meta name="description" content="With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their wedding. Venue, agenda, and countdown inside." />
   <meta name="theme-color" content="#5c1420" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,7 +13,8 @@
   <link rel="preload" as="image" type="image/webp" href="./tiruchendur-comic-portrait.webp?v=4.0" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" />
   <link rel="preload" as="image" type="image/webp" href="./tiruchendur-comic-landscape.webp?v=4.0" />
   <link rel="preload" as="image" type="image/webp" href="./couple-comic.webp?v=4.0" />
-  <link rel="preload" as="image" type="image/webp" href="./invitation-comic.webp" />
+  <link rel="preload" as="video" type="video/mp4" href="./gemini_generated_video_75411d9a.mp4" />
+  <link rel="preload" as="video" type="video/mp4" href="./gemini_generated_video_e04013cf.mp4" />
   <link rel="stylesheet" href="./styles.css?v=5.0" />
 </head>
 <body class="locked">
@@ -246,40 +247,44 @@
     <div id="scrollCinemaTrack" class="scroll-cinema-track" aria-label="Unfolding Wedding Film">
       <div class="sticky-film-viewport">
 
-        <!-- 1. Background Video Projection Layers (Cross-fade & Ken Burns on Scroll) -->
+        <!-- 1. Background Video Projection Layers (Reel 1 & Reel 2 Driven by Scroll) -->
         <div class="film-backdrops" aria-hidden="true">
-          <!-- Act 0: Tiruchendur Seashore Sunrise -->
-          <div class="film-layer layer-0 is-active" data-layer="0">
-            <picture class="temple-vista">
-              <source type="image/webp" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" srcset="./tiruchendur-comic-portrait.webp?v=4.0" />
-              <source type="image/jpeg" media="(max-aspect-ratio: 1/1) or (max-width: 768px)" srcset="./tiruchendur-comic-portrait.jpg?v=4.0" />
-              <source type="image/webp" srcset="./tiruchendur-comic-landscape.webp?v=4.0" />
-              <img class="film-bg-img temple-artwork" src="./tiruchendur-comic-landscape.jpg?v=4.0" alt="Artistic comic illustration of Tiruchendur Murugan Temple on the seashore" fetchpriority="high" />
-            </picture>
+          <!-- REEL 1: Tiruchendur Shore & Couple Walk -> Auspicious Engagement -->
+          <div class="film-video-layer layer-video-1 is-active" id="videoLayer1" data-reel="1">
+            <video
+              id="filmVideo1"
+              class="film-bg-video"
+              src="./gemini_generated_video_75411d9a.mp4"
+              poster="./tiruchendur-comic-landscape.webp?v=4.0"
+              playsinline
+              webkit-playsinline
+              muted
+              preload="auto">
+            </video>
             <div class="sun-radiance"></div>
             <div class="wave-glow"></div>
-            <div class="temple-sea-mist"></div>
-          </div>
-
-          <!-- Act 1: Auspicious Engagement Dusk -->
-          <div class="film-layer layer-1" data-layer="1">
-            <img class="film-bg-img" src="./invitation-comic.webp" alt="Sacred Kalasam and glowing brass oil lamps at dusk" loading="eager" />
             <div class="twilight-glow"></div>
           </div>
 
-          <!-- Act 2: Sacred Muhurtham Dawn Sunrise -->
-          <div class="film-layer layer-2" data-layer="2">
-            <img class="film-bg-img" src="./muhurtham-comic.webp?v=4.0" alt="Sacred Thali tying Muhurtham ceremony" loading="eager" />
+          <!-- REEL 2: Sacred Muhurtham Dawn Sunrise -> Starlit Beach Reception Gala -->
+          <div class="film-video-layer layer-video-2" id="videoLayer2" data-reel="2">
+            <video
+              id="filmVideo2"
+              class="film-bg-video"
+              src="./gemini_generated_video_e04013cf.mp4"
+              poster="./muhurtham-comic.webp?v=4.0"
+              playsinline
+              webkit-playsinline
+              muted
+              preload="auto">
+            </video>
             <div class="sunrise-glow"></div>
-          </div>
-
-          <!-- Act 3: Reception Starlit Gala -->
-          <div class="film-layer layer-3" data-layer="3">
-            <img class="film-bg-img" src="./reception-comic.webp" alt="Evening reception stage under starlit night" loading="eager" />
             <div class="night-glow"></div>
           </div>
 
-          <!-- Film Atmosphere (Cinema Vignette, Sparks & Letterbox aura) -->
+          <!-- Cinematic Film Atmosphere (Vignette, Letterbox bar styling, Golden spark motes) -->
+          <div class="film-letterbox-bar top"></div>
+          <div class="film-letterbox-bar bottom"></div>
           <div class="film-vignette"></div>
           <div class="film-spark-layer">
             <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span>
@@ -287,22 +292,25 @@
           </div>
         </div>
 
-        <!-- 2. Interactive Film Scrubber & Director HUD -->
+        <!-- 2. Interactive Timeline Scrubber HUD -->
         <div class="film-hud" id="filmHud">
           <div class="film-hud-badge">
             <span class="rec-dot" aria-hidden="true"></span>
-            <span class="film-act-name" id="filmActName">PROLOGUE · TIRUCHENDUR SHORE</span>
+            <span class="film-act-name" id="filmActName">TIRUCHENDUR SHORE</span>
+            <span class="film-timecode" id="filmTimecode" aria-hidden="true">00:00</span>
           </div>
 
           <div class="film-timeline-wrap">
             <div class="film-timeline" id="filmTimeline">
               <div class="film-timeline-fill" id="filmTimelineFill"></div>
-              <button class="film-cue-dot dot-0 active" data-target-act="0" aria-label="Cover: Tiruchendur Shore"></button>
-              <button class="film-cue-dot dot-1" data-target-act="1" aria-label="Act I: Engagement"></button>
-              <button class="film-cue-dot dot-2" data-target-act="2" aria-label="Act II: Sacred Muhurtham"></button>
-              <button class="film-cue-dot dot-3" data-target-act="3" aria-label="Act III: Reception"></button>
+              <button class="film-cue-dot dot-0 active" data-target-act="0" aria-label="Tiruchendur Shore"></button>
+              <button class="film-cue-dot dot-1" data-target-act="1" aria-label="Engagement"></button>
+              <button class="film-cue-dot dot-2" data-target-act="2" aria-label="Sacred Muhurtham"></button>
+              <button class="film-cue-dot dot-3" data-target-act="3" aria-label="Reception"></button>
             </div>
           </div>
+
+          <button class="film-hud-toggle-btn" id="filmFocusBtn" type="button" aria-pressed="false" title="Toggle story card to admire video">🎬 <span class="focus-label">Film Focus</span></button>
 
           <div class="film-scroll-hint" id="filmScrollHint">
             <span>Scroll to Unfold</span> <span class="hint-arrow">↓</span>
@@ -312,64 +320,98 @@
         <!-- 3. Foreground Narrative Scene Cards (Fade & Glide on Scroll) -->
         <div class="film-stage-content">
           <!-- ACT 0: Cover / Cinematic Movie Premiere Title Screen -->
-          <!-- ACT 0: Cover / Hero Card with Full Original Text & Blessings -->
           <div id="cover" class="film-scene-frame frame-0 is-active" data-scene="0">
-            <div class="panel-inner hero-inner">
-              <div class="card hero-card">
-                <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
-                <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
-                <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
-                <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
-                <div class="polaroid rise" style="--d:.0s">
-                  <img src="./couple-comic.webp?v=4.0" alt="GnanaGanesh and Dharshini in comic art style" />
-                  <span class="tape t1" aria-hidden="true"></span>
-                  <span class="tape t2" aria-hidden="true"></span>
-                  <span class="polaroid-caption">GnanaGanesh ♥ Dharshini</span>
+            <div class="cinema-premiere-card">
+              <!-- Corner Golden Filigree Accents -->
+              <span class="gold-corner tl" aria-hidden="true"></span>
+              <span class="gold-corner tr" aria-hidden="true"></span>
+              <span class="gold-corner bl" aria-hidden="true"></span>
+              <span class="gold-corner br" aria-hidden="true"></span>
+
+              <!-- Divine Tamil Invocation -->
+              <div class="cinema-divine-banner rise" style="--d:.05s">
+                <span class="cinema-om" aria-hidden="true">ௐ</span>
+                <span class="cinema-mantra">திருவருள் கூடும் சுப முகூர்த்த அழைப்பிதழ்</span>
+                <span class="cinema-om" aria-hidden="true">ௐ</span>
+              </div>
+              <p class="cinema-blessing-text rise" style="--d:.12s">With the divine blessings of Lord Murugan &amp; our elders</p>
+
+              <!-- Arched Royal Cameo of the Couple (Clean, No Polaroid, No Tape, No Sticker) -->
+              <div class="cinema-cameo-frame rise" style="--d:.2s">
+                <div class="cameo-arch">
+                  <img src="./couple-comic.webp?v=4.0" alt="GnanaGanesh &amp; Dharshini" class="cameo-couple-img" />
                 </div>
-                <div class="date-sticker rise" style="--d:.7s">Save the<br />Date!</div>
-                <div class="hero-text">
-                  <div class="hero-pillayar rise" style="--d:.05s"><img class="pillayar" src="./logo.jpg" alt="Lord Ganesha" /></div>
-                  <p class="tamil rise" style="--d:.15s">திருமண அழைப்பு</p>
-                  <p class="blessing rise" style="--d:.25s">With the divine blessings of Lord Murugan &amp; our elders</p>
-                  <div class="kolam-rule rise" style="--d:.3s" aria-hidden="true"><span>❋</span> <span>◇</span> <span>❋</span></div>
-                  <h1 class="rise" style="--d:.4s">
-                    <span class="name">GnanaGanesh</span>
-                    <span class="weds">weds</span>
-                    <span class="name">Dharshini</span>
-                  </h1>
-                  <p class="date rise" style="--d:.5s">Sunday, 13 December 2026 · Muhurtham 6:30 – 7:30 AM</p>
-                  <p class="venue-short rise" style="--d:.55s">Shanmugar Mahal, Tiruchendur</p>
-                  <div class="cta-row rise" style="--d:.65s">
-                    <button class="btn primary" type="button" data-scroll="#rsvp">RSVP / Call</button>
-                    <button class="btn" type="button" data-scroll="#venue">Venue &amp; Map</button>
-                  </div>
-                  <div class="cover-modes rise" style="--d:.8s">
-                    <button id="playBtn" class="btn primary cinema-cta" type="button">
-                      <span class="play-icon-glow">▶</span>
-                      <span>Watch Wedding Film / கதைப் பயணம்</span>
-                    </button>
-                    <button id="exploreBtn" class="btn cinema-cta-sec" type="button" data-act-jump="1">
-                      <span>📜 Unfold Chronicles ↓</span>
-                    </button>
-                  </div>
-                  <p class="scroll-cue rise" style="--d:.95s">Scroll down to unfold the story <span aria-hidden="true">↓</span></p>
+                <div class="cameo-ribbon">
+                  <span>திருமண பந்தம்</span>
                 </div>
               </div>
+
+              <!-- Grand Movie Title Names -->
+              <div class="cinema-title-wrap rise" style="--d:.3s">
+                <h1 class="cinema-main-title">
+                  <span class="title-name">GnanaGanesh</span>
+                  <span class="title-connector">
+                    <span class="connector-line"></span>
+                    <span class="connector-weds">weds</span>
+                    <span class="connector-line"></span>
+                  </span>
+                  <span class="title-name">Dharshini</span>
+                </h1>
+              </div>
+
+              <!-- Celebration Events Marquee Strip -->
+              <div class="cinema-marquee rise" style="--d:.4s">
+                <div class="marquee-item" data-act-jump="1" role="button" tabindex="0" title="View Engagement Details">
+                  <span class="mq-badge">ENGAGEMENT</span>
+                  <span class="mq-date">Sat, 12 Dec · 6:30 PM</span>
+                  <span class="mq-venue">Shanmugar Mahal, Tiruchendur</span>
+                </div>
+                <div class="marquee-sep" aria-hidden="true">✦</div>
+                <div class="marquee-item highlight-act" data-act-jump="2" role="button" tabindex="0" title="View Muhurtham Details">
+                  <span class="mq-badge">SACRED MUHURTHAM</span>
+                  <span class="mq-date">Sun, 13 Dec · 6:30 AM</span>
+                  <span class="mq-venue">Shanmugar Mahal, Tiruchendur</span>
+                </div>
+                <div class="marquee-sep" aria-hidden="true">✦</div>
+                <div class="marquee-item" data-act-jump="3" role="button" tabindex="0" title="View Reception Details">
+                  <span class="mq-badge">RECEPTION</span>
+                  <span class="mq-date">Sun, 13 Dec · 6:30 PM</span>
+                  <span class="mq-venue">Thoothukudi (Pearl City)</span>
+                </div>
+              </div>
+
+              <!-- Direct Premiere Controls -->
+              <div class="cinema-cta-bar rise" style="--d:.5s">
+                <button id="playBtn" class="btn primary cinema-play-cta" type="button">
+                  <span class="play-icon-glow">▶</span>
+                  <span>Watch Wedding Film / கதைப் பயணம்</span>
+                </button>
+                <button id="exploreBtn" class="btn cinema-unfold-cta" type="button" data-act-jump="1">
+                  <span>📜 Unfold Chronicles ↓</span>
+                </button>
+              </div>
+
+              <!-- Fast Nav Pills -->
+              <div class="cinema-pill-nav rise" style="--d:.6s">
+                <button class="cinema-pill" type="button" data-scroll="#venue">📍 Venue &amp; Map</button>
+                <button class="cinema-pill" type="button" data-scroll="#countdown">🌾 Shower Blessings</button>
+              </div>
+
+              <p class="cinema-scroll-hint rise" style="--d:.7s">Scroll to journey through the celebrations <span aria-hidden="true">↓</span></p>
             </div>
           </div>
 
-          <!-- ACT 1: Engagement -->
+          <!-- Engagement -->
           <div id="engagement" class="film-scene-frame frame-1" data-scene="1">
             <div class="panel-inner wide">
-              <div class="chapter-header">
-                <span class="scene-badge"><span class="rec-dot"></span> ACT I · TWILIGHT DUSK</span>
-                <h2 class="tamil chapter-title">நிச்சயதார்த்தம் · The Engagement</h2>
-              </div>
               <div class="card scene-card film-card">
                 <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+                <div class="scene-card-header">
+                  <h2 class="tamil chapter-title">நிச்சயதார்த்தம் · The Engagement</h2>
+                </div>
                 <div class="scene-lead">
                   <span class="scene-icon">💍</span>
                   <div>
@@ -396,18 +438,17 @@
             </div>
           </div>
 
-          <!-- ACT 2: Sacred Muhurtham -->
+          <!-- Sacred Muhurtham -->
           <div id="muhurtham" class="film-scene-frame frame-2" data-scene="2">
             <div class="panel-inner wide">
-              <div class="chapter-header">
-                <span class="scene-badge"><span class="rec-dot"></span> ACT II · GOLDEN SUNRISE DAWN</span>
-                <h2 class="tamil chapter-title">திருமாங்கல்ய தாரணம் · Sacred Marriage</h2>
-              </div>
               <div class="card scene-card film-card">
                 <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+                <div class="scene-card-header">
+                  <h2 class="tamil chapter-title">திருமாங்கல்ய தாரணம் · Sacred Marriage</h2>
+                </div>
                 <div class="scene-lead">
                   <span class="scene-icon">🪔</span>
                   <div>
@@ -434,18 +475,17 @@
             </div>
           </div>
 
-          <!-- ACT 3: Reception -->
+          <!-- Reception -->
           <div id="reception" class="film-scene-frame frame-3" data-scene="3">
             <div class="panel-inner wide">
-              <div class="chapter-header">
-                <span class="scene-badge"><span class="rec-dot"></span> ACT III · STARLIT NIGHT</span>
-                <h2 class="tamil chapter-title">மணமக்கள் வரவேற்பு · Reception</h2>
-              </div>
               <div class="card scene-card film-card">
                 <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+                <div class="scene-card-header">
+                  <h2 class="tamil chapter-title">மணமக்கள் வரவேற்பு · Reception</h2>
+                </div>
                 <div class="scene-lead">
                   <span class="scene-icon">✨</span>
                   <div>
@@ -529,7 +569,6 @@
             </div>
 
             <div class="cta-row venue-cta-row">
-              <button class="btn" type="button" data-scroll="#travel">Transit &amp; Travel Guide ↓</button>
               <button class="btn primary" type="button" data-scroll="#countdown">Shower Blessings ✨</button>
             </div>
           </div>
@@ -537,46 +576,11 @@
       </div>
     </section>
 
-    <!-- ACT V: Quick Transit & Guest Stay -->
-    <section id="travel" class="panel maroon travel-panel">
-      <div class="panel-inner wide">
-        <div class="chapter-header rise" style="--d:.0s">
-          <h2 class="tamil chapter-title">பயண வழிகாட்டி · Transit Guide</h2>
-        </div>
-
-        <div class="travel-scrapbook rise" style="--d:.15s">
-          <!-- 1. Train Card -->
-          <div class="travel-comic-card">
-            <div class="travel-stamp">🚆</div>
-            <span class="transit-tag">By Train</span>
-            <h4>ரயில் பயணம்</h4>
-            <p><strong>Tiruchendur Station (TCN)</strong> is just 1.5 km away. Direct express trains from Chennai Egmore, Madurai, and Tirunelveli.</p>
-          </div>
-
-          <!-- 2. Flight Card -->
-          <div class="travel-comic-card">
-            <div class="travel-stamp">✈️</div>
-            <span class="transit-tag">By Flight</span>
-            <h4>விமானப் பயணம்</h4>
-            <p><strong>Tuticorin Airport (TCR)</strong> is 38 km (~45 mins). <strong>Madurai Airport (IXM)</strong> is 165 km (~3 hrs scenic highway drive).</p>
-          </div>
-
-          <!-- 3. Stay Card -->
-          <div class="travel-comic-card stay-card">
-            <div class="travel-stamp">🏨</div>
-            <span class="transit-tag">Guest Stay</span>
-            <h4>தங்குமிடம் &amp; உதவி</h4>
-            <p>Comfortable rooms arranged for family &amp; guests near Shanmugar Mahal. Contact the family for immediate check-in assistance.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ACT VI: Will You Join Us & Comic Speech -->
+    <!-- Heartfelt Welcome Note from Couple -->
     <section id="rsvp" class="panel cream rsvp-panel">
       <div class="panel-inner">
         <div class="chapter-header rise" style="--d:.0s">
-          <h2 class="tamil chapter-title">வருகை பதிவு &amp; நல்வாழ்த்துகள்</h2>
+          <h2 class="tamil chapter-title">மணமக்கள் நல்வரவு · Welcome</h2>
         </div>
 
         <div class="card rsvp-comic-card rise" style="--d:.15s">
@@ -590,15 +594,9 @@
             <p>"Your presence, blessings, and joyful smiles will make our wedding day truly memorable. We eagerly await welcoming you and your family in Tiruchendur! 🪔"</p>
           </div>
 
-          <div class="rsvp-cta-wrap">
-            <p class="rsvp-help-text">Tap below to message the couple directly or call the families:</p>
-            <div class="cta-row">
-              <a class="btn primary whatsapp-btn" href="https://wa.me/?text=Dear%20GnanaGanesh%20%26%20Dharshini%2C%20Heartiest%20Congratulations%20on%20your%20wedding!%20Wishing%20you%20a%20lifetime%20of%20eternal%20love%20and%20happiness.%20வாழ்க%20வளமுடன்!" target="_blank" rel="noopener">
-                <span>💬 Send WhatsApp Blessing</span>
-              </a>
-              <a class="btn" href="tel:+910000000000">📞 Call Groom's Family</a>
-              <a class="btn" href="tel:+910000000000">📞 Call Bride's Family</a>
-            </div>
+          <div class="cta-row" style="justify-content: center; margin-top: 1.2rem;">
+            <button class="btn primary" type="button" data-scroll="#countdown">✨ Shower Akshadhai &amp; Blessings</button>
+            <button class="btn" type="button" data-scroll="#venue">📍 Venue &amp; Directions</button>
           </div>
         </div>
       </div>

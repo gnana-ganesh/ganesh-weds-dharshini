@@ -2,7 +2,7 @@
 
 Standalone mobile-friendly wedding invitation site (no build step — plain HTML/CSS/JS).
 
-Sections: hero invitation · countdown · families · agenda · venue map · travel/how-to-reach · RSVP · traditional drone music toggle · add-to-calendar.
+Sections: hero invitation · countdown · families · agenda · venue map · RSVP · traditional drone music toggle · add-to-calendar.
 
 ## 1. Edit placeholders
 

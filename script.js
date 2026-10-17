@@ -211,28 +211,71 @@ if ("IntersectionObserver" in window) {
 }
 
 // ==========================================================================
-// METHOD 3: CINEMATIC SCROLL FILM ENGINE (Unfolding Video on Scroll)
+// CINEMATIC SCROLL FILM ENGINE: DUAL-REEL STORYTELLING ON SCROLL
 // ==========================================================================
 const filmTrack = document.getElementById("scrollCinemaTrack");
-const filmLayers = Array.from(document.querySelectorAll(".film-layer"));
+const video1 = document.getElementById("filmVideo1");
+const video2 = document.getElementById("filmVideo2");
+const videoLayer1 = document.getElementById("videoLayer1");
+const videoLayer2 = document.getElementById("videoLayer2");
+const filmStageContent = document.querySelector(".film-stage-content");
 const filmFrames = Array.from(document.querySelectorAll(".film-scene-frame"));
 const filmTimelineFill = document.getElementById("filmTimelineFill");
 const filmActName = document.getElementById("filmActName");
+const filmTimecode = document.getElementById("filmTimecode");
 const filmDots = Array.from(document.querySelectorAll(".film-cue-dot"));
+const filmFocusBtn = document.getElementById("filmFocusBtn");
 const playBtn = document.getElementById("playBtn");
 
 const actTitles = [
-  "PROLOGUE · TIRUCHENDUR SHORE",
-  "ACT I · THE ENGAGEMENT (12 DEC)",
-  "ACT II · SACRED MUHURTHAM (13 DEC)",
-  "ACT III · RECEPTION GALA (13 DEC)"
+  "REEL 1 · TIRUCHENDUR SHORE",
+  "REEL 1 · ACT I: ENGAGEMENT",
+  "REEL 2 · ACT II: SACRED MUHURTHAM",
+  "REEL 2 · ACT III: RECEPTION GALA"
 ];
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
+// Initialize both video reels: muted, inline, primed
+let dur1 = 10.0;
+let dur2 = 10.0;
+[video1, video2].forEach((v, idx) => {
+  if (!v) return;
+  v.muted = true;
+  v.playsInline = true;
+  v.setAttribute("playsinline", "");
+  v.setAttribute("webkit-playsinline", "");
+  v.addEventListener("loadedmetadata", () => {
+    if (idx === 0 && v.duration && !isNaN(v.duration)) dur1 = v.duration;
+    if (idx === 1 && v.duration && !isNaN(v.duration)) dur2 = v.duration;
+  });
+  try {
+    v.load();
+    v.currentTime = 0.001;
+  } catch (e) {}
+});
+
+// Scrubbing and playback state
+let targetTime1 = 0;
+let targetTime2 = 0;
 let currentFilmAct = 0;
 let filmAutoPlaying = false;
 let autoScrollAnimId = null;
+let cardsHidden = false;
+
+// Toggle Focus Mode (Hide/Show Narrative Cards to admire full-screen film)
+if (filmFocusBtn && filmStageContent) {
+  filmFocusBtn.addEventListener("click", () => {
+    cardsHidden = !cardsHidden;
+    filmStageContent.classList.toggle("cards-hidden", cardsHidden);
+    filmFocusBtn.classList.toggle("is-active", cardsHidden);
+    filmFocusBtn.setAttribute("aria-pressed", String(cardsHidden));
+    const label = filmFocusBtn.querySelector(".focus-label");
+    if (label) {
+      label.textContent = cardsHidden ? "Show Story" : "Film Focus";
+    }
+  });
+}
 
 function updateFilmProgress() {
   if (!filmTrack) return;
@@ -249,10 +292,10 @@ function updateFilmProgress() {
   }
 
   // 4 acts across the progress:
-  // Act 0: 0.00 – 0.24
-  // Act 1: 0.25 – 0.49
-  // Act 2: 0.50 – 0.74
-  // Act 3: 0.75 – 1.00
+  // Act 0: 0.00 – 0.24 (Shore & Couple)
+  // Act 1: 0.24 – 0.50 (Engagement)
+  // Act 2: 0.50 – 0.75 (Muhurtham)
+  // Act 3: 0.75 – 1.00 (Reception)
   let activeIdx = 0;
   if (progress < 0.24) activeIdx = 0;
   else if (progress < 0.50) activeIdx = 1;
@@ -260,33 +303,6 @@ function updateFilmProgress() {
   else activeIdx = 3;
 
   currentFilmAct = activeIdx;
-
-  // Relative phase within current act for subtle Ken Burns effect
-  const stepSize = 0.25;
-  const phase = (progress % stepSize) / stepSize; // 0.0 to 1.0
-
-  // Cross-fade backdrops & Ken Burns zoom
-  filmLayers.forEach((layer, idx) => {
-    if (idx === activeIdx) {
-      layer.classList.add("is-active");
-      if (!reducedMotion) {
-        const scale = 1.0 + phase * 0.06;
-        layer.style.transform = `scale(${scale})`;
-      }
-    } else {
-      layer.classList.remove("is-active");
-      layer.style.transform = "scale(1.0)";
-    }
-  });
-
-  // Cross-fade narrative cards
-  filmFrames.forEach((frame, idx) => {
-    if (idx === activeIdx) {
-      frame.classList.add("is-active");
-    } else {
-      frame.classList.remove("is-active");
-    }
-  });
 
   // Update HUD act title & active dot
   if (filmActName) {
@@ -298,7 +314,162 @@ function updateFilmProgress() {
 
   // Dynamic atmospheric body lighting
   document.body.setAttribute("data-time-of-day", timeThemes[activeIdx]);
+
+  // Update Timecode in HUD (total duration ~ 20.0s across both reels)
+  if (filmTimecode) {
+    const totalSecs = progress * (dur1 + dur2);
+    const m = Math.floor(totalSecs / 60);
+    const s = Math.floor(totalSecs % 60);
+    const ms = Math.floor((totalSecs % 1) * 10);
+    filmTimecode.textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}.${ms}`;
+  }
+
+  // --- REEL 1 & REEL 2 VIDEO SYNCHRONIZATION ---
+  if (progress < 0.50) {
+    // REEL 1: 0.00 to 0.50 -> scrubs video1 (0s to dur1)
+    const p1 = Math.min(Math.max(progress / 0.50, 0), 1);
+    targetTime1 = p1 * dur1;
+
+    // Crossfade into Video 2 near the boundary (0.44 to 0.50)
+    if (progress > 0.44) {
+      const t = (progress - 0.44) / 0.06;
+      if (videoLayer1) videoLayer1.style.opacity = String(1 - t);
+      if (videoLayer2) videoLayer2.style.opacity = String(t);
+    } else {
+      if (videoLayer1) {
+        videoLayer1.style.opacity = "1";
+        videoLayer1.classList.add("is-active");
+      }
+      if (videoLayer2) {
+        videoLayer2.style.opacity = "0";
+        videoLayer2.classList.remove("is-active");
+      }
+    }
+  } else {
+    // REEL 2: 0.50 to 1.00 -> scrubs video2 (0s to dur2)
+    const p2 = Math.min(Math.max((progress - 0.50) / 0.50, 0), 1);
+    targetTime2 = p2 * dur2;
+
+    // Crossfade from Video 1 near the boundary (0.50 to 0.56)
+    if (progress < 0.56) {
+      const t = (progress - 0.50) / 0.06;
+      if (videoLayer1) videoLayer1.style.opacity = String(1 - t);
+      if (videoLayer2) videoLayer2.style.opacity = String(t);
+    } else {
+      if (videoLayer2) {
+        videoLayer2.style.opacity = "1";
+        videoLayer2.classList.add("is-active");
+      }
+      if (videoLayer1) {
+        videoLayer1.style.opacity = "0";
+        videoLayer1.classList.remove("is-active");
+      }
+    }
+  }
+
+  // --- NARRATIVE SCENE CARD PROGRESSION ---
+  filmFrames.forEach((frame, idx) => {
+    let opacity = 0;
+    let translateY = 30; // px
+    if (idx === 0) {
+      // Act 0: Cover (0.00 to 0.24)
+      if (progress < 0.16) {
+        opacity = 1;
+        translateY = 0;
+      } else if (progress < 0.24) {
+        const t = (progress - 0.16) / 0.08;
+        opacity = 1 - t;
+        translateY = -t * 30;
+      }
+    } else if (idx === 1) {
+      // Act 1: Engagement (0.24 to 0.50)
+      if (progress >= 0.20 && progress < 0.26) {
+        const t = (progress - 0.20) / 0.06;
+        opacity = t;
+        translateY = (1 - t) * 30;
+      } else if (progress >= 0.26 && progress < 0.44) {
+        opacity = 1;
+        translateY = 0;
+      } else if (progress >= 0.44 && progress < 0.50) {
+        const t = (progress - 0.44) / 0.06;
+        opacity = 1 - t;
+        translateY = -t * 30;
+      }
+    } else if (idx === 2) {
+      // Act 2: Muhurtham (0.50 to 0.75)
+      if (progress >= 0.46 && progress < 0.53) {
+        const t = (progress - 0.46) / 0.07;
+        opacity = t;
+        translateY = (1 - t) * 30;
+      } else if (progress >= 0.53 && progress < 0.69) {
+        opacity = 1;
+        translateY = 0;
+      } else if (progress >= 0.69 && progress < 0.76) {
+        const t = (progress - 0.69) / 0.07;
+        opacity = 1 - t;
+        translateY = -t * 30;
+      }
+    } else if (idx === 3) {
+      // Act 3: Reception (0.75 to 1.00)
+      if (progress >= 0.72 && progress < 0.78) {
+        const t = (progress - 0.72) / 0.06;
+        opacity = t;
+        translateY = (1 - t) * 30;
+      } else if (progress >= 0.78 && progress < 0.94) {
+        opacity = 1;
+        translateY = 0;
+      } else if (progress >= 0.94) {
+        const t = (progress - 0.94) / 0.06;
+        opacity = 1 - t;
+        translateY = -t * 30;
+      }
+    }
+
+    if (!reducedMotion) {
+      frame.style.opacity = opacity.toFixed(3);
+      frame.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+    }
+    const isFocused = opacity > 0.45;
+    frame.classList.toggle("is-active", isFocused);
+    frame.style.pointerEvents = isFocused ? "auto" : "none";
+  });
 }
+
+// Continuous smooth video seeking loop via RAF
+function videoScrubLoop() {
+  if (!filmAutoPlaying) {
+    if (video1 && video1.readyState >= 2 && !video1.seeking) {
+      const diff1 = targetTime1 - video1.currentTime;
+      if (Math.abs(diff1) > 0.035) {
+        const nextTime1 = video1.currentTime + diff1 * 0.35;
+        try {
+          if (typeof video1.fastSeek === "function") {
+            video1.fastSeek(nextTime1);
+          } else {
+            video1.currentTime = nextTime1;
+          }
+        } catch (e) {}
+      }
+    }
+
+    if (video2 && video2.readyState >= 2 && !video2.seeking) {
+      const diff2 = targetTime2 - video2.currentTime;
+      if (Math.abs(diff2) > 0.035) {
+        const nextTime2 = video2.currentTime + diff2 * 0.35;
+        try {
+          if (typeof video2.fastSeek === "function") {
+            video2.fastSeek(nextTime2);
+          } else {
+            video2.currentTime = nextTime2;
+          }
+        } catch (e) {}
+      }
+    }
+  }
+
+  requestAnimationFrame(videoScrubLoop);
+}
+requestAnimationFrame(videoScrubLoop);
 
 window.addEventListener("scroll", () => {
   requestAnimationFrame(updateFilmProgress);
@@ -310,7 +481,7 @@ function jumpToFilmAct(actIdx) {
   stopAutoPlayFilm();
   if (!filmTrack) return;
   const trackHeight = filmTrack.offsetHeight - window.innerHeight;
-  const actTargets = [0.01, 0.35, 0.62, 0.88];
+  const actTargets = [0.01, 0.35, 0.60, 0.86];
   const targetTop = filmTrack.offsetTop + trackHeight * actTargets[Math.min(Math.max(actIdx, 0), 3)];
 
   window.scrollTo({
@@ -342,7 +513,7 @@ function startAutoPlayFilm() {
     playBtn.innerHTML = "⏸ Pause Story";
   }
 
-  // Ensure music plays during film walkthrough
+  // Ensure wedding background music plays
   if (!playing && typeof startMusic === "function") {
     try {
       startMusic();
@@ -376,6 +547,7 @@ function startAutoPlayFilm() {
       return;
     }
 
+    // Advance scroll, which triggers updateFilmProgress and scrubs the video
     window.scrollBy(0, delta * speed);
     autoScrollAnimId = requestAnimationFrame(step);
   }
@@ -406,7 +578,6 @@ if (playBtn) {
 }
 
 // User manual scroll / touch pauses auto-playback gently
-let userInteractionTimeout = null;
 window.addEventListener("wheel", () => { if (filmAutoPlaying) stopAutoPlayFilm(); }, { passive: true });
 window.addEventListener("touchmove", () => { if (filmAutoPlaying) stopAutoPlayFilm(); }, { passive: true });
 window.addEventListener("keydown", (e) => {
