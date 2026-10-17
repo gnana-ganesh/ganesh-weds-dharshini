@@ -2730,6 +2730,13 @@ body.cinema-active .comic-art {
   margin-top: 0.2rem;
 }
 
+.cinema-lower-third .venue-btn {
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+  padding: 0.42rem 0.9rem;
+}
+
 @media (max-width: 600px) {
   .cinema-cover-title {
     font-size: 2.1rem;
