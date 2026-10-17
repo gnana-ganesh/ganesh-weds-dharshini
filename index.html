@@ -288,7 +288,7 @@
 
           <!-- REEL 2: Sacred Muhurtham Dawn Sunrise -> Starlit Beach Reception Gala -->
           <div class="film-video-layer layer-video-2" id="videoLayer2" data-reel="2">
-            <video id="filmVideo2" class="film-bg-video" src="./gemini_generated_video_e04013cf.mp4"
+            <video id="filmVideo2" class="film-bg-video" src="./gemini_generated_video_71e35553.mp4"
               poster="./muhurtham-comic.webp?v=4.0" muted playsinline webkit-playsinline preload="auto">
             </video>
             <div class="sunrise-glow"></div>
@@ -341,9 +341,10 @@
                 <button class="cinema-pill" type="button" data-scroll="#countdown">🌾 Shower Blessings</button>
               </div>
 
-              <p class="cinema-scroll-hint">
-                <span>Scroll to journey through celebrations</span> <span aria-hidden="true">↓</span>
-              </p>
+              <div id="coverScrollHint" class="cover-scroll-hint" role="status" aria-label="Scroll up to explore">
+                <span class="cover-scroll-arrow" aria-hidden="true">↑</span>
+                <span>Scroll up</span>
+              </div>
             </footer>
           </div>
 
@@ -365,11 +366,13 @@
                   </div>
                 </div>
                 <div class="cta-row">
-                  <a class="btn primary small" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
+                  <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
                     target="_blank" rel="noopener">
-                    <span>📍 Shanmugar Mahal, Tiruchendur</span>
+                    <span>📍 Location</span>
                   </a>
-                  <button class="btn small" type="button" data-act-jump="2">Next: Sacred Marriage ↓</button>
+                  <button type="button" class="btn small venue-cal-btn" data-cal-event="engagement">
+                    <span>📅 Add to Calendar</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -393,11 +396,13 @@
                   </div>
                 </div>
                 <div class="cta-row">
-                  <a class="btn primary small" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
+                  <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
                     target="_blank" rel="noopener">
-                    <span>📍 Shanmugar Mahal, Tiruchendur</span>
+                    <span>📍 Location</span>
                   </a>
-                  <button class="btn small" type="button" data-act-jump="3">Next: Reception ↓</button>
+                  <button type="button" class="btn small venue-cal-btn" data-cal-event="muhurtham">
+                    <span>📅 Add to Calendar</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -421,11 +426,13 @@
                   </div>
                 </div>
                 <div class="cta-row">
-                  <a class="btn primary small" href="https://maps.google.com/?q=Sandhya+Mahal+VMS+Nagar+South+Meelavittan+Road+Thoothukudi" target="_blank"
+                  <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Sandhya+Mahal+VMS+Nagar+South+Meelavittan+Road+Thoothukudi" target="_blank"
                     rel="noopener">
-                    <span>📍 Sandhya Mahal, Thoothukudi</span>
+                    <span>📍 Location</span>
                   </a>
-                  <button class="btn small" type="button" data-scroll="#venue-summary">📍 Venues &amp; Map ↓</button>
+                  <button type="button" class="btn small venue-cal-btn" data-cal-event="reception">
+                    <span>📅 Add to Calendar</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -452,7 +459,7 @@
 
           <!-- Live Countdown Timer -->
           <div class="countdown-block">
-            <h3 class="countdown-heading">Counting down to the Sacred Muhurtham</h3>
+            <h3 class="countdown-heading">Our Journey Begins in ❤️</h3>
             <div class="timer" role="timer" aria-live="off">
               <div><span id="d">–</span><small>Days</small></div>
               <div><span id="h">–</span><small>Hours</small></div>
@@ -507,19 +514,13 @@
                 </div>
               </div>
             </div>
-
-            <!-- Embedded Interactive Google Map -->
-            <div class="map-wrap venue-summary-map">
-              <iframe title="Shanmugar Mahal Tiruchendur wedding venue map" loading="lazy"
-                src="https://www.google.com/maps?q=Shanmugar+Mahal+Tiruchendur&output=embed"></iframe>
-            </div>
           </div>
         </div>
 
         <div class="finale rise" style="--d:.4s">
           <div class="kolam" aria-hidden="true">❋ ── ◇ ── ❋</div>
           <p class="finale-wish">We can't wait to celebrate with you.</p>
-          <p class="finale-love">With love,<br /><span class="finale-couple-names">GnanaGanesh &amp; Dharshini</span></p>
+          <p class="finale-love">With love,<br /><span class="finale-couple-names">GnanaGanesh ❤️ Dharshini</span></p>
           <p class="finale-blessing"><span class="tamil">வாழ்க வளமுடன்!</span></p>
           <p class="small">ganesh-weds-dharshini.gnanaganesh.in</p>
         </div>
@@ -530,12 +531,8 @@
   <!-- Interactive Cursor Flower & Akshadhai Shower Layer -->
   <div id="cursorShower" class="cursor-shower-layer" aria-hidden="true"></div>
 
-  <!-- Floating Right-Bottom Controller Dock: Scroll Up Hint & Play/Pause Button -->
-  <aside id="filmDock" class="film-dock" aria-label="Playback and navigation controls">
-    <span class="dock-scroll-text" id="dockScrollText" title="Scroll up to explore manually">
-      <span class="scroll-arrow" aria-hidden="true">↑</span>
-      <span>Scroll up</span>
-    </span>
+  <!-- Floating Right-Bottom Controller Dock: Play/Pause Button -->
+  <aside id="filmDock" class="film-dock" aria-label="Playback controls">
     <button id="dockPlayBtn" class="dock-btn dock-play-btn" type="button" aria-label="Play wedding film automatically">
       <span class="dock-btn-icon" aria-hidden="true">▶</span>
       <span class="dock-btn-label">Play</span>
@@ -591,7 +588,7 @@
     </div>
   </dialog>
 
-  <script src="./script.js?v=12.0"></script>
+  <script src="./script.js?v=14.0"></script>
 </body>
 
 </html>

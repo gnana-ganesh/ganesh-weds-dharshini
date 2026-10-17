@@ -2850,7 +2850,7 @@ body.cinema-active .comic-art {
   -webkit-backdrop-filter: blur(14px);
   border: 1.5px solid var(--gold-rich);
   border-radius: 999px;
-  padding: 5px 8px 5px 14px;
+  padding: 4px;
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.75), 0 0 16px rgba(217, 164, 65, 0.25);
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -2872,36 +2872,45 @@ body.opened .film-dock {
   transform: translateY(0);
 }
 
-.dock-scroll-text {
+/* Scroll hint on first page (disappears upon scrolling/swiping up) */
+.cover-scroll-hint {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 0.85rem;
+  padding: 6px 18px;
+  background: rgba(18, 5, 8, 0.7);
+  border: 1px solid rgba(232, 199, 126, 0.5);
+  border-radius: 999px;
+  color: #fff9ea;
   font-family: var(--font-body);
-  font-size: 0.84rem;
-  font-weight: 500;
-  color: #ffecc8;
-  letter-spacing: 0.03em;
-  opacity: 0.9;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.2s ease, color 0.2s ease;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: auto;
 }
 
-.dock-scroll-text:hover {
-  opacity: 1;
-  color: #ffffff;
+.cover-scroll-hint.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
 }
 
-.dock-scroll-text .scroll-arrow {
-  font-size: 0.92rem;
-  color: var(--gold-rich);
+.cover-scroll-arrow {
   display: inline-block;
-  animation: floatArrowUp 1.8s infinite ease-in-out;
+  color: var(--gold-rich);
+  font-size: 0.95rem;
+  animation: floatArrowUp 1.6s infinite ease-in-out;
 }
 
 @keyframes floatArrowUp {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
+  50% { transform: translateY(-4px); }
 }
 
 .dock-btn {
@@ -2960,14 +2969,10 @@ body.opened .film-dock {
   .film-dock {
     bottom: max(16px, env(safe-area-inset-bottom, 16px));
     right: max(16px, env(safe-area-inset-right, 16px));
-    padding: 4px 6px 4px 10px;
-    gap: 7px;
-  }
-  .dock-scroll-text {
-    font-size: 0.78rem;
+    padding: 3px;
   }
   .dock-btn {
-    padding: 7px 14px;
+    padding: 7px 15px;
     font-size: 0.82rem;
   }
 }
@@ -3129,19 +3134,32 @@ body.opened .film-dock {
   box-sizing: border-box;
 }
 
+.venue-btn,
 .venue-actions .venue-btn {
   background: linear-gradient(135deg, #8a2130 0%, #5c1420 100%);
   color: #fff9ed;
   border: 1px solid rgba(232, 199, 126, 0.6);
   box-shadow: 0 4px 12px rgba(122, 31, 43, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
+.venue-btn:hover,
 .venue-actions .venue-btn:hover {
   background: linear-gradient(135deg, #9e2338 0%, #6e1624 100%);
   border-color: var(--gold-pale);
   box-shadow: 0 6px 16px rgba(122, 31, 43, 0.55);
 }
 
+.venue-cal-btn,
 .venue-actions .venue-cal-btn {
   background: rgba(255, 255, 255, 0.09);
   color: #fff8ea;
@@ -3150,8 +3168,18 @@ body.opened .film-dock {
   -webkit-backdrop-filter: blur(6px);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
+.venue-cal-btn:hover,
 .venue-actions .venue-cal-btn:hover {
   background: rgba(232, 199, 126, 0.2);
   border-color: var(--gold-rich);
