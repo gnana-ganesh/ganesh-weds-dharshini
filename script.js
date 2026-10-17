@@ -78,80 +78,50 @@ if (calBtn && calDialog) {
   });
 }
 
-// Autoplay Choice Dialog — Prompt guest right after opening the sacred seal
-const autoplayDialog = document.getElementById("autoplayDialog");
-const startAutoplayBtn = document.getElementById("startAutoplayBtn");
-const exploreManualBtn = document.getElementById("exploreManualBtn");
-const autoplayCloseBtn = document.getElementById("autoplayCloseBtn");
+// Floating Bottom Controller Dock: Play & Swipe
+const filmDock = document.getElementById("filmDock");
+const dockPlayBtn = document.getElementById("dockPlayBtn");
+const dockSwipeBtn = document.getElementById("dockSwipeBtn");
 
-function showAutoplayPrompt() {
-  if (!autoplayDialog) return;
-  // If guest is already actively scrolling down the page, don't interrupt
-  if (window.scrollY > 150) return;
-  try {
-    if (typeof autoplayDialog.showModal === "function") {
-      autoplayDialog.showModal();
-    } else {
-      autoplayDialog.setAttribute("open", "");
-    }
-  } catch (e) {
-    try { autoplayDialog.setAttribute("open", ""); } catch (err) {}
+function updatePlaybackUI(isPlaying) {
+  if (dockPlayBtn) {
+    const icon = dockPlayBtn.querySelector(".dock-btn-icon");
+    const label = dockPlayBtn.querySelector(".dock-btn-label");
+    if (icon) icon.textContent = isPlaying ? "⏸" : "▶";
+    if (label) label.textContent = isPlaying ? "Pause" : "Play";
+    dockPlayBtn.classList.toggle("is-playing", isPlaying);
+    dockPlayBtn.setAttribute("aria-label", isPlaying ? "Pause story" : "Play wedding film automatically");
+  }
+  if (playBtn) {
+    playBtn.innerHTML = isPlaying
+      ? "⏸ Pause Story"
+      : '<span class="play-icon-glow">▶</span> <span>Watch Wedding Film / கதைப் பயணம்</span>';
+  }
+  if (filmDock) {
+    filmDock.classList.toggle("is-playing", isPlaying);
   }
 }
 
-function closeAutoplayPrompt() {
-  if (!autoplayDialog) return;
-  try {
-    if (typeof autoplayDialog.close === "function") {
-      autoplayDialog.close();
+if (dockPlayBtn) {
+  dockPlayBtn.addEventListener("click", () => {
+    if (filmAutoPlaying) {
+      stopAutoPlayFilm();
     } else {
-      autoplayDialog.removeAttribute("open");
-    }
-  } catch (e) {
-    try { autoplayDialog.removeAttribute("open"); } catch (err) {}
-  }
-}
-
-if (startAutoplayBtn) {
-  startAutoplayBtn.addEventListener("click", () => {
-    closeAutoplayPrompt();
-    startAutoPlayFilm();
-  });
-}
-
-if (exploreManualBtn) {
-  exploreManualBtn.addEventListener("click", () => {
-    closeAutoplayPrompt();
-  });
-}
-
-if (autoplayCloseBtn) {
-  autoplayCloseBtn.addEventListener("click", () => {
-    closeAutoplayPrompt();
-  });
-}
-
-if (autoplayDialog) {
-  autoplayDialog.addEventListener("click", (e) => {
-    const rect = autoplayDialog.getBoundingClientRect();
-    const isInDialog = (
-      rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
-      rect.left <= e.clientX && e.clientX <= rect.left + rect.width
-    );
-    if (!isInDialog) {
-      closeAutoplayPrompt();
+      startAutoPlayFilm();
     }
   });
 }
 
-// Gentle dismiss if guest starts scrolling with mouse wheel or finger touch
-window.addEventListener("wheel", () => {
-  if (autoplayDialog && autoplayDialog.open) closeAutoplayPrompt();
-}, { passive: true });
-
-window.addEventListener("touchmove", () => {
-  if (autoplayDialog && autoplayDialog.open) closeAutoplayPrompt();
-}, { passive: true });
+if (dockSwipeBtn) {
+  dockSwipeBtn.addEventListener("click", () => {
+    if (filmAutoPlaying) {
+      stopAutoPlayFilm();
+    }
+    // Smooth scroll nudge down into the next section
+    const nudge = Math.min(window.innerHeight * 0.75, 520);
+    window.scrollBy({ top: nudge, behavior: reducedMotion ? "auto" : "smooth" });
+  });
+}
 
 // Traditional-style drone (no audio file needed).
 // Tanpura-like Sa–Pa–Sa using WebAudio oscillators. Starts only on user tap.
@@ -275,7 +245,6 @@ if (opener && openBtn && envelope) {
       revealSite();
       setTimeout(() => {
         try { opener.remove(); } catch (e) {}
-        showAutoplayPrompt();
       }, 100);
       return;
     }
@@ -286,7 +255,6 @@ if (opener && openBtn && envelope) {
     setTimeout(revealSite, 2650);
     setTimeout(() => {
       try { opener.remove(); } catch (e) {}
-      showAutoplayPrompt();
     }, 3250);
   });
 } else {
@@ -726,9 +694,7 @@ document.addEventListener("click", (e) => {
 function startAutoPlayFilm() {
   filmAutoPlaying = true;
   document.body.classList.add("movie-playing");
-  if (playBtn) {
-    playBtn.innerHTML = "⏸ Pause Story";
-  }
+  updatePlaybackUI(true);
 
   // Ensure wedding background music plays
   if (!playing && typeof startMusic === "function") {
@@ -764,7 +730,7 @@ function startAutoPlayFilm() {
       return;
     }
 
-    // Advance scroll, which triggers updateFilmProgress and scrubs the video
+    // Advance scroll from current scroll position, which triggers updateFilmProgress and scrubs the video
     window.scrollBy(0, delta * speed);
     autoScrollAnimId = requestAnimationFrame(step);
   }
@@ -782,9 +748,7 @@ function stopAutoPlayFilm() {
   }
   if (video1) { try { video1.pause(); } catch (e) {} }
   if (video2) { try { video2.pause(); } catch (e) {} }
-  if (playBtn) {
-    playBtn.innerHTML = '<span class="play-icon-glow">▶</span> <span>Watch Wedding Film / கதைப் பயணம்</span>';
-  }
+  updatePlaybackUI(false);
 }
 
 if (playBtn) {

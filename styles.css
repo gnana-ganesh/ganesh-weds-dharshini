@@ -2801,156 +2801,119 @@ body.cinema-active .comic-art {
 }
 
 /* ==========================================================================
-   AUTOPLAY EXPERIENCE DIALOG (SHOWN AFTER OPENING SEAL)
+   FLOATING BOTTOM CONTROLLER DOCK: PLAY & SWIPE
    ========================================================================== */
-.autoplay-dialog {
-  max-width: 460px;
-  width: 92vw;
-}
-
-.autoplay-dialog-card {
-  padding: 1.6rem 1.4rem;
-  background: linear-gradient(150deg, #2c0b14 0%, #150207 100%);
-  border: 1.5px solid var(--gold-rich);
-  border-radius: 20px;
-  box-shadow: 0 0 32px rgba(217, 164, 65, 0.22) inset, 0 24px 60px rgba(0, 0, 0, 0.85);
-}
-
-.autoplay-film-icon {
-  background: linear-gradient(135deg, rgba(217, 164, 65, 0.3) 0%, rgba(200, 16, 46, 0.3) 100%);
-  border: 1px solid var(--gold-rich);
-  animation: pulseGoldGlow 2.5s infinite ease-in-out;
-}
-
-@keyframes pulseGoldGlow {
-  0%, 100% { box-shadow: 0 0 8px rgba(217, 164, 65, 0.3); }
-  50% { box-shadow: 0 0 18px rgba(217, 164, 65, 0.7); }
-}
-
-.autoplay-dialog-intro {
-  margin: 0.2rem 0 1.15rem;
-  font-size: 0.92rem;
-  color: #ffecc8;
-  line-height: 1.5;
-  text-align: left;
-}
-
-.autoplay-options-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.autoplay-opt-btn {
+.film-dock {
+  position: fixed;
+  bottom: 24px;
+  bottom: max(24px, env(safe-area-inset-bottom, 24px));
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  z-index: 999;
   display: flex;
   align-items: center;
-  gap: 0.95rem;
-  text-align: left;
-  width: 100%;
-  border-radius: 14px;
-  padding: 0.95rem 1.05rem;
-  cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  color: #fff8eb;
-  font-family: inherit;
-  border: none;
-  position: relative;
-  overflow: hidden;
-}
-
-.autoplay-opt-btn.primary-opt {
-  background: linear-gradient(135deg, rgba(232, 199, 126, 0.22) 0%, rgba(200, 16, 46, 0.38) 100%);
+  gap: 8px;
+  background: rgba(24, 4, 9, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1.5px solid var(--gold-rich);
-  box-shadow: 0 4px 18px rgba(217, 164, 65, 0.2);
+  border-radius: 999px;
+  padding: 6px 10px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.75), 0 0 16px rgba(217, 164, 65, 0.25);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease;
+  pointer-events: auto;
+  user-select: none;
 }
 
-.autoplay-opt-btn.primary-opt:hover {
-  background: linear-gradient(135deg, rgba(232, 199, 126, 0.38) 0%, rgba(200, 16, 46, 0.55) 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(217, 164, 65, 0.4);
-  border-color: #fff2c4;
+/* Hidden while opener envelope is sealed */
+body.locked .film-dock {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(24px);
 }
 
-.autoplay-opt-btn.secondary-opt {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(232, 199, 126, 0.32);
+body.opened .film-dock {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
 }
 
-.autoplay-opt-btn.secondary-opt:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--gold-rich);
-  transform: translateY(-2px);
-}
-
-.autoplay-opt-icon {
-  font-size: 1.35rem;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(232, 199, 126, 0.3);
-  display: flex;
+.dock-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  color: #ffd778;
-}
-
-.primary-opt .autoplay-opt-icon {
-  background: rgba(217, 164, 65, 0.25);
-  border-color: var(--gold-rich);
-  color: #fff;
-  text-shadow: 0 0 8px rgba(255, 215, 120, 0.8);
-}
-
-.autoplay-opt-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.autoplay-opt-info strong {
-  font-size: 0.96rem;
-  color: #fff9ea;
-  font-weight: 600;
-}
-
-.autoplay-opt-info small {
-  font-size: 0.76rem;
-  color: #eedbc2;
-  opacity: 0.88;
-  line-height: 1.35;
-}
-
-.autoplay-opt-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 0.22rem 0.55rem;
+  gap: 7px;
   border-radius: 999px;
+  padding: 8px 18px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s ease,
+              box-shadow 0.2s ease,
+              border-color 0.2s ease;
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
-.primary-opt .autoplay-opt-badge {
-  background: var(--gold-rich);
-  color: #2b0b14;
+.dock-play-btn {
+  background: linear-gradient(135deg, #e8be48 0%, #c48c22 100%);
+  color: #26050b;
+  box-shadow: 0 3px 12px rgba(217, 164, 65, 0.45);
 }
 
-.secondary-opt .autoplay-opt-badge {
-  background: rgba(232, 199, 126, 0.12);
-  border: 1px solid rgba(232, 199, 126, 0.35);
-  color: var(--gold-pale);
+.dock-play-btn:hover {
+  background: linear-gradient(135deg, #f5d475 0%, #d49c2a 100%);
+  transform: scale(1.05);
+  box-shadow: 0 5px 18px rgba(217, 164, 65, 0.65);
 }
 
-.autoplay-hint-note {
-  font-size: 0.76rem;
-  color: #eedbc2;
-  opacity: 0.8;
-  text-align: center;
-  margin-top: 1rem;
-  margin-bottom: 0;
+.dock-play-btn.is-playing {
+  background: linear-gradient(135deg, #e63946 0%, #a8122a 100%);
+  color: #ffffff;
+  box-shadow: 0 3px 14px rgba(230, 57, 70, 0.5);
+}
+
+.dock-play-btn.is-playing:hover {
+  background: linear-gradient(135deg, #ff4d5e 0%, #be1834 100%);
+  box-shadow: 0 5px 20px rgba(230, 57, 70, 0.7);
+}
+
+.dock-swipe-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff2d6;
+  border: 1px solid rgba(217, 164, 65, 0.35);
+}
+
+.dock-swipe-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--gold-rich);
+  transform: scale(1.05);
+}
+
+.dock-btn-icon {
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.dock-btn-label {
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 480px) {
+  .film-dock {
+    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    padding: 5px 6px;
+    gap: 6px;
+  }
+  .dock-btn {
+    padding: 7px 14px;
+    font-size: 0.82rem;
+  }
 }
 
 /* ==========================================================================
