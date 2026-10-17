@@ -30,42 +30,91 @@ function tick() {
 tick();
 setInterval(tick, 1000);
 
-// Add to Calendar — Direct invite creation across Google, Apple & Outlook
+// Add to Calendar — Direct invite creation across Google, Apple & Outlook for Muhurtham & Reception
 const calBtn = document.getElementById("calBtn");
 const calDialog = document.getElementById("calDialog");
 const calCloseBtn = document.getElementById("calCloseBtn");
+const calDialogSub = document.getElementById("calDialogSub");
+const calMetaDate = document.getElementById("calMetaDate");
+const calMetaTime = document.getElementById("calMetaTime");
+const calMetaLocation = document.getElementById("calMetaLocation");
 const gcalOption = document.getElementById("gcalOption");
+const appleOption = document.getElementById("appleOption");
 const outlookOption = document.getElementById("outlookOption");
 
-if (calBtn && calDialog) {
-  const gcalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-    "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
-    "&dates=20261213T010000Z/20261213T030000Z" +
-    "&details=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
-    "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215");
+const CALENDAR_EVENTS = {
+  muhurtham: {
+    sub: "GnanaGanesh weds Dharshini · Sacred Muhurtham",
+    dateHtml: "🗓️ <strong>Sunday, 13 Dec 2026</strong>",
+    timeHtml: "⏰ <strong>6:30 AM – 8:30 AM IST</strong>",
+    locHtml: "📍 <strong>Shanmugar Mahal, Tiruchendur</strong>",
+    icsFile: "./invite.ics",
+    gcalUrl: "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
+      "&dates=20261213T010000Z/20261213T030000Z" +
+      "&details=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+      "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215"),
+    outlookUrl: "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
+      "&startdt=2026-12-13T01:00:00Z" +
+      "&enddt=2026-12-13T03:00:00Z" +
+      "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
+      "&body=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+      "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215")
+  },
+  reception: {
+    sub: "GnanaGanesh weds Dharshini · Wedding Reception",
+    dateHtml: "🗓️ <strong>Sunday, 13 Dec 2026</strong>",
+    timeHtml: "⏰ <strong>6:30 PM – 9:30 PM IST</strong>",
+    locHtml: "📍 <strong>Sandhya Mahal, Thoothukudi</strong>",
+    icsFile: "./reception.ics",
+    gcalUrl: "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Wedding Reception") +
+      "&dates=20261213T130000Z/20261213T160000Z" +
+      "&details=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Sandhya Mahal, Thoothukudi") +
+      "&location=" + encodeURIComponent("Sandhya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu"),
+    outlookUrl: "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
+      "&startdt=2026-12-13T13:00:00Z" +
+      "&enddt=2026-12-13T16:00:00Z" +
+      "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Wedding Reception") +
+      "&body=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Sandhya Mahal, Thoothukudi") +
+      "&location=" + encodeURIComponent("Sandhya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu")
+  }
+};
 
-  const outlookUrl = "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
-    "&startdt=2026-12-13T01:00:00Z" +
-    "&enddt=2026-12-13T03:00:00Z" +
-    "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
-    "&body=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
-    "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215");
+function openCalendarModal(eventType) {
+  const ev = CALENDAR_EVENTS[eventType] || CALENDAR_EVENTS.muhurtham;
+  if (calDialogSub) calDialogSub.textContent = ev.sub;
+  if (calMetaDate) calMetaDate.innerHTML = ev.dateHtml;
+  if (calMetaTime) calMetaTime.innerHTML = ev.timeHtml;
+  if (calMetaLocation) calMetaLocation.innerHTML = ev.locHtml;
+  if (gcalOption) gcalOption.href = ev.gcalUrl;
+  if (outlookOption) outlookOption.href = ev.outlookUrl;
+  if (appleOption) appleOption.href = ev.icsFile;
 
-  if (gcalOption) gcalOption.href = gcalUrl;
-  if (outlookOption) outlookOption.href = outlookUrl;
-
-  calBtn.addEventListener("click", () => {
+  if (calDialog) {
     if (typeof calDialog.showModal === "function") {
       calDialog.showModal();
     } else {
-      window.open(gcalUrl, "_blank", "noopener");
+      window.open(ev.gcalUrl, "_blank", "noopener");
     }
-  });
-
-  if (calCloseBtn) {
-    calCloseBtn.addEventListener("click", () => calDialog.close());
   }
+}
 
+if (calBtn) {
+  calBtn.addEventListener("click", () => openCalendarModal("muhurtham"));
+}
+
+document.querySelectorAll(".venue-cal-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    openCalendarModal(btn.dataset.calEvent || "muhurtham");
+  });
+});
+
+if (calCloseBtn && calDialog) {
+  calCloseBtn.addEventListener("click", () => calDialog.close());
+}
+
+if (calDialog) {
   calDialog.addEventListener("click", (e) => {
     const rect = calDialog.getBoundingClientRect();
     const isInDialog = (

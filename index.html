@@ -364,16 +364,6 @@
                     <p class="scene-meta">Saturday, 12 Dec 2026 · Evening 6:30 PM to 7:30 PM</p>
                   </div>
                 </div>
-                <div class="scene-highlights">
-                  <div class="highlight-item">
-                    <span class="hi-icon">🪔</span>
-                    <span>Lagna Pathirikai Reading &amp; Ring Exchange</span>
-                  </div>
-                  <div class="highlight-item">
-                    <span class="hi-icon">🍽️</span>
-                    <span>Traditional South Indian Evening Feast</span>
-                  </div>
-                </div>
                 <div class="cta-row">
                   <a class="btn primary small" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
                     target="_blank" rel="noopener">
@@ -402,16 +392,6 @@
                     <p class="scene-meta">Sunday, 13 Dec 2026 · Morning 6:30 AM to 7:30 AM</p>
                   </div>
                 </div>
-                <div class="scene-highlights">
-                  <div class="highlight-item">
-                    <span class="hi-icon">🌅</span>
-                    <span>Kashi Yatra (5:30 AM) &amp; Maalai Maatral</span>
-                  </div>
-                  <div class="highlight-item">
-                    <span class="hi-icon">🌾</span>
-                    <span>Mangalya Dharanam &amp; Akshadhai Blessing</span>
-                  </div>
-                </div>
                 <div class="cta-row">
                   <a class="btn primary small" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
                     target="_blank" rel="noopener">
@@ -438,16 +418,6 @@
                   <span class="scene-icon">✨</span>
                   <div>
                     <p class="scene-meta">Sunday, 13 Dec 2026 · Evening 6:30 PM to 9:00 PM</p>
-                  </div>
-                </div>
-                <div class="scene-highlights">
-                  <div class="highlight-item">
-                    <span class="hi-icon">🌟</span>
-                    <span>Celebration, Greetings &amp; Photo Moments</span>
-                  </div>
-                  <div class="highlight-item">
-                    <span class="hi-icon">🍲</span>
-                    <span>Grand South Indian Royal Dinner Feast</span>
                   </div>
                 </div>
                 <div class="cta-row">
@@ -510,10 +480,15 @@
                 <h4 class="venue-summary-title">Shanmugar Mahal</h4>
                 <p class="venue-summary-events">Sat, 12 Dec (6:30 PM) &amp; Sun, 13 Dec (6:30 AM)</p>
                 <p class="venue-summary-addr">Tiruchendur, Thoothukudi District, Tamil Nadu 628215</p>
-                <a class="btn primary small venue-map-link" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
-                  target="_blank" rel="noopener">
-                  <span>🗺️ Directions to Shanmugar Mahal ↗</span>
-                </a>
+                <div class="venue-actions">
+                  <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
+                    target="_blank" rel="noopener">
+                    <span>📍 Location</span>
+                  </a>
+                  <button type="button" class="btn small venue-cal-btn" data-cal-event="muhurtham">
+                    <span>📅 Add to Calendar</span>
+                  </button>
+                </div>
               </div>
 
               <div class="venue-summary-card">
@@ -521,10 +496,15 @@
                 <h4 class="venue-summary-title">Sandhya Mahal</h4>
                 <p class="venue-summary-events">Sunday, 13 Dec 2026 · Evening 6:30 PM onwards</p>
                 <p class="venue-summary-addr">VMS Nagar South, Meelavittan Road, Thoothukudi</p>
-                <a class="btn primary small venue-map-link" href="https://maps.google.com/?q=Sandhya+Mahal+VMS+Nagar+South+Meelavittan+Road+Thoothukudi"
-                  target="_blank" rel="noopener">
-                  <span>🗺️ Directions to Sandhya Mahal ↗</span>
-                </a>
+                <div class="venue-actions">
+                  <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Sandhya+Mahal+VMS+Nagar+South+Meelavittan+Road+Thoothukudi"
+                    target="_blank" rel="noopener">
+                    <span>📍 Location</span>
+                  </a>
+                  <button type="button" class="btn small venue-cal-btn" data-cal-event="reception">
+                    <span>📅 Add to Calendar</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -569,15 +549,15 @@
         <div class="cal-dialog-icon" aria-hidden="true">📅</div>
         <div class="cal-dialog-title-wrap">
           <h3 id="calDialogTitle" class="cal-dialog-title">Add to Your Calendar</h3>
-          <p class="cal-dialog-sub">GnanaGanesh weds Dharshini · Muhurtham</p>
+          <p class="cal-dialog-sub" id="calDialogSub">GnanaGanesh weds Dharshini · Muhurtham</p>
         </div>
         <button type="button" class="cal-dialog-close" id="calCloseBtn" aria-label="Close dialog">✕</button>
       </div>
 
-      <div class="cal-event-summary">
-        <span class="cal-meta-item">🗓️ <strong>Sunday, 13 Dec 2026</strong></span>
-        <span class="cal-meta-item">⏰ <strong>6:30 AM – 8:30 AM IST</strong></span>
-        <span class="cal-meta-item">📍 <strong>Shanmugar Mahal, Tiruchendur</strong></span>
+      <div class="cal-event-summary" id="calEventSummary">
+        <span class="cal-meta-item" id="calMetaDate">🗓️ <strong>Sunday, 13 Dec 2026</strong></span>
+        <span class="cal-meta-item" id="calMetaTime">⏰ <strong>6:30 AM – 8:30 AM IST</strong></span>
+        <span class="cal-meta-item" id="calMetaLocation">📍 <strong>Shanmugar Mahal, Tiruchendur</strong></span>
       </div>
 
       <div class="cal-dialog-options">
@@ -611,7 +591,7 @@
     </div>
   </dialog>
 
-  <script src="./script.js?v=11.0"></script>
+  <script src="./script.js?v=12.0"></script>
 </body>
 
 </html>

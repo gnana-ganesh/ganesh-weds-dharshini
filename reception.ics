@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//GnanaGanesh weds Dharshini//Wedding Reception//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wedding-reception-ganesh-weds-dharshini-20261213@gnanaganesh.in
+DTSTAMP:20261017T040000Z
+DTSTART:20261213T130000Z
+DTEND:20261213T160000Z
+SUMMARY:GnanaGanesh weds Dharshini — Wedding Reception
+DESCRIPTION:With joy and gratitude\, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nTime: Sunday\, 13 Dec 2026\, 6:30 PM – 9:30 PM IST\nVenue: Sandhya Mahal\, Thoothukudi\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in
+LOCATION:Sandhya Mahal\, VMS Nagar South\, Meelavittan Road\, Thoothukudi\, Tamil Nadu
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-PT24H
+ACTION:DISPLAY
+DESCRIPTION:Reminder: GnanaGanesh weds Dharshini Wedding Reception Tomorrow!
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT2H
+ACTION:DISPLAY
+DESCRIPTION:Reminder: GnanaGanesh weds Dharshini Wedding Reception in 2 hours!
+END:VALARM
+END:VEVENT
+END:VCALENDAR
