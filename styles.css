@@ -716,8 +716,8 @@ body.movie-playing .film-timeline-wrap {
   display: block; font-size: 0.75rem; font-style: italic;
   letter-spacing: 0.35em; text-transform: uppercase; color: #a07c1f;
 }
-.letter .gold-dark { color: #a07c1f; margin: 0; font-size: 0.85rem; font-family: var(--font-display); font-style: italic; }
-.letter .open-sub { color: var(--muted); margin: 0.2rem 0 0; font-size: 0.85rem; }
+.letter .gold-dark { color: #8e6812; margin: 0; font-size: 0.92rem; font-family: var(--font-display); font-style: italic; font-weight: 600; letter-spacing: 0.02em; }
+.letter .open-sub { color: #5a1a25; margin: 0.3rem 0 0; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.04em; }
 .kolam.small { font-size: 0.8rem; margin: 0.4rem 0 0; }
 
 .env-front {
