@@ -2382,48 +2382,6 @@ body.cinema-active .comic-art {
   box-shadow: 0 0 10px rgba(217, 164, 65, 0.35);
 }
 
-/* Venue Summary Quick Jump */
-.venue-film-jump {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 1.2rem;
-  padding-top: 1rem;
-  border-top: 1px dashed rgba(232, 199, 126, 0.3);
-}
-
-.venue-film-jump-label {
-  font-size: 0.82rem;
-  color: var(--gold-pale);
-  opacity: 0.9;
-}
-
-.venue-film-jump-btns {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex-wrap: wrap;
-}
-
-.venue-film-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(232, 199, 126, 0.35);
-  border-radius: 999px;
-  padding: 0.3rem 0.75rem;
-  font-size: 0.76rem;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.venue-film-btn:hover {
-  background: rgba(232, 199, 126, 0.25);
-  border-color: var(--gold-pale);
-  transform: translateY(-1px);
-}
-
 /* 3. Foreground Narrative Scene Cards (Positioned so bride & groom's faces are never covered) */
 .film-stage-content {
   position: absolute;
