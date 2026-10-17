@@ -134,6 +134,21 @@ const opener = document.getElementById("opener");
 const openBtn = document.getElementById("openBtn");
 const envelope = document.getElementById("envelope");
 
+function playFilmVideos() {
+  const v1 = document.getElementById("filmVideo1");
+  const v2 = document.getElementById("filmVideo2");
+  if (v1) {
+    v1.muted = true;
+    const p1 = v1.play();
+    if (p1 && typeof p1.catch === "function") p1.catch(() => {});
+  }
+  if (v2) {
+    v2.muted = true;
+    const p2 = v2.play();
+    if (p2 && typeof p2.catch === "function") p2.catch(() => {});
+  }
+}
+
 function revealSite() {
   if (opener) opener.classList.add("open");
   document.body.classList.remove("locked");
@@ -141,6 +156,7 @@ function revealSite() {
   window.scrollTo({ top: 0 });
   const cover = document.getElementById("cover");
   if (cover) cover.classList.add("in");
+  playFilmVideos();
   if (typeof updateFilmProgress === "function") updateFilmProgress();
   if (location.hash) {
     const t = document.querySelector(location.hash);
@@ -167,6 +183,7 @@ if (opener && openBtn && envelope) {
   };
   openBtn.addEventListener("click", () => {
     openBtn.disabled = true;
+    playFilmVideos();
     // Guest track loops from the tap itself (user gesture unlocks audio)
     try {
       startMusic();
