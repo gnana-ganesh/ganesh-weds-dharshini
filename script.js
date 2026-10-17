@@ -86,7 +86,7 @@
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {
       targetPercent = Math.max(targetPercent, 70);
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
   // Stage 3: Key image preloads (seal & background poster)
@@ -289,7 +289,7 @@ function startDrone() {
   });
 }
 function stopDrone() {
-  nodes.forEach(n => { try { n.stop(); } catch {} });
+  nodes.forEach(n => { try { n.stop(); } catch { } });
   nodes = [];
 }
 // Looped invitation track (guest-provided mp3). Starts on the seal tap;
@@ -302,7 +302,7 @@ if (loopTrack) {
     try {
       loopTrack.currentTime = 0;
       loopTrack.play();
-    } catch (e) {}
+    } catch (e) { }
   });
 }
 function startMusic() {
@@ -310,15 +310,15 @@ function startMusic() {
     loopTrack.loop = true;
     const p = loopTrack.play();
     if (p && typeof p.catch === "function") {
-      p.catch(() => { try { startDrone(); } catch {} });
+      p.catch(() => { try { startDrone(); } catch { } });
     }
   } else {
-    try { startDrone(); } catch {}
+    try { startDrone(); } catch { }
   }
 }
 function stopMusic() {
-  try { if (loopTrack) loopTrack.pause(); } catch {}
-  try { stopDrone(); } catch {}
+  try { if (loopTrack) loopTrack.pause(); } catch { }
+  try { stopDrone(); } catch { }
 }
 if (btn) btn.addEventListener("click", () => {
   playing = !playing;
@@ -343,15 +343,15 @@ function playFilmVideos() {
       if (v1.currentTime < 2.0 || v1.currentTime > 5.0) {
         v1.currentTime = 2.85;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   if (v2) {
     v2.muted = true;
-    try { v2.pause(); v2.currentTime = 0.001; } catch (e) {}
+    try { v2.pause(); v2.currentTime = 0.001; } catch (e) { }
   }
   if (v3) {
     v3.muted = true;
-    try { v3.pause(); v3.currentTime = 0.001; } catch (e) {}
+    try { v3.pause(); v3.currentTime = 0.001; } catch (e) { }
   }
 }
 
@@ -396,7 +396,7 @@ if (opener && openBtn && envelope) {
       const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
       if (isFullscreen) return;
       if (docEl.requestFullscreen) {
-        docEl.requestFullscreen().catch(() => {});
+        docEl.requestFullscreen().catch(() => { });
       } else if (docEl.webkitRequestFullscreen) {
         docEl.webkitRequestFullscreen();
       } else if (docEl.webkitRequestFullScreen) {
@@ -423,11 +423,11 @@ if (opener && openBtn && envelope) {
         btn.setAttribute("aria-pressed", "true");
         btn.classList.add("is-playing");
       }
-    } catch {}
+    } catch { }
     if (reducedMotion) {
       revealSite();
       setTimeout(() => {
-        try { opener.remove(); } catch (e) {}
+        try { opener.remove(); } catch (e) { }
       }, 100);
       return;
     }
@@ -437,7 +437,7 @@ if (opener && openBtn && envelope) {
     setTimeout(() => { envelope.classList.add("expand"); burst(); }, 1950); // card -> temple scene
     setTimeout(revealSite, 2650);
     setTimeout(() => {
-      try { opener.remove(); } catch (e) {}
+      try { opener.remove(); } catch (e) { }
     }, 3250);
   });
 } else {
@@ -522,10 +522,10 @@ const actTitles = [
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
 
 // Initialize 3 video reels: muted, inline, primed, sped up by 10% across all chapters
-const FILM_PLAYBACK_RATE = 0.36; // 10% faster than 0.33x (0.33 * 1.10 = 0.363 ≈ 0.36x)
-const RECEPTION_PLAYBACK_RATE = 0.44; // 10% faster than 0.40x (0.40 * 1.10 = 0.44x)
+const FILM_PLAYBACK_RATE = 0.40; // Sped up by 10% (0.36 * 1.10 = 0.396 ≈ 0.40x)
+const RECEPTION_PLAYBACK_RATE = 0.48; // Sped up by 10% (0.44 * 1.10 = 0.484 ≈ 0.48x)
 let dur1 = 10.0;
-let dur2 = 5.77;
+let dur2 = 10.0;
 let dur3 = 10.0;
 [video1, video2, video3].forEach((v, idx) => {
   if (!v) return;
@@ -544,7 +544,7 @@ let dur3 = 10.0;
     try {
       v.pause();
       if (idx === 0) v.currentTime = 2.85;
-    } catch (e) {}
+    } catch (e) { }
   });
   v.addEventListener("play", () => {
     v.playbackRate = reelRate;
@@ -559,7 +559,7 @@ let dur3 = 10.0;
     v.playbackRate = reelRate;
     v.pause();
     v.currentTime = idx === 0 ? 2.85 : 0.001;
-  } catch (e) {}
+  } catch (e) { }
 });
 
 // Scrubbing and playback state (start with standing couple at 2.85s)
@@ -734,7 +734,7 @@ function scrubVideoTo(video, targetT) {
       } else {
         video.currentTime = clamped;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 }
 
@@ -783,7 +783,7 @@ function updateFilmProgress() {
       scrubVideoTo(video1, t1);
     }
     if (progress >= 0.38 && progress < 0.74 && video2) {
-      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 5.77;
+      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 10.0;
       const t2 = Math.min(Math.max((progress - 0.44) / 0.28, 0), 1) * maxReel2T;
       scrubVideoTo(video2, t2);
     }
@@ -812,7 +812,7 @@ function startAutoPlayFilm() {
         btn.setAttribute("aria-pressed", "true");
         btn.classList.add("is-playing");
       }
-    } catch {}
+    } catch { }
   }
 
   // Determine current position to resume playing from
@@ -844,19 +844,19 @@ function startAutoPlayFilm() {
         video1.currentTime = 2.85;
       }
       video1.playbackRate = FILM_PLAYBACK_RATE;
-      video1.play().catch(() => {});
+      video1.play().catch(() => { });
     }
   } else if (activeReel === 2) {
     if (videoLayer1) videoLayer1.style.opacity = "0";
     if (videoLayer2) videoLayer2.style.opacity = "1";
     if (videoLayer3) videoLayer3.style.opacity = "0";
     if (video2) {
-      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 5.77;
+      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 10.0;
       if (video2.currentTime >= maxReel2T - 0.2) {
         video2.currentTime = 0;
       }
       video2.playbackRate = FILM_PLAYBACK_RATE;
-      video2.play().catch(() => {});
+      video2.play().catch(() => { });
     }
   } else {
     if (videoLayer1) videoLayer1.style.opacity = "0";
@@ -867,7 +867,7 @@ function startAutoPlayFilm() {
         video3.currentTime = 0;
       }
       video3.playbackRate = RECEPTION_PLAYBACK_RATE;
-      video3.play().catch(() => {});
+      video3.play().catch(() => { });
     }
   }
 
@@ -887,7 +887,7 @@ function startAutoPlayFilm() {
         if (video2 && video2.paused) {
           video2.currentTime = 0.04;
           video2.playbackRate = FILM_PLAYBACK_RATE;
-          video2.play().catch(() => {});
+          video2.play().catch(() => { });
         }
         const fade = Math.min(Math.max((t1 - 8.15) / 1.40, 0), 1);
         if (videoLayer1) videoLayer1.style.opacity = "1";
@@ -906,12 +906,12 @@ function startAutoPlayFilm() {
         if (videoLayer2) videoLayer2.style.opacity = "1";
         if (video2 && video2.paused) {
           video2.playbackRate = FILM_PLAYBACK_RATE;
-          video2.play().catch(() => {});
+          video2.play().catch(() => { });
         }
       }
     } else if (activeReel === 2) {
       // REEL 2 PLAYBACK (Act 2: Sacred Muhurtham)
-      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 5.77;
+      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 10.0;
       const t2 = video2 ? video2.currentTime : 0;
       const progReel2 = Math.min(Math.max(t2 / maxReel2T, 0), 1);
       overallProg = 0.44 + progReel2 * 0.28;
@@ -922,7 +922,7 @@ function startAutoPlayFilm() {
         if (video3 && video3.paused) {
           video3.currentTime = 0.04;
           video3.playbackRate = RECEPTION_PLAYBACK_RATE;
-          video3.play().catch(() => {});
+          video3.play().catch(() => { });
         }
         const fade = Math.min(Math.max((t2 - fadeStart2) / 1.35, 0), 1);
         if (videoLayer1) videoLayer1.style.opacity = "0";
@@ -941,7 +941,7 @@ function startAutoPlayFilm() {
         if (videoLayer3) videoLayer3.style.opacity = "1";
         if (video3 && video3.paused) {
           video3.playbackRate = RECEPTION_PLAYBACK_RATE;
-          video3.play().catch(() => {});
+          video3.play().catch(() => { });
         }
       }
     } else {
@@ -962,7 +962,7 @@ function startAutoPlayFilm() {
           try {
             video3.pause();
             video3.currentTime = Math.min(maxReel3T, 9.6) - 0.06;
-          } catch (e) {}
+          } catch (e) { }
         }
         const countdownEl = document.getElementById("countdown");
         if (countdownEl) {
@@ -993,9 +993,9 @@ function stopAutoPlayFilm() {
     cancelAnimationFrame(autoPlayAnimId);
     autoPlayAnimId = null;
   }
-  if (video1) { try { video1.pause(); } catch (e) {} }
-  if (video2) { try { video2.pause(); } catch (e) {} }
-  if (video3) { try { video3.pause(); } catch (e) {} }
+  if (video1) { try { video1.pause(); } catch (e) { } }
+  if (video2) { try { video2.pause(); } catch (e) { } }
+  if (video3) { try { video3.pause(); } catch (e) { } }
   updatePlaybackUI(false);
 }
 
@@ -1151,7 +1151,7 @@ async function recordShower() {
     showerTotal = data.count;
     renderShowerTotal();
   } catch {
-    try { localStorage.setItem("gd_shower_total", String(showerTotal)); } catch {}
+    try { localStorage.setItem("gd_shower_total", String(showerTotal)); } catch { }
   }
 }
 
