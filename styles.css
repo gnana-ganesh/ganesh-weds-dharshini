@@ -2825,24 +2825,26 @@ body.cinema-active .comic-art {
 }
 
 /* ==========================================================================
-   FLOATING BOTTOM CONTROLLER DOCK: PLAY & SWIPE
+   FLOATING RIGHT-BOTTOM CONTROLLER DOCK: SCROLL UP HINT & PLAY/PAUSE
    ========================================================================== */
 .film-dock {
   position: fixed;
   bottom: 24px;
   bottom: max(24px, env(safe-area-inset-bottom, 24px));
-  left: 50%;
-  transform: translateX(-50%) translateY(0);
+  right: 24px;
+  right: max(24px, env(safe-area-inset-right, 24px));
+  left: auto;
+  transform: translateY(0);
   z-index: 999;
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(24, 4, 9, 0.88);
+  gap: 10px;
+  background: rgba(24, 4, 9, 0.9);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1.5px solid var(--gold-rich);
   border-radius: 999px;
-  padding: 6px 10px;
+  padding: 5px 8px 5px 14px;
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.75), 0 0 16px rgba(217, 164, 65, 0.25);
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
@@ -2855,13 +2857,45 @@ body.cinema-active .comic-art {
 body.locked .film-dock {
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-50%) translateY(24px);
+  transform: translateY(24px);
 }
 
 body.opened .film-dock {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
+}
+
+.dock-scroll-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #ffecc8;
+  letter-spacing: 0.03em;
+  opacity: 0.9;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.dock-scroll-text:hover {
+  opacity: 1;
+  color: #ffffff;
+}
+
+.dock-scroll-text .scroll-arrow {
+  font-size: 0.92rem;
+  color: var(--gold-rich);
+  display: inline-block;
+  animation: floatArrowUp 1.8s infinite ease-in-out;
+}
+
+@keyframes floatArrowUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }
 
 .dock-btn {
@@ -2873,7 +2907,7 @@ body.opened .film-dock {
   padding: 8px 18px;
   font-family: var(--font-body);
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border: none;
   outline: none;
@@ -2907,18 +2941,6 @@ body.opened .film-dock {
   box-shadow: 0 5px 20px rgba(230, 57, 70, 0.7);
 }
 
-.dock-swipe-btn {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff2d6;
-  border: 1px solid rgba(217, 164, 65, 0.35);
-}
-
-.dock-swipe-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: var(--gold-rich);
-  transform: scale(1.05);
-}
-
 .dock-btn-icon {
   font-size: 0.92rem;
   line-height: 1;
@@ -2931,8 +2953,12 @@ body.opened .film-dock {
 @media (max-width: 480px) {
   .film-dock {
     bottom: max(16px, env(safe-area-inset-bottom, 16px));
-    padding: 5px 6px;
-    gap: 6px;
+    right: max(16px, env(safe-area-inset-right, 16px));
+    padding: 4px 6px 4px 10px;
+    gap: 7px;
+  }
+  .dock-scroll-text {
+    font-size: 0.78rem;
   }
   .dock-btn {
     padding: 7px 14px;

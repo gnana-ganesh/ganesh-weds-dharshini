@@ -78,10 +78,10 @@ if (calBtn && calDialog) {
   });
 }
 
-// Floating Bottom Controller Dock: Play & Swipe
+// Floating Right-Bottom Controller Dock: Scroll Up Hint & Play/Pause
 const filmDock = document.getElementById("filmDock");
 const dockPlayBtn = document.getElementById("dockPlayBtn");
-const dockSwipeBtn = document.getElementById("dockSwipeBtn");
+const dockScrollText = document.getElementById("dockScrollText");
 
 function updatePlaybackUI(isPlaying) {
   if (dockPlayBtn) {
@@ -112,8 +112,8 @@ if (dockPlayBtn) {
   });
 }
 
-if (dockSwipeBtn) {
-  dockSwipeBtn.addEventListener("click", () => {
+if (dockScrollText) {
+  dockScrollText.addEventListener("click", () => {
     if (filmAutoPlaying) {
       stopAutoPlayFilm();
     }
