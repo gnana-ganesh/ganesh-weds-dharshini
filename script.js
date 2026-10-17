@@ -109,12 +109,11 @@ function openCalendarModal(eventType) {
   if (outlookOption) outlookOption.href = ev.outlookUrl;
   if (appleOption) appleOption.href = ev.icsFile;
 
-  if (calDialog) {
-    if (typeof calDialog.showModal === "function") {
-      calDialog.showModal();
-    } else {
-      window.open(ev.gcalUrl, "_blank", "noopener");
-    }
+  // Open directly to Google Calendar by default
+  if (ev && ev.gcalUrl) {
+    window.open(ev.gcalUrl, "_blank", "noopener");
+  } else if (calDialog && typeof calDialog.showModal === "function") {
+    calDialog.showModal();
   }
 }
 
@@ -515,6 +514,23 @@ function renderFilmUI(progress) {
   }
   filmDots.forEach((dot, idx) => {
     dot.classList.toggle("active", idx === activeIdx);
+  });
+
+  // Update floating event navigation menu visibility & active states
+  const filmEventMenu = document.getElementById("filmEventMenu");
+  if (filmEventMenu) {
+    if (progress >= 0.12) {
+      filmEventMenu.classList.add("is-visible");
+    } else {
+      filmEventMenu.classList.remove("is-visible");
+    }
+  }
+
+  document.querySelectorAll("[data-target-act]").forEach((btn) => {
+    const act = parseInt(btn.dataset.targetAct, 10);
+    const isActive = (act === activeIdx && activeIdx > 0);
+    btn.classList.toggle("is-active", isActive);
+    btn.setAttribute("aria-current", isActive ? "true" : "false");
   });
 
   // Dynamic atmospheric body lighting

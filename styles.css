@@ -2271,6 +2271,159 @@ body.cinema-active .comic-art {
   display: none !important;
 }
 
+/* ==========================================================================
+   EVENT CHAPTERS NAVIGATION MENU (ENGAGEMENT, MARRIAGE, RECEPTION)
+   ========================================================================== */
+.film-event-menu {
+  position: absolute;
+  top: clamp(14px, 2.5vh, 26px);
+  left: 50%;
+  transform: translate(-50%, -14px);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  background: rgba(14, 3, 8, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(232, 199, 126, 0.45);
+  border-radius: 999px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.7), 0 0 18px rgba(217, 164, 65, 0.22);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.film-event-menu.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.event-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.38rem 0.85rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: clamp(0.76rem, 1.8vw, 0.85rem);
+  font-weight: 500;
+  color: rgba(255, 245, 230, 0.78);
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.event-menu-btn:hover {
+  color: #fff;
+  background: rgba(232, 199, 126, 0.16);
+}
+
+.event-menu-btn.is-active {
+  color: #260a08;
+  background: linear-gradient(135deg, #f7dfa5 0%, #d4a042 100%);
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(212, 160, 66, 0.55);
+  transform: scale(1.02);
+}
+
+.menu-sep {
+  color: rgba(232, 199, 126, 0.4);
+  font-size: 0.65rem;
+  user-select: none;
+}
+
+/* Event Menu Pills in Cover Footer */
+.cinema-pill.event-pill.is-active {
+  background: linear-gradient(135deg, rgba(232, 199, 126, 0.35) 0%, rgba(217, 164, 65, 0.5) 100%);
+  border-color: var(--gold-pale);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(217, 164, 65, 0.4);
+}
+
+/* In-Card Event Menu Switcher */
+.scene-event-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.scene-event-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(232, 199, 126, 0.3);
+  border-radius: 999px;
+  padding: 0.24rem 0.65rem;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: rgba(255, 248, 235, 0.82);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.scene-event-btn:hover {
+  background: rgba(232, 199, 126, 0.18);
+  border-color: var(--gold-pale);
+  color: #fff;
+}
+
+.scene-event-btn.is-active {
+  background: rgba(232, 199, 126, 0.28);
+  border-color: var(--gold-rich);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(217, 164, 65, 0.35);
+}
+
+/* Venue Summary Quick Jump */
+.venue-film-jump {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px dashed rgba(232, 199, 126, 0.3);
+}
+
+.venue-film-jump-label {
+  font-size: 0.82rem;
+  color: var(--gold-pale);
+  opacity: 0.9;
+}
+
+.venue-film-jump-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.venue-film-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(232, 199, 126, 0.35);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.76rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.venue-film-btn:hover {
+  background: rgba(232, 199, 126, 0.25);
+  border-color: var(--gold-pale);
+  transform: translateY(-1px);
+}
+
 /* 3. Foreground Narrative Scene Cards (Positioned so bride & groom's faces are never covered) */
 .film-stage-content {
   position: absolute;

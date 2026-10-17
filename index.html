@@ -280,6 +280,24 @@
           </div>
         </div>
 
+        <!-- Floating Regal Event Navigation Menu (Engagement, Marriage, Reception) -->
+        <nav id="filmEventMenu" class="film-event-menu" aria-label="Event Chapters Navigation">
+          <button type="button" class="event-menu-btn" data-target-act="1" aria-label="Jump to Engagement">
+            <span class="menu-icon">💍</span>
+            <span class="menu-text">Engagement</span>
+          </button>
+          <span class="menu-sep" aria-hidden="true">✦</span>
+          <button type="button" class="event-menu-btn" data-target-act="2" aria-label="Jump to Marriage">
+            <span class="menu-icon">🪔</span>
+            <span class="menu-text">Marriage</span>
+          </button>
+          <span class="menu-sep" aria-hidden="true">✦</span>
+          <button type="button" class="event-menu-btn" data-target-act="3" aria-label="Jump to Reception">
+            <span class="menu-icon">✨</span>
+            <span class="menu-text">Reception</span>
+          </button>
+        </nav>
+
         <!-- 3. Foreground Narrative Scene Cards (Positioned so faces are never covered) -->
         <div class="film-stage-content">
           <!-- ACT 0: Cover / Cinematic Movie Premiere Title Screen -->
@@ -308,14 +326,17 @@
                   <span class="play-icon-glow">▶</span>
                   <span>Watch Wedding Film / கதைப் பயணம்</span>
                 </button>
-                <button id="exploreBtn" class="btn cinema-unfold-cta" type="button" data-act-jump="1">
+                <button id="exploreBtn" class="btn cinema-unfold-cta" type="button" data-target-act="1">
                   <span>📜 Unfold Chronicles ↓</span>
                 </button>
               </div>
 
-              <div class="cinema-pill-nav">
-                <button class="cinema-pill" type="button" data-scroll="#venue-summary">📍 Venues &amp; Map</button>
-                <button class="cinema-pill" type="button" data-scroll="#countdown">🌾 Shower Blessings</button>
+              <!-- Quick Event Navigation Menu -->
+              <div class="cinema-pill-nav event-menu-nav" aria-label="Event Chapters Menu">
+                <button class="cinema-pill event-pill" type="button" data-target-act="1"><span>💍</span> Engagement</button>
+                <button class="cinema-pill event-pill" type="button" data-target-act="2"><span>🪔</span> Marriage</button>
+                <button class="cinema-pill event-pill" type="button" data-target-act="3"><span>✨</span> Reception</button>
+                <button class="cinema-pill" type="button" data-scroll="#countdown"><span>🌾</span> Blessings</button>
               </div>
 
               <div id="coverScrollHint" class="cover-scroll-hint" role="status" aria-label="Scroll up to explore">
@@ -334,6 +355,11 @@
                 <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
                 <div class="scene-card-header">
+                  <div class="scene-event-menu" aria-label="Event Chapters Switcher">
+                    <button type="button" class="scene-event-btn is-active" data-target-act="1">💍 Engagement</button>
+                    <button type="button" class="scene-event-btn" data-target-act="2">🪔 Marriage</button>
+                    <button type="button" class="scene-event-btn" data-target-act="3">✨ Reception</button>
+                  </div>
                   <h2 class="tamil chapter-title">நிச்சயதார்த்தம் · Engagement</h2>
                 </div>
                 <div class="scene-lead">
@@ -364,6 +390,11 @@
                 <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
                 <div class="scene-card-header">
+                  <div class="scene-event-menu" aria-label="Event Chapters Switcher">
+                    <button type="button" class="scene-event-btn" data-target-act="1">💍 Engagement</button>
+                    <button type="button" class="scene-event-btn is-active" data-target-act="2">🪔 Marriage</button>
+                    <button type="button" class="scene-event-btn" data-target-act="3">✨ Reception</button>
+                  </div>
                   <h2 class="tamil chapter-title">திருமாங்கல்ய தாரணம் · Marriage</h2>
                 </div>
                 <div class="scene-lead">
@@ -394,6 +425,11 @@
                 <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
                 <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
                 <div class="scene-card-header">
+                  <div class="scene-event-menu" aria-label="Event Chapters Switcher">
+                    <button type="button" class="scene-event-btn" data-target-act="1">💍 Engagement</button>
+                    <button type="button" class="scene-event-btn" data-target-act="2">🪔 Marriage</button>
+                    <button type="button" class="scene-event-btn is-active" data-target-act="3">✨ Reception</button>
+                  </div>
                   <h2 class="tamil chapter-title">மணமக்கள் வரவேற்பு · Reception</h2>
                 </div>
                 <div class="scene-lead">
@@ -451,7 +487,7 @@
             <div class="venue-summary-grid">
               <div class="venue-summary-card">
                 <span class="venue-summary-badge">ENGAGEMENT &amp; MUHURTHAM</span>
-                <h4 class="venue-summary-title">Shanmugar Mahal</h4>
+                <h4 class="venue-summary-title">Shanmugar Mahal, Tiruchendur</h4>
                 <p class="venue-summary-events">Sat, 12 Dec (6:30 PM) &amp; Sun, 13 Dec (6:30 AM)</p>
                 <div class="venue-actions">
                   <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
@@ -466,7 +502,7 @@
 
               <div class="venue-summary-card">
                 <span class="venue-summary-badge">EVENING RECEPTION</span>
-                <h4 class="venue-summary-title">Santhiya Mahal</h4>
+                <h4 class="venue-summary-title">Santhiya Mahal, Thoothukudi</h4>
                 <p class="venue-summary-events">Sunday, 13 Dec 2026 · Evening 6:30 PM onwards</p>
                 <div class="venue-actions">
                   <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Santhiya+Mahal+VMS+Nagar+South+Meelavittan+Road+Thoothukudi"
@@ -477,6 +513,16 @@
                     <span>📅 Add to Calendar</span>
                   </button>
                 </div>
+              </div>
+            </div>
+
+            <!-- Jump to Ceremony Video Chapters -->
+            <div class="venue-film-jump">
+              <span class="venue-film-jump-label">Relive Ceremony Chapters:</span>
+              <div class="venue-film-jump-btns">
+                <button type="button" class="venue-film-btn" data-target-act="1"><span>💍</span> Engagement</button>
+                <button type="button" class="venue-film-btn" data-target-act="2"><span>🪔</span> Marriage</button>
+                <button type="button" class="venue-film-btn" data-target-act="3"><span>✨</span> Reception</button>
               </div>
             </div>
           </div>
