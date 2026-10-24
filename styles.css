@@ -1187,22 +1187,6 @@ body.movie-playing .film-timeline-wrap {
   50% { box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 28px rgba(255, 225, 120, 0.95); }
 }
 
-/* Card Countdown Block */
-.card-countdown-block {
-  margin: 0.8rem 0 0.9rem;
-}
-.card-countdown-block .countdown-heading {
-  margin-bottom: 0.75rem;
-  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
-}
-.card-timer {
-  max-width: 440px;
-  margin: 0 auto;
-}
-.card-divider {
-  margin: 1rem 0;
-}
-
 /* Card Venues Block */
 .card-venues-block {
   margin-top: 0.6rem;

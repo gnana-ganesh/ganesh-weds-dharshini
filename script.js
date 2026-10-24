@@ -126,10 +126,6 @@ const dEl = document.getElementById("d");
 const hEl = document.getElementById("h");
 const mEl = document.getElementById("m");
 const sEl = document.getElementById("s");
-const cardDEl = document.getElementById("card-d");
-const cardHEl = document.getElementById("card-h");
-const cardMEl = document.getElementById("card-m");
-const cardSEl = document.getElementById("card-s");
 const noteEl = document.getElementById("countNote");
 
 function tick() {
@@ -139,10 +135,6 @@ function tick() {
     if (hEl) hEl.textContent = "0";
     if (mEl) mEl.textContent = "0";
     if (sEl) sEl.textContent = "0";
-    if (cardDEl) cardDEl.textContent = "0";
-    if (cardHEl) cardHEl.textContent = "0";
-    if (cardMEl) cardMEl.textContent = "0";
-    if (cardSEl) cardSEl.textContent = "0";
     if (noteEl) noteEl.textContent = "Married! Thank you for blessing us.";
     return;
   }
@@ -151,7 +143,6 @@ function tick() {
   const m = Math.floor(diff / 6e4) % 60;
   const s = Math.floor(diff / 1e3) % 60;
   if (dEl) { dEl.textContent = d; hEl.textContent = h; mEl.textContent = m; sEl.textContent = s; }
-  if (cardDEl) { cardDEl.textContent = d; cardHEl.textContent = h; cardMEl.textContent = m; cardSEl.textContent = s; }
 }
 tick();
 setInterval(tick, 1000);
