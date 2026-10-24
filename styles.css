@@ -945,13 +945,23 @@ body.movie-playing .film-timeline-wrap {
   font-family: var(--font-display); letter-spacing: 0.05em;
 }
 
+.envelope-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 620px;
+}
+
 .envelope {
   position: relative;
   width: min(340px, 84vw);
   max-height: 48vh;
   aspect-ratio: 3 / 2.1;
   perspective: 1200px;
-  transition: transform 0.9s ease, opacity 0.9s ease;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+  z-index: 2;
 }
 .env-back {
   position: absolute; inset: 0; border-radius: 10px;
@@ -1014,8 +1024,232 @@ body.movie-playing .film-timeline-wrap {
 .envelope.unsealed .seal-btn { transform: translate(-50%, -50%) scale(0); opacity: 0; }
 .envelope.flap-open .env-flap { transform: rotateX(180deg); z-index: 1; }
 .envelope.letter-out .letter { transform: translateY(-62%); z-index: 5; }
-.envelope.expand .letter { transform: translateY(-62%) scale(1.02); border-radius: 10px; }
-.envelope.expand { transform: scale(2.6); opacity: 0; }
+
+/* The Unfolded Royal Invitation Card (Centered, stays on screen with ceremony details & Play CTA) */
+.invitation-card {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(580px, 94vw);
+  height: fit-content;
+  max-height: 88vh;
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transform: scale(0.92);
+  background:
+    radial-gradient(circle at 50% 8%, rgba(145, 28, 50, 0.45) 0%, transparent 60%),
+    linear-gradient(170deg, #2c0812 0%, #1c040b 55%, #120106 100%);
+  color: #fff8eb;
+  border: 1.5px solid var(--gold-rich);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 3px #1f040b,
+    inset 0 0 0 4.5px rgba(232, 199, 126, 0.45),
+    0 24px 70px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(232, 199, 126, 0.3);
+  padding: clamp(1.2rem, 2.6vh, 1.75rem) clamp(1rem, 3.5vw, 1.6rem);
+  text-align: center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-rich) rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  transition: opacity 0.6s ease, transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+}
+
+.invitation-card::-webkit-scrollbar {
+  width: 5px;
+}
+.invitation-card::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.invitation-card::-webkit-scrollbar-thumb {
+  background: var(--gold-rich);
+  border-radius: 4px;
+}
+
+/* Opener Transitions when invitation is revealed */
+.opener.showing-invitation .envelope {
+  transform: translateY(60px) scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.opener.showing-invitation .invitation-card {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.opener.showing-invitation .opener-top,
+.opener.showing-invitation .opener-hint {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.opener.open .invitation-card {
+  transform: scale(1.04);
+  opacity: 0;
+}
+
+/* Inside the Invitation Card */
+.card-header {
+  margin-bottom: 0.9rem;
+}
+.card-blessings {
+  color: var(--gold-soft);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.92rem, 2.4vw, 1.08rem);
+  font-weight: 600;
+  margin: 0.3rem 0 0.15rem;
+}
+.card-names {
+  margin: 0.15rem 0;
+  color: var(--gold-pale);
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  line-height: 1.2;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+.card-names span.card-weds {
+  display: inline-block;
+  font-size: 0.55em;
+  font-style: italic;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+  margin: 0 0.4rem;
+}
+.card-date-sub {
+  color: #f7e6c4;
+  margin: 0.25rem 0 0.4rem;
+  font-size: clamp(0.85rem, 2.2vw, 0.98rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* Primary Play Button */
+.card-play-cta-wrap {
+  margin: 0.7rem auto 1.1rem;
+}
+.card-play-cta-bottom {
+  margin: 1.1rem auto 0.4rem;
+}
+.play-invitation-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: clamp(0.75rem, 2vh, 0.95rem) clamp(1.4rem, 4vw, 2rem);
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 2.4vw, 1.12rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fff3c9 0%, #e8be48 40%, #caa032 75%, #9e7518 100%);
+  color: #24050d;
+  border: 1.5px solid #fffdf0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 22px rgba(232, 190, 72, 0.6);
+  cursor: pointer;
+  transition: transform 0.22s var(--ease-out), box-shadow 0.22s ease;
+  animation: pulseGoldGlow 2.4s ease-in-out infinite;
+}
+.play-invitation-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 30px rgba(232, 190, 72, 0.85);
+}
+.play-invitation-btn:active {
+  transform: scale(0.98);
+}
+.play-invitation-btn .play-icon-glow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #24050d;
+  color: #f7d570;
+  font-size: 0.75rem;
+  padding-left: 2px;
+}
+
+@keyframes pulseGoldGlow {
+  0%, 100% { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 16px rgba(232, 190, 72, 0.45); }
+  50% { box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 28px rgba(255, 225, 120, 0.95); }
+}
+
+/* Card Countdown Block */
+.card-countdown-block {
+  margin: 0.8rem 0 0.9rem;
+}
+.card-countdown-block .countdown-heading {
+  margin-bottom: 0.75rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+}
+.card-timer {
+  max-width: 440px;
+  margin: 0 auto;
+}
+.card-divider {
+  margin: 1rem 0;
+}
+
+/* Card Venues Block */
+.card-venues-block {
+  margin-top: 0.6rem;
+}
+.card-venues-block .venue-summary-grid {
+  margin-bottom: 0.8rem;
+}
+.card-venues-block .venue-summary-card {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(232, 199, 126, 0.45);
+}
+.card-venues-block .venue-summary-card:hover {
+  border-color: var(--gold-rich);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Card Finale */
+.card-finale {
+  margin-top: 0.8rem;
+}
+.card-finale .kolam {
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+}
+.card-finale .finale-wish {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: var(--gold-pale);
+  margin: 0 0 0.35rem;
+}
+.card-finale .finale-love {
+  font-size: 0.92rem;
+  color: #fff4db;
+  margin: 0 0 0.25rem;
+}
+.card-finale .finale-couple-names {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--gold-rich);
+}
+.card-domain {
+  font-size: 0.78rem;
+  color: rgba(255, 244, 219, 0.65);
+  margin: 0.25rem 0 0;
+}
 
 .petal {
   position: absolute; top: 42%; font-size: 1.15rem; z-index: 6;

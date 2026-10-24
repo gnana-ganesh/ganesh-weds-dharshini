@@ -60,6 +60,7 @@
       if (statusEl) statusEl.textContent = "அழைப்பு தயார் · மங்கலம் நிறைக!";
       setTimeout(() => {
         preloader.classList.add("is-loaded");
+        window.dispatchEvent(new CustomEvent("sitePreloaderDone"));
         setTimeout(() => {
           try { preloader.remove(); } catch (e) { preloader.style.display = "none"; }
         }, 800);
@@ -125,13 +126,23 @@ const dEl = document.getElementById("d");
 const hEl = document.getElementById("h");
 const mEl = document.getElementById("m");
 const sEl = document.getElementById("s");
+const cardDEl = document.getElementById("card-d");
+const cardHEl = document.getElementById("card-h");
+const cardMEl = document.getElementById("card-m");
+const cardSEl = document.getElementById("card-s");
 const noteEl = document.getElementById("countNote");
 
 function tick() {
-  if (!dEl) return;
   const diff = WEDDING_DATE - new Date();
   if (diff <= 0) {
-    dEl.textContent = hEl.textContent = mEl.textContent = sEl.textContent = "0";
+    if (dEl) dEl.textContent = "0";
+    if (hEl) hEl.textContent = "0";
+    if (mEl) mEl.textContent = "0";
+    if (sEl) sEl.textContent = "0";
+    if (cardDEl) cardDEl.textContent = "0";
+    if (cardHEl) cardHEl.textContent = "0";
+    if (cardMEl) cardMEl.textContent = "0";
+    if (cardSEl) cardSEl.textContent = "0";
     if (noteEl) noteEl.textContent = "Married! Thank you for blessing us.";
     return;
   }
@@ -139,7 +150,8 @@ function tick() {
   const h = Math.floor(diff / 36e5) % 24;
   const m = Math.floor(diff / 6e4) % 60;
   const s = Math.floor(diff / 1e3) % 60;
-  dEl.textContent = d; hEl.textContent = h; mEl.textContent = m; sEl.textContent = s;
+  if (dEl) { dEl.textContent = d; hEl.textContent = h; mEl.textContent = m; sEl.textContent = s; }
+  if (cardDEl) { cardDEl.textContent = d; cardHEl.textContent = h; cardMEl.textContent = m; cardSEl.textContent = s; }
 }
 tick();
 setInterval(tick, 1000);
@@ -235,10 +247,11 @@ if (calBtn) {
   calBtn.addEventListener("click", () => openCalendarModal("muhurtham"));
 }
 
-document.querySelectorAll(".venue-cal-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    openCalendarModal(btn.dataset.calEvent || "muhurtham");
-  });
+document.addEventListener("click", (e) => {
+  const calTrigger = e.target.closest(".venue-cal-btn");
+  if (calTrigger) {
+    openCalendarModal(calTrigger.dataset.calEvent || "muhurtham");
+  }
 });
 
 if (calCloseBtn && calDialog) {
@@ -327,10 +340,15 @@ if (btn) btn.addEventListener("click", () => {
   if (playing) startMusic(); else stopMusic();
 });
 
-// Sealed-envelope opener: seal breaks -> flap opens -> card rises -> expands into the temple-by-the-sea scene
+// Sealed-envelope opener: seal breaks -> flap opens -> card rises & stays -> user taps "Play Invitation" -> cinema begins
 const opener = document.getElementById("opener");
 const openBtn = document.getElementById("openBtn");
 const envelope = document.getElementById("envelope");
+const cardPlayBtn = document.getElementById("cardPlayBtn");
+const cardPlayBtnBottom = document.getElementById("cardPlayBtnBottom");
+
+let isEnvelopeOpened = false;
+let sealAutoOpenTimer = null;
 
 function playFilmVideos() {
   const v1 = document.getElementById("filmVideo1");
@@ -363,7 +381,7 @@ function revealSite() {
   const cover = document.getElementById("cover");
   if (cover) cover.classList.add("in");
   if (typeof updateFilmProgress === "function") updateFilmProgress();
-  // When seal is broken, immediately start playing the wedding film first
+  // Start playing the wedding film now
   if (typeof startAutoPlayFilm === "function") {
     startAutoPlayFilm();
   }
@@ -373,73 +391,148 @@ function revealSite() {
   }
 }
 
+const petals = ["🌸", "🏵️", "🌼", "❋"];
+const burst = () => {
+  if (reducedMotion || !opener) return;
+  for (let i = 0; i < 28; i++) {
+    const s = document.createElement("span");
+    s.className = "petal";
+    s.textContent = petals[i % petals.length];
+    s.style.left = `${30 + Math.random() * 40}%`;
+    s.style.setProperty("--dx", `${(Math.random() - 0.5) * 60}vw`);
+    s.style.animationDelay = `${Math.random() * 0.3}s`;
+    opener.appendChild(s);
+    setTimeout(() => s.remove(), 2400);
+  }
+};
+
+const enterFullScreen = () => {
+  try {
+    const docEl = document.documentElement;
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+    if (isFullscreen) return;
+    if (docEl.requestFullscreen) {
+      docEl.requestFullscreen().catch(() => { });
+    } else if (docEl.webkitRequestFullscreen) {
+      docEl.webkitRequestFullscreen();
+    } else if (docEl.webkitRequestFullScreen) {
+      docEl.webkitRequestFullScreen();
+    } else if (docEl.mozRequestFullScreen) {
+      docEl.mozRequestFullScreen();
+    } else if (docEl.msRequestFullscreen) {
+      docEl.msRequestFullscreen();
+    }
+  } catch (e) { }
+};
+
+function openEnvelope() {
+  if (isEnvelopeOpened) return;
+  isEnvelopeOpened = true;
+  if (sealAutoOpenTimer) {
+    clearTimeout(sealAutoOpenTimer);
+    sealAutoOpenTimer = null;
+  }
+  if (openBtn) openBtn.disabled = true;
+
+  // Try unlocking audio if browser allows (succeeds immediately on user gesture)
+  try {
+    startMusic();
+    playing = true;
+    if (btn) {
+      btn.setAttribute("aria-pressed", "true");
+      btn.classList.add("is-playing");
+    }
+  } catch (e) { }
+
+  if (reducedMotion) {
+    if (envelope) envelope.classList.add("unsealed", "flap-open", "letter-out");
+    if (opener) opener.classList.add("showing-invitation");
+    return;
+  }
+
+  // 1. Break the seal
+  if (envelope) envelope.classList.add("unsealed");
+
+  // 2. Open the envelope flap
+  setTimeout(() => {
+    if (envelope) envelope.classList.add("flap-open");
+  }, 380);
+
+  // 3. Letter slides up out of the envelope
+  setTimeout(() => {
+    if (envelope) envelope.classList.add("letter-out");
+  }, 950);
+
+  // 4. Reveal the full invitation card with all ceremony details & Play button — and STAY!
+  setTimeout(() => {
+    if (opener) opener.classList.add("showing-invitation");
+    burst();
+  }, 1450);
+}
+
+function handlePlayInvitation() {
+  enterFullScreen();
+  try {
+    startMusic();
+    playing = true;
+    if (btn) {
+      btn.setAttribute("aria-pressed", "true");
+      btn.classList.add("is-playing");
+    }
+  } catch (e) { }
+
+  userInteractionAllowedAfter = Date.now() + 3200;
+  playFilmVideos();
+
+  if (opener) {
+    opener.classList.add("open");
+  }
+
+  // Reveal site and immediately start the videos
+  revealSite();
+
+  setTimeout(() => {
+    try {
+      if (opener) opener.remove();
+    } catch (e) { }
+  }, 850);
+}
+
 if (opener && openBtn && envelope) {
   document.body.classList.add("locked");
   document.body.classList.remove("opened");
-  const petals = ["🌸", "🏵️", "🌼", "❋"];
-  const burst = () => {
-    if (reducedMotion) return;
-    for (let i = 0; i < 24; i++) {
-      const s = document.createElement("span");
-      s.className = "petal";
-      s.textContent = petals[i % petals.length];
-      s.style.left = `${36 + Math.random() * 28}%`;
-      s.style.setProperty("--dx", `${(Math.random() - 0.5) * 60}vw`);
-      s.style.animationDelay = `${Math.random() * 0.3}s`;
-      opener.appendChild(s);
-      setTimeout(() => s.remove(), 2400);
-    }
-  };
-  const enterFullScreen = () => {
-    try {
-      const docEl = document.documentElement;
-      const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-      if (isFullscreen) return;
-      if (docEl.requestFullscreen) {
-        docEl.requestFullscreen().catch(() => { });
-      } else if (docEl.webkitRequestFullscreen) {
-        docEl.webkitRequestFullscreen();
-      } else if (docEl.webkitRequestFullScreen) {
-        docEl.webkitRequestFullScreen();
-      } else if (docEl.mozRequestFullScreen) {
-        docEl.mozRequestFullScreen();
-      } else if (docEl.msRequestFullscreen) {
-        docEl.msRequestFullscreen();
-      }
-    } catch (e) {
-      // Graceful fallback for browsers where fullscreen is restricted
-    }
-  };
+
+  // User manual tap on seal opens immediately
   openBtn.addEventListener("click", () => {
-    enterFullScreen();
-    openBtn.disabled = true;
-    userInteractionAllowedAfter = Date.now() + 3200;
-    playFilmVideos();
-    // Guest track loops from the tap itself (user gesture unlocks audio)
-    try {
-      startMusic();
-      playing = true;
-      if (btn) {
-        btn.setAttribute("aria-pressed", "true");
-        btn.classList.add("is-playing");
-      }
-    } catch { }
-    if (reducedMotion) {
-      revealSite();
-      setTimeout(() => {
-        try { opener.remove(); } catch (e) { }
-      }, 100);
-      return;
-    }
-    envelope.classList.add("unsealed");       // seal pops visually
-    setTimeout(() => { envelope.classList.add("flap-open"); }, 380);   // flap rotates up
-    setTimeout(() => { envelope.classList.add("letter-out"); }, 1050); // card slides out
-    setTimeout(() => { envelope.classList.add("expand"); burst(); }, 1950); // card -> temple scene
-    setTimeout(revealSite, 2650);
-    setTimeout(() => {
-      try { opener.remove(); } catch (e) { }
-    }, 3250);
+    openEnvelope();
   });
+
+  // Schedule auto-open: seal opens by default in 2 seconds if not opened already
+  function scheduleSealAutoOpen() {
+    if (sealAutoOpenTimer || isEnvelopeOpened) return;
+    sealAutoOpenTimer = setTimeout(() => {
+      if (!isEnvelopeOpened) {
+        openEnvelope();
+      }
+    }, 2000);
+  }
+
+  const preloaderEl = document.getElementById("sitePreloader");
+  if (!preloaderEl || preloaderEl.classList.contains("is-loaded")) {
+    scheduleSealAutoOpen();
+  } else {
+    window.addEventListener("sitePreloaderDone", scheduleSealAutoOpen, { once: true });
+    // Safety fallback
+    setTimeout(scheduleSealAutoOpen, 4200);
+  }
+
+  // Play button on the invitation card triggers video film
+  if (cardPlayBtn) {
+    cardPlayBtn.addEventListener("click", handlePlayInvitation);
+  }
+  if (cardPlayBtnBottom) {
+    cardPlayBtnBottom.addEventListener("click", handlePlayInvitation);
+  }
 } else {
   document.body.classList.remove("locked");
   document.body.classList.add("opened");
@@ -1225,7 +1318,7 @@ function triggerBlessingShower(originX, originY, count = 14) {
 // Shower petals on taps, anywhere on the page EXCEPT on buttons & interactive links
 document.addEventListener("pointerdown", (e) => {
   // Never interfere with buttons (like mute/unmute), links, inputs, or scrubber controls
-  if (e.target.closest("button, a, input, select, textarea, [role='button'], .film-cue-dot")) {
+  if (e.target.closest("button, a, input, select, textarea, [role='button'], .film-cue-dot, .invitation-card")) {
     return;
   }
   const now = Date.now();

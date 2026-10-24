@@ -23,7 +23,7 @@
   <link rel="preload" as="video" type="video/mp4" href="./gemini_generated_video_7bb01561.mp4" />
   <link rel="preload" as="video" type="video/mp4" href="./gemini_generated_video_fe38268d.mp4" />
   <link rel="preload" as="audio" type="audio/mpeg" href="./en-jeevan.mp3" />
-  <link rel="stylesheet" href="./styles.css?v=21.0" />
+  <link rel="stylesheet" href="./styles.css?v=22.0" />
 </head>
 
 <body class="locked">
@@ -223,22 +223,119 @@
   </div>
 
   <div id="opener" class="opener" role="dialog" aria-modal="true" aria-label="Wedding invitation cover">
-    <p class="opener-top tamil"><span>திருமண அழைப்பு</span></p>
-    <div class="envelope" id="envelope" aria-hidden="false">
-      <div class="env-back"></div>
-      <div class="letter" id="letter">
-        <p class="gold-dark">With the Blessings of Parents</p>
-        <h2>GnanaGanesh <span>weds</span> Dharshini</h2>
-        <p class="open-sub">13-12-2026 (Sunday)</p>
-        <div class="kolam small" aria-hidden="true">❋ ── ◇ ── ❋</div>
+    <p class="opener-top tamil" id="openerTop"><span>திருமண அழைப்பு</span></p>
+    <div class="envelope-stage" id="envelopeStage">
+      <!-- 1. The Physical Sealed Envelope Cover -->
+      <div class="envelope" id="envelope" aria-hidden="false">
+        <div class="env-back"></div>
+        <div class="letter" id="letter">
+          <p class="gold-dark">With the Blessings of Parents</p>
+          <h2>GnanaGanesh <span>weds</span> Dharshini</h2>
+          <p class="open-sub">13-12-2026 (Sunday)</p>
+          <div class="kolam small" aria-hidden="true">❋ ── ◇ ── ❋</div>
+        </div>
+        <div class="env-front"></div>
+        <div class="env-flap" id="envFlap"></div>
+        <button id="openBtn" class="seal-btn" type="button" aria-label="Open invitation">
+          <img src="./seal.jpg" alt="Sacred Ganesha seal" />
+        </button>
       </div>
-      <div class="env-front"></div>
-      <div class="env-flap" id="envFlap"></div>
-      <button id="openBtn" class="seal-btn" type="button" aria-label="Open invitation">
-        <img src="./seal.jpg" alt="Sacred Ganesha seal" />
-      </button>
+
+      <!-- 2. The Unfolded Royal Invitation Card (Stays on screen with all details & Play CTA) -->
+      <div id="invitationCard" class="invitation-card" aria-label="Wedding Invitation Details" role="region">
+        <span class="corner-dots top-left" aria-hidden="true"><i></i><i></i></span>
+        <span class="corner-dots top-right" aria-hidden="true"><i></i><i></i></span>
+        <span class="corner-dots bottom-left" aria-hidden="true"><i></i><i></i></span>
+        <span class="corner-dots bottom-right" aria-hidden="true"><i></i><i></i></span>
+
+        <!-- Sacred Top Header -->
+        <header class="card-header">
+          <p class="card-blessings gold-dark">With the Blessings of Parents</p>
+          <h2 class="card-names">GnanaGanesh <span class="card-weds">weds</span> Dharshini</h2>
+          <p class="card-date-sub">Sunday, 13 December 2026 · Tiruchendur</p>
+          <div class="kolam small" aria-hidden="true">❋ ── ◇ ── ❋</div>
+        </header>
+
+        <!-- Prominent Play Invitation Button (Primary CTA) -->
+        <div class="card-play-cta-wrap">
+          <button id="cardPlayBtn" class="btn primary play-invitation-btn" type="button" aria-label="Play Invitation Film">
+            <span class="play-icon-glow">▶</span>
+            <span>Play Invitation / திருமணக் காணொளி</span>
+          </button>
+        </div>
+
+        <!-- Live Countdown Timer -->
+        <div class="countdown-block card-countdown-block">
+          <h3 class="countdown-heading">Our Journey ❤️ Begins in</h3>
+          <div class="timer card-timer" role="timer" aria-live="off">
+            <div><span id="card-d">–</span><small>Days</small></div>
+            <div><span id="card-h">–</span><small>Hours</small></div>
+            <div><span id="card-m">–</span><small>Mins</small></div>
+            <div><span id="card-s">–</span><small>Secs</small></div>
+          </div>
+        </div>
+
+        <!-- Decorative Floral Divider -->
+        <div class="countdown-divider card-divider" aria-hidden="true">
+          <span>❋ ─── 📍 ─── ❋</span>
+        </div>
+
+        <!-- Wedding Locations & Venue Summary (Details from last part of inside view) -->
+        <div class="venue-summary-block card-venues-block" id="card-venue-summary">
+          <div class="venue-summary-grid">
+            <!-- Venue 1: Tiruchendur -->
+            <div class="venue-summary-card">
+              <span class="venue-summary-badge">ENGAGEMENT &amp; MUHURTHAM</span>
+              <h4 class="venue-summary-title">Shanmugar Mahal, Tiruchendur</h4>
+              <p class="venue-summary-events">Sat, 12 Dec (6:30 PM) &amp; Sun, 13 Dec (6:30 AM)</p>
+              <div class="venue-actions">
+                <a class="btn primary small venue-btn" href="https://maps.google.com/?q=Shanmugar+Mahal+Tiruchendur"
+                  target="_blank" rel="noopener">
+                  <span>📍 Open Map</span>
+                </a>
+                <button type="button" class="btn small venue-cal-btn" data-cal-event="muhurtham">
+                  <span>📅 Add to Calendar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Venue 2: Thoothukudi -->
+            <div class="venue-summary-card">
+              <span class="venue-summary-badge">EVENING RECEPTION</span>
+              <h4 class="venue-summary-title">Santhiya Mahal, Thoothukudi</h4>
+              <p class="venue-summary-events">Sunday, 13 Dec 2026 · Evening 6:30 PM onwards</p>
+              <div class="venue-actions">
+                <a class="btn primary small venue-btn"
+                  href="https://maps.google.com/?q=Santhiya+Mahal+VMS+Nagar+South+Meelavittan+Road+Thoothukudi"
+                  target="_blank" rel="noopener">
+                  <span>📍 Open Map</span>
+                </a>
+                <button type="button" class="btn small venue-cal-btn" data-cal-event="reception">
+                  <span>📅 Add to Calendar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warm Finale Wishes -->
+        <div class="card-finale">
+          <div class="kolam small" aria-hidden="true">❋ ── ◇ ── ❋</div>
+          <p class="finale-wish">We can't wait to celebrate with you.</p>
+          <p class="finale-love">With love,<br /><span class="finale-couple-names">GnanaGanesh ❤️ Dharshini</span></p>
+          <p class="small card-domain">ganesh-weds-dharshini.gnanaganesh.in</p>
+        </div>
+
+        <!-- Bottom Play Invitation Button -->
+        <div class="card-play-cta-bottom">
+          <button id="cardPlayBtnBottom" class="btn primary play-invitation-btn" type="button" aria-label="Play Invitation Film">
+            <span class="play-icon-glow">▶</span>
+            <span>Play Invitation / திருமணக் காணொளி</span>
+          </button>
+        </div>
+      </div>
     </div>
-    <p class="opener-hint">Tap the seal to open</p>
+    <p class="opener-hint" id="openerHint">Tap the seal to open</p>
   </div>
 
 
@@ -332,11 +429,6 @@
           <div id="cover" class="film-scene-frame frame-0 is-active" data-scene="0">
             <!-- Top Header: Floating Regal Typography above couple -->
             <header class="cinema-cover-header rise" style="--d:.05s">
-              <div class="cinema-divine-banner">
-                <span class="cinema-om" aria-hidden="true">ௐ</span>
-                <span class="cinema-mantra">திருவருள் கூடும் சுப முகூர்த்த அழைப்பிதழ்</span>
-                <span class="cinema-om" aria-hidden="true">ௐ</span>
-              </div>
               <h1 class="cinema-cover-title">
                 <span class="title-name">GnanaGanesh</span>
                 <span class="title-weds">weds</span>
@@ -590,7 +682,7 @@
     </div>
   </dialog>
 
-  <script src="./script.js?v=25.0"></script>
+  <script src="./script.js?v=26.0"></script>
 </body>
 
 </html>
