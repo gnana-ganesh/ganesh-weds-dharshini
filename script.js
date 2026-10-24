@@ -716,6 +716,12 @@ function renderFilmUI(progress) {
     }
   }
 
+  // Floating play/resume button visibility inside the cinema scenes
+  const filmResumeBtn = document.getElementById("filmResumeBtn");
+  if (filmResumeBtn) {
+    filmResumeBtn.classList.toggle("is-visible", progress >= 0.16 && progress < 0.98);
+  }
+
   document.querySelectorAll("[data-target-act]").forEach((btn) => {
     const act = parseInt(btn.dataset.targetAct, 10);
     const isActive = (act === activeIdx && activeIdx > 0);
@@ -1158,6 +1164,27 @@ if (playBtn) {
       stopAutoPlayFilm();
     } else {
       startAutoPlayFilm();
+    }
+  });
+}
+
+const filmResumeBtn = document.getElementById("filmResumeBtn");
+if (filmResumeBtn) {
+  filmResumeBtn.addEventListener("click", () => {
+    userInteractionAllowedAfter = Date.now() + 2500;
+    startAutoPlayFilm();
+  });
+}
+
+// Tapping the film stage while video is playing pauses playback and shows the play button
+const stickyFilmViewport = document.querySelector(".sticky-film-viewport");
+if (stickyFilmViewport) {
+  stickyFilmViewport.addEventListener("click", (e) => {
+    if (e.target.closest("button") || e.target.closest("a") || e.target.closest("input") || e.target.closest(".scene-card")) {
+      return;
+    }
+    if (filmAutoPlaying && Date.now() >= userInteractionAllowedAfter) {
+      stopAutoPlayFilm();
     }
   });
 }
