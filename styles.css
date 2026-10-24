@@ -715,7 +715,11 @@ body.movie-playing .film-floating-play-btn {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transform: translate(-50%, -50%) scale(0.9) !important;
+  transform: translateX(-50%) scale(0.9) !important;
+}
+
+body.locked .film-floating-play-btn {
+  display: none !important;
 }
 
 body.movie-playing #playBtn,
@@ -2831,39 +2835,44 @@ body.cinema-active .comic-art {
 
 /* ==========================================================================
    FLOATING CINEMA RESUME PLAY BUTTON (VISIBLE WHEN PAUSED, HIDDEN WHEN PLAYING)
+   Docked at the bottom directly above the event description card/footer
+   so the couple's faces and upper video are NEVER hidden!
    ========================================================================== */
 .film-floating-play-btn {
   position: absolute;
-  top: 48%;
+  bottom: var(--resume-btn-bottom, clamp(160px, 22vh, 220px));
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.95);
+  transform: translateX(-50%) scale(0.95);
   z-index: 85;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.65rem;
-  padding: 0.85rem 1.95rem;
+  gap: 0.6rem;
+  padding: 0.68rem 1.65rem;
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  font-size: clamp(0.88rem, 1.8vw, 1.02rem);
   font-weight: 600;
   letter-spacing: 0.04em;
   border-radius: 999px;
   background: linear-gradient(135deg, #fcebc2 0%, #e8be48 45%, #c8952a 80%, #996e1a 100%);
   color: #2b0b12;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 24px rgba(232, 190, 72, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(232, 190, 72, 0.55);
   border: 1px solid rgba(255, 250, 230, 0.9);
   cursor: pointer;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              bottom 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 .film-floating-play-btn .floating-play-icon {
-  font-size: 1.1em;
+  font-size: 1.05em;
   display: inline-block;
   transform: translateX(1px);
 }
@@ -2873,13 +2882,13 @@ body.cinema-active .comic-art {
 }
 
 .film-floating-play-btn:hover {
-  transform: translate(-50%, -50%) scale(1.05);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 32px rgba(232, 190, 72, 0.85);
+  transform: translateX(-50%) scale(1.04);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.7), 0 0 28px rgba(232, 190, 72, 0.85);
   color: #1a0409;
 }
 
 .film-floating-play-btn:active {
-  transform: translate(-50%, -50%) scale(0.96);
+  transform: translateX(-50%) scale(0.96);
 }
 
 @keyframes resumePlayGlow {
@@ -2894,12 +2903,12 @@ body.cinema-active .comic-art {
   }
 }
 
-/* Shown when paused inside the cinematic chapters */
+/* Shown when paused inside the cinema (including the first part & all scenes) */
 body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translateX(-50%) scale(1);
   animation: resumePlayGlow 2.4s infinite ease-in-out;
 }
 
@@ -3031,11 +3040,7 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
 }
 
 .cinema-cta-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  flex-wrap: wrap;
+  display: none !important;
 }
 
 .cinema-play-cta {
@@ -3347,9 +3352,9 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
   }
 
   .film-floating-play-btn {
-    padding: 0.72rem 1.5rem;
-    font-size: 0.95rem;
-    gap: 0.5rem;
+    padding: 0.62rem 1.4rem;
+    font-size: 0.88rem;
+    gap: 0.45rem;
   }
 
   /* Music toggle button on mobile */

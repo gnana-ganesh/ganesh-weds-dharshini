@@ -668,6 +668,26 @@ if (filmFocusBtn && filmStageContent) {
   });
 }
 
+// Dock the floating play button directly above the active event description card or footer
+let lastMeasuredAct = -1;
+function updateResumeBtnPosition(force = false) {
+  const filmResumeBtn = document.getElementById("filmResumeBtn");
+  if (!filmResumeBtn) return;
+  if (!force && lastMeasuredAct === currentFilmAct) return;
+  lastMeasuredAct = currentFilmAct;
+
+  const activeFrame = (typeof filmFrames !== "undefined" && filmFrames[currentFilmAct]) || document.querySelector(".film-scene-frame.is-active");
+  if (!activeFrame) return;
+  const card = activeFrame.querySelector(".cinema-lower-third, .cinema-cover-footer");
+  if (card) {
+    const cardRect = card.getBoundingClientRect();
+    if (cardRect.top > 0) {
+      const bottomDist = Math.max(Math.round(window.innerHeight - cardRect.top + (currentFilmAct === 0 ? 12 : 14)), 130);
+      filmResumeBtn.style.setProperty("--resume-btn-bottom", `${bottomDist}px`);
+    }
+  }
+}
+
 // Render narrative cards, timecode, HUD and lighting according to normalized progress (0.00 to 1.00)
 function renderFilmUI(progress) {
   // Update scrubber progress bar fill
@@ -716,10 +736,11 @@ function renderFilmUI(progress) {
     }
   }
 
-  // Floating play/resume button visibility inside the cinema scenes
+  // Floating play/resume button visibility inside the cinema scenes (including the first part)
   const filmResumeBtn = document.getElementById("filmResumeBtn");
   if (filmResumeBtn) {
-    filmResumeBtn.classList.toggle("is-visible", progress >= 0.16 && progress < 0.98);
+    filmResumeBtn.classList.toggle("is-visible", progress < 0.98);
+    updateResumeBtnPosition();
   }
 
   document.querySelectorAll("[data-target-act]").forEach((btn) => {
@@ -1083,6 +1104,7 @@ function stopAutoPlayFilm() {
   if (video2) { try { video2.pause(); } catch (e) { } }
   if (video3) { try { video3.pause(); } catch (e) { } }
   updatePlaybackUI(false);
+  updateResumeBtnPosition(true);
 }
 
 // User interactions (wheel, touch swipe, keys) pause autoplay
@@ -1188,6 +1210,12 @@ if (stickyFilmViewport) {
     }
   });
 }
+
+window.addEventListener("resize", () => {
+  updateResumeBtnPosition(true);
+}, { passive: true });
+
+updateResumeBtnPosition(true);
 
 
 // Smooth anchor buttons
