@@ -336,7 +336,6 @@ const opener = document.getElementById("opener");
 const openBtn = document.getElementById("openBtn");
 const envelope = document.getElementById("envelope");
 const cardPlayBtn = document.getElementById("cardPlayBtn");
-const cardPlayBtnBottom = document.getElementById("cardPlayBtnBottom");
 
 let isEnvelopeOpened = false;
 let sealAutoOpenTimer = null;
@@ -520,9 +519,6 @@ if (opener && openBtn && envelope) {
   // Play button on the invitation card triggers video film
   if (cardPlayBtn) {
     cardPlayBtn.addEventListener("click", handlePlayInvitation);
-  }
-  if (cardPlayBtnBottom) {
-    cardPlayBtnBottom.addEventListener("click", handlePlayInvitation);
   }
 } else {
   document.body.classList.remove("locked");

@@ -1140,9 +1140,6 @@ body.movie-playing .film-timeline-wrap {
 .card-play-cta-wrap {
   margin: 0.7rem auto 1.1rem;
 }
-.card-play-cta-bottom {
-  margin: 1.1rem auto 0.4rem;
-}
 .play-invitation-btn {
   display: inline-flex;
   align-items: center;
