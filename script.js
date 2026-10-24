@@ -169,13 +169,13 @@ const CALENDAR_EVENTS = {
     gcalUrl: "https://calendar.google.com/calendar/render?action=TEMPLATE" +
       "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Engagement Ceremony") +
       "&dates=20261212T130000Z/20261212T150000Z" +
-      "&details=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred Engagement ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+      "&details=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred Engagement ceremony.\n\nWebsite: https://gnanaganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
       "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215"),
     outlookUrl: "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
       "&startdt=2026-12-12T13:00:00Z" +
       "&enddt=2026-12-12T15:00:00Z" +
       "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Engagement Ceremony") +
-      "&body=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred Engagement ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+      "&body=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred Engagement ceremony.\n\nWebsite: https://gnanaganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
       "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215")
   },
   muhurtham: {
@@ -187,13 +187,13 @@ const CALENDAR_EVENTS = {
     gcalUrl: "https://calendar.google.com/calendar/render?action=TEMPLATE" +
       "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
       "&dates=20261213T010000Z/20261213T030000Z" +
-      "&details=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+      "&details=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://gnanaganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
       "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215"),
     outlookUrl: "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
       "&startdt=2026-12-13T01:00:00Z" +
       "&enddt=2026-12-13T03:00:00Z" +
       "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Sacred Muhurtham") +
-      "&body=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
+      "&body=" + encodeURIComponent("With the blessings of our families, GnanaGanesh & Dharshini invite you to celebrate their sacred wedding ceremony.\n\nWebsite: https://gnanaganesh-weds-dharshini.gnanaganesh.in\nVenue: Shanmugar Mahal, Tiruchendur") +
       "&location=" + encodeURIComponent("Shanmugar Mahal, Tiruchendur, Thoothukudi District, Tamil Nadu 628215")
   },
   reception: {
@@ -205,13 +205,13 @@ const CALENDAR_EVENTS = {
     gcalUrl: "https://calendar.google.com/calendar/render?action=TEMPLATE" +
       "&text=" + encodeURIComponent("GnanaGanesh weds Dharshini — Wedding Reception") +
       "&dates=20261213T130000Z/20261213T160000Z" +
-      "&details=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Santhiya Mahal, Thoothukudi") +
+      "&details=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://gnanaganesh-weds-dharshini.gnanaganesh.in\nVenue: Santhiya Mahal, Thoothukudi") +
       "&location=" + encodeURIComponent("Santhiya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu"),
     outlookUrl: "https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent" +
       "&startdt=2026-12-13T13:00:00Z" +
       "&enddt=2026-12-13T16:00:00Z" +
       "&subject=" + encodeURIComponent("GnanaGanesh weds Dharshini — Wedding Reception") +
-      "&body=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://ganesh-weds-dharshini.gnanaganesh.in\nVenue: Santhiya Mahal, Thoothukudi") +
+      "&body=" + encodeURIComponent("With joy and gratitude, join GnanaGanesh & Dharshini as they celebrate their Wedding Reception evening.\n\nWebsite: https://gnanaganesh-weds-dharshini.gnanaganesh.in\nVenue: Santhiya Mahal, Thoothukudi") +
       "&location=" + encodeURIComponent("Santhiya Mahal, VMS Nagar South, Meelavittan Road, Thoothukudi, Tamil Nadu")
   }
 };
