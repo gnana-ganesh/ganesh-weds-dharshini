@@ -2940,6 +2940,7 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
 
 .film-scene-frame.is-active {
   opacity: 1;
+  z-index: 20;
 }
 
 /* ==========================================================================
@@ -3163,6 +3164,8 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
   padding: 0.95rem 1.4rem;
   color: #fff9ed;
   pointer-events: auto;
+  position: relative;
+  z-index: 25;
   max-height: none; /* AVOID SCROLLBAR: Let content dictate natural compact height */
   overflow: visible; /* AVOID SCROLLBAR: No nested scrolling on cards */
   scrollbar-width: none;
@@ -3235,6 +3238,8 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
   gap: 0.55rem;
   margin: 0;
   flex-shrink: 0;
+  position: relative;
+  z-index: 30;
 }
 
 .cinema-lower-third .venue-btn {
@@ -3243,12 +3248,24 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
   line-height: 1.25;
   padding: 0.44rem 0.95rem;
   font-size: 0.84rem;
+  position: relative;
+  z-index: 35;
+  pointer-events: auto !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(232, 199, 126, 0.35);
 }
 
 .cinema-lower-third .venue-cal-btn {
   white-space: nowrap;
   padding: 0.44rem 0.95rem;
   font-size: 0.84rem;
+  position: relative;
+  z-index: 35;
+  pointer-events: auto !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(232, 199, 126, 0.35);
 }
 
 /* Tablet & Desktop Layout (min-width: 768px) */
@@ -3413,6 +3430,8 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
     display: flex;
     gap: 0.45rem;
     width: 100%;
+    position: relative;
+    z-index: 30;
   }
   .cinema-lower-third .cta-row .btn {
     flex: 1 1 0;
@@ -3424,6 +3443,11 @@ body.in-cinema:not(.movie-playing) .film-floating-play-btn.is-visible {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
+    z-index: 35;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+    cursor: pointer;
   }
   .cinema-lower-third .cta-row .btn span {
     overflow: hidden;

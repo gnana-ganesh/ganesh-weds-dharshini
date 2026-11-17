@@ -116,6 +116,7 @@
 })();
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let filmAutoPlaying = false;
 
 
 
@@ -217,6 +218,9 @@ const CALENDAR_EVENTS = {
 };
 
 function openCalendarModal(eventType) {
+  if (typeof stopAutoPlayFilm === "function") {
+    stopAutoPlayFilm();
+  }
   const ev = CALENDAR_EVENTS[eventType] || CALENDAR_EVENTS.muhurtham;
   if (calDialogSub) calDialogSub.textContent = ev.sub;
   if (calMetaDate) calMetaDate.innerHTML = ev.dateHtml;
@@ -226,11 +230,26 @@ function openCalendarModal(eventType) {
   if (outlookOption) outlookOption.href = ev.outlookUrl;
   if (appleOption) appleOption.href = ev.icsFile;
 
-  // Open directly to Google Calendar by default
+  let popupBlocked = false;
   if (ev && ev.gcalUrl) {
-    window.open(ev.gcalUrl, "_blank", "noopener");
-  } else if (calDialog && typeof calDialog.showModal === "function") {
-    calDialog.showModal();
+    try {
+      const win = window.open(ev.gcalUrl, "_blank", "noopener");
+      if (!win || win.closed || typeof win.closed === "undefined") {
+        popupBlocked = true;
+      }
+    } catch (e) {
+      popupBlocked = true;
+    }
+  }
+
+  // If opening Google Calendar directly in a new tab was blocked by popup blocker or failed,
+  // gracefully open the calendar dialog so the user can choose
+  if (popupBlocked && calDialog && typeof calDialog.showModal === "function") {
+    try {
+      calDialog.showModal();
+    } catch (e) {
+      calDialog.setAttribute("open", "");
+    }
   }
 }
 
@@ -241,8 +260,40 @@ if (calBtn) {
 document.addEventListener("click", (e) => {
   const calTrigger = e.target.closest(".venue-cal-btn");
   if (calTrigger) {
+    if (typeof stopAutoPlayFilm === "function") {
+      stopAutoPlayFilm();
+    }
     openCalendarModal(calTrigger.dataset.calEvent || "muhurtham");
   }
+  const venueLink = e.target.closest(".venue-btn");
+  if (venueLink) {
+    if (typeof stopAutoPlayFilm === "function") {
+      stopAutoPlayFilm();
+    }
+  }
+});
+
+// Immediately freeze auto-playback when user touches or clicks any interactive card, button or link
+// so that continuous programmatic scrolling (window.scrollTo) does NOT cancel user taps/clicks!
+const handleInteractivePointerDown = (e) => {
+  const isInteractive = e.target && e.target.closest && e.target.closest(".venue-btn, .venue-cal-btn, .scene-card, .cinema-lower-third, .cal-opt-item, .film-event-menu");
+  if (isInteractive && filmAutoPlaying) {
+    stopAutoPlayFilm();
+  }
+};
+
+window.addEventListener("pointerdown", handleInteractivePointerDown, { capture: true, passive: true });
+window.addEventListener("touchstart", handleInteractivePointerDown, { capture: true, passive: true });
+window.addEventListener("mousedown", handleInteractivePointerDown, { capture: true, passive: true });
+
+document.querySelectorAll(".cal-opt-item").forEach((opt) => {
+  opt.addEventListener("click", () => {
+    setTimeout(() => {
+      if (calDialog && typeof calDialog.close === "function") {
+        calDialog.close();
+      }
+    }, 300);
+  });
 });
 
 if (calCloseBtn && calDialog) {
@@ -647,7 +698,7 @@ let targetTime1 = 2.85;
 let targetTime2 = 0;
 let targetTime3 = 0;
 let currentFilmAct = 0;
-let filmAutoPlaying = false;
+filmAutoPlaying = false;
 let autoPlayAnimId = null;
 let cardsHidden = false;
 let userInteractionAllowedAfter = 0;
@@ -824,9 +875,13 @@ function renderFilmUI(progress) {
       frame.style.opacity = opacity.toFixed(3);
       frame.style.transform = `translateY(${translateY.toFixed(1)}px)`;
     }
-    const isFocused = opacity > 0.4;
+    const isFocused = opacity > 0.05 && (activeIdx === idx || (idx > 0 && Math.abs(activeIdx - idx) <= 1));
     frame.classList.toggle("is-active", isFocused);
-    frame.style.pointerEvents = isFocused ? "auto" : "none";
+    frame.style.pointerEvents = "none";
+    const card = frame.querySelector(".cinema-lower-third, .cinema-cover-header, .cinema-cover-footer");
+    if (card) {
+      card.style.pointerEvents = (activeIdx === idx || opacity > 0.2) ? "auto" : "none";
+    }
   });
 }
 
