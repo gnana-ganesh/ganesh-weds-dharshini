@@ -1,71 +1,38 @@
-
-
-// ---------- Auspicious Wedding Preloader ----------
+// ---------- Fast Non-Blocking Preloader ----------
 (function initSitePreloader() {
   const preloader = document.getElementById("sitePreloader");
   if (!preloader) return;
 
   const bar = document.getElementById("preloaderBar");
-  const percentEl = document.getElementById("preloaderPercent");
-  const statusEl = document.getElementById("preloaderStatus");
-
   let currentPercent = 0;
-  let targetPercent = 25;
+  let targetPercent = 35;
   let isDone = false;
-  const startTime = Date.now();
-  const MIN_DISPLAY_MS = 1400; // Auspicious breath so users experience the royal prologue
-  const MAX_WAIT_MS = 3800;    // Failsafe so user is never blocked on slow connections
-
-  const statusMessages = [
-    { at: 0, text: "மங்கல அழைப்பிதழ் தயாராகிறது..." },
-    { at: 45, text: "இசையும் காட்சிகளும் இணைகின்றன..." },
-    { at: 85, text: "அழைப்பு தயார் · மங்கலம் நிறைக!" }
-  ];
-
-  function updateStatus(val) {
-    if (!statusEl) return;
-    for (let i = statusMessages.length - 1; i >= 0; i--) {
-      if (val >= statusMessages[i].at) {
-        statusEl.textContent = statusMessages[i].text;
-        break;
-      }
-    }
-  }
+  const MAX_WAIT_MS = 1200; // Fast failsafe so user is never blocked
 
   function setProgress(val) {
     currentPercent = Math.min(100, Math.max(currentPercent, Math.round(val)));
     if (bar) bar.style.width = `${currentPercent}%`;
-    if (percentEl) percentEl.textContent = `${currentPercent}%`;
-    if (preloader) preloader.setAttribute("aria-valuenow", currentPercent);
-    updateStatus(currentPercent);
+    preloader.setAttribute("aria-valuenow", String(currentPercent));
   }
 
-  // Smooth interpolation ticker
   const interval = setInterval(() => {
     if (currentPercent < targetPercent) {
-      const step = Math.max(1, Math.ceil((targetPercent - currentPercent) * 0.18));
+      const step = Math.max(2, Math.ceil((targetPercent - currentPercent) * 0.28));
       setProgress(currentPercent + step);
     }
     if (currentPercent >= 100 && isDone) {
       clearInterval(interval);
       finish();
     }
-  }, 35);
+  }, 30);
 
   function finish() {
-    const elapsed = Date.now() - startTime;
-    const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+    setProgress(100);
+    preloader.classList.add("is-loaded");
+    window.dispatchEvent(new CustomEvent("sitePreloaderDone"));
     setTimeout(() => {
-      setProgress(100);
-      if (statusEl) statusEl.textContent = "அழைப்பு தயார் · மங்கலம் நிறைக!";
-      setTimeout(() => {
-        preloader.classList.add("is-loaded");
-        window.dispatchEvent(new CustomEvent("sitePreloaderDone"));
-        setTimeout(() => {
-          try { preloader.remove(); } catch (e) { preloader.style.display = "none"; }
-        }, 800);
-      }, 250);
-    }, remaining);
+      try { preloader.remove(); } catch (e) { preloader.style.display = "none"; }
+    }, 500);
   }
 
   function complete() {
@@ -74,53 +41,36 @@
     targetPercent = 100;
   }
 
-  // Stage 1: DOM readiness
   if (document.readyState === "interactive" || document.readyState === "complete") {
-    targetPercent = Math.max(targetPercent, 50);
+    targetPercent = Math.max(targetPercent, 60);
   } else {
     document.addEventListener("DOMContentLoaded", () => {
-      targetPercent = Math.max(targetPercent, 50);
-    });
+      targetPercent = Math.max(targetPercent, 60);
+    }, { once: true });
   }
 
-  // Stage 2: Fonts loaded
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => {
-      targetPercent = Math.max(targetPercent, 70);
-    }).catch(() => { });
-  }
+  const fontsReady = (document.fonts && document.fonts.ready)
+    ? document.fonts.ready.catch(() => { })
+    : Promise.resolve();
 
-  // Stage 3: Key image preloads (seal & background poster)
-  const keyImages = ["./seal.jpg", "./tiruchendur-comic-landscape.webp?v=4.0"];
-  let loadedImages = 0;
-  keyImages.forEach(src => {
+  const sealReady = new Promise((resolve) => {
     const img = new Image();
-    img.onload = img.onerror = () => {
-      loadedImages++;
-      targetPercent = Math.max(targetPercent, 70 + Math.round((loadedImages / keyImages.length) * 20));
-    };
-    img.src = src;
+    img.onload = img.onerror = resolve;
+    img.src = "./seal.webp";
   });
 
-  // Stage 4: Window complete load
-  if (document.readyState === "complete") {
+  Promise.all([fontsReady, sealReady]).then(() => {
+    targetPercent = 90;
     complete();
-  } else {
-    window.addEventListener("load", () => {
-      complete();
-    });
-  }
+  });
 
-  // Hard safety timeout
   setTimeout(complete, MAX_WAIT_MS);
 })();
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let filmAutoPlaying = false;
 
-
-
-// Muhurtham: Sunday 13 Dec 2026, 6:30 AM IST. Format: YYYY-MM-DDTHH:MM:SS+05:30
+// Muhurtham: Sunday 13 Dec 2026, 6:30 AM IST.
 const WEDDING_DATE = new Date("2026-12-13T06:30:00+05:30");
 
 const dEl = document.getElementById("d");
@@ -148,8 +98,7 @@ function tick() {
 tick();
 setInterval(tick, 1000);
 
-// Add to Calendar — Direct invite creation across Google, Apple & Outlook for Muhurtham & Reception
-const calBtn = document.getElementById("calBtn");
+// ---------- Add to Calendar Dialog ----------
 const calDialog = document.getElementById("calDialog");
 const calCloseBtn = document.getElementById("calCloseBtn");
 const calDialogSub = document.getElementById("calDialogSub");
@@ -230,61 +179,42 @@ function openCalendarModal(eventType) {
   if (outlookOption) outlookOption.href = ev.outlookUrl;
   if (appleOption) appleOption.href = ev.icsFile;
 
-  let popupBlocked = false;
-  if (ev && ev.gcalUrl) {
-    try {
-      const win = window.open(ev.gcalUrl, "_blank", "noopener");
-      if (!win || win.closed || typeof win.closed === "undefined") {
-        popupBlocked = true;
+  // Always show the picker so Apple/iOS, Google, and Outlook users can pick their app
+  if (calDialog) {
+    if (typeof calDialog.showModal === "function") {
+      try {
+        calDialog.showModal();
+      } catch (e) {
+        calDialog.setAttribute("open", "");
       }
-    } catch (e) {
-      popupBlocked = true;
-    }
-  }
-
-  // If opening Google Calendar directly in a new tab was blocked by popup blocker or failed,
-  // gracefully open the calendar dialog so the user can choose
-  if (popupBlocked && calDialog && typeof calDialog.showModal === "function") {
-    try {
-      calDialog.showModal();
-    } catch (e) {
+    } else {
       calDialog.setAttribute("open", "");
     }
   }
 }
 
-if (calBtn) {
-  calBtn.addEventListener("click", () => openCalendarModal("muhurtham"));
-}
-
 document.addEventListener("click", (e) => {
   const calTrigger = e.target.closest(".venue-cal-btn");
   if (calTrigger) {
-    if (typeof stopAutoPlayFilm === "function") {
-      stopAutoPlayFilm();
-    }
     openCalendarModal(calTrigger.dataset.calEvent || "muhurtham");
+    return;
   }
   const venueLink = e.target.closest(".venue-btn");
-  if (venueLink) {
-    if (typeof stopAutoPlayFilm === "function") {
-      stopAutoPlayFilm();
-    }
+  if (venueLink && typeof stopAutoPlayFilm === "function") {
+    stopAutoPlayFilm();
   }
 });
 
-// Immediately freeze auto-playback when user touches or clicks any interactive card, button or link
-// so that continuous programmatic scrolling (window.scrollTo) does NOT cancel user taps/clicks!
-const handleInteractivePointerDown = (e) => {
-  const isInteractive = e.target && e.target.closest && e.target.closest(".venue-btn, .venue-cal-btn, .scene-card, .cinema-lower-third, .cal-opt-item, .film-event-menu");
-  if (isInteractive && filmAutoPlaying) {
+// Freeze auto-playback immediately when user touches/clicks interactive controls
+window.addEventListener("pointerdown", (e) => {
+  if (!filmAutoPlaying) return;
+  const isInteractive = e.target && e.target.closest && e.target.closest(
+    ".venue-btn, .venue-cal-btn, .scene-card, .cinema-lower-third, .cal-opt-item, .film-event-menu"
+  );
+  if (isInteractive) {
     stopAutoPlayFilm();
   }
-};
-
-window.addEventListener("pointerdown", handleInteractivePointerDown, { capture: true, passive: true });
-window.addEventListener("touchstart", handleInteractivePointerDown, { capture: true, passive: true });
-window.addEventListener("mousedown", handleInteractivePointerDown, { capture: true, passive: true });
+}, { capture: true, passive: true });
 
 document.querySelectorAll(".cal-opt-item").forEach((opt) => {
   opt.addEventListener("click", () => {
@@ -292,7 +222,7 @@ document.querySelectorAll(".cal-opt-item").forEach((opt) => {
       if (calDialog && typeof calDialog.close === "function") {
         calDialog.close();
       }
-    }, 300);
+    }, 250);
   });
 });
 
@@ -302,53 +232,43 @@ if (calCloseBtn && calDialog) {
 
 if (calDialog) {
   calDialog.addEventListener("click", (e) => {
-    const rect = calDialog.getBoundingClientRect();
-    const isInDialog = (
-      rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
-      rect.left <= e.clientX && e.clientX <= rect.left + rect.width
-    );
-    if (!isInDialog) {
+    if (e.target === calDialog) {
       calDialog.close();
     }
   });
 }
 
-function updatePlaybackUI(isPlaying) {
-  if (playBtn) {
-    playBtn.innerHTML = isPlaying
-      ? "⏸ Pause Story"
-      : '<span class="play-icon-glow">▶</span> <span>Watch Wedding Film / கதைப் பயணம்</span>';
-  }
-}
-
-// Traditional-style drone (no audio file needed).
-// Tanpura-like Sa–Pa–Sa using WebAudio oscillators. Starts only on user tap.
+// ---------- Music Player (MP3 + WebAudio Tanpura Drone Fallback) ----------
 let ctx = null, nodes = [], playing = false;
 const btn = document.getElementById("musicBtn");
+
 function startDrone() {
   ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
   ctx.resume();
-  const freqs = [136.1, 204.15, 272.2]; // Sa, Pa, Sa (C# drone-ish)
+  const freqs = [136.1, 204.15, 272.2];
   freqs.forEach((f, i) => {
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.type = i === 1 ? "triangle" : "sine";
     o.frequency.value = f;
     g.gain.value = 0.035;
-    // gentle pluck pulse
     const lfo = ctx.createOscillator(), lg = ctx.createGain();
-    lfo.frequency.value = 0.25 + i * 0.12; lg.gain.value = 0.015;
-    lfo.connect(lg); lg.connect(g.gain);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); lfo.start();
+    lfo.frequency.value = 0.25 + i * 0.12;
+    lg.gain.value = 0.015;
+    lfo.connect(lg);
+    lg.connect(g.gain);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start();
+    lfo.start();
     nodes.push(o, lfo);
   });
 }
+
 function stopDrone() {
   nodes.forEach(n => { try { n.stop(); } catch { } });
   nodes = [];
 }
-// Looped invitation track (guest-provided mp3). Starts on the seal tap;
-// the Music button toggles it. Synth drone is the fallback if it can't play.
+
 const loopTrack = document.getElementById("bgMusic");
 if (loopTrack) {
   loopTrack.volume = 0.85;
@@ -360,6 +280,7 @@ if (loopTrack) {
     } catch (e) { }
   });
 }
+
 function startMusic() {
   if (loopTrack) {
     loopTrack.loop = true;
@@ -371,31 +292,36 @@ function startMusic() {
     try { startDrone(); } catch { }
   }
 }
+
 function stopMusic() {
   try { if (loopTrack) loopTrack.pause(); } catch { }
   try { stopDrone(); } catch { }
 }
-if (btn) btn.addEventListener("click", () => {
-  playing = !playing;
-  btn.setAttribute("aria-pressed", String(playing));
-  btn.classList.toggle("is-playing", playing);
-  if (playing) startMusic(); else stopMusic();
-});
 
-// Sealed-envelope opener: seal breaks -> flap opens -> card rises & stays -> user taps "Play Invitation" -> cinema begins
+if (btn) {
+  btn.addEventListener("click", () => {
+    playing = !playing;
+    btn.setAttribute("aria-pressed", String(playing));
+    btn.classList.toggle("is-playing", playing);
+    if (playing) startMusic(); else stopMusic();
+  });
+}
+
+// ---------- Sealed-Envelope Opener ----------
 const opener = document.getElementById("opener");
 const openBtn = document.getElementById("openBtn");
 const envelope = document.getElementById("envelope");
 const cardPlayBtn = document.getElementById("cardPlayBtn");
+const cardSkipBtn = document.getElementById("cardSkipBtn");
 
 let isEnvelopeOpened = false;
-let sealAutoOpenTimer = null;
 
 function playFilmVideos() {
   const v1 = document.getElementById("filmVideo1");
   const v2 = document.getElementById("filmVideo2");
   const v3 = document.getElementById("filmVideo3");
   if (v1) {
+    v1.preload = "auto";
     v1.muted = true;
     try {
       v1.pause();
@@ -404,26 +330,26 @@ function playFilmVideos() {
       }
     } catch (e) { }
   }
-  if (v2) {
+  if (v2 && v2.src) {
     v2.muted = true;
     try { v2.pause(); v2.currentTime = 0.001; } catch (e) { }
   }
-  if (v3) {
+  if (v3 && v3.src) {
     v3.muted = true;
     try { v3.pause(); v3.currentTime = 0.001; } catch (e) { }
   }
 }
 
-function revealSite() {
+function revealSite({ autoPlay = true } = {}) {
   if (opener) opener.classList.add("open");
   document.body.classList.remove("locked");
   document.body.classList.add("opened");
-  window.scrollTo({ top: 0 });
+  window.scrollTo({ top: 0, behavior: "instant" });
+  cacheFilmTrackMetrics();
   const cover = document.getElementById("cover");
   if (cover) cover.classList.add("in");
   if (typeof updateFilmProgress === "function") updateFilmProgress();
-  // Start playing the wedding film now
-  if (typeof startAutoPlayFilm === "function") {
+  if (autoPlay && typeof startAutoPlayFilm === "function") {
     startAutoPlayFilm();
   }
   if (location.hash) {
@@ -435,7 +361,7 @@ function revealSite() {
 const petals = ["🌸", "🏵️", "🌼", "❋"];
 const burst = () => {
   if (reducedMotion || !opener) return;
-  for (let i = 0; i < 28; i++) {
+  for (let i = 0; i < 24; i++) {
     const s = document.createElement("span");
     s.className = "petal";
     s.textContent = petals[i % petals.length];
@@ -443,39 +369,18 @@ const burst = () => {
     s.style.setProperty("--dx", `${(Math.random() - 0.5) * 60}vw`);
     s.style.animationDelay = `${Math.random() * 0.3}s`;
     opener.appendChild(s);
-    setTimeout(() => s.remove(), 2400);
+    setTimeout(() => s.remove(), 2200);
   }
-};
-
-const enterFullScreen = () => {
-  try {
-    const docEl = document.documentElement;
-    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-    if (isFullscreen) return;
-    if (docEl.requestFullscreen) {
-      docEl.requestFullscreen().catch(() => { });
-    } else if (docEl.webkitRequestFullscreen) {
-      docEl.webkitRequestFullscreen();
-    } else if (docEl.webkitRequestFullScreen) {
-      docEl.webkitRequestFullScreen();
-    } else if (docEl.mozRequestFullScreen) {
-      docEl.mozRequestFullScreen();
-    } else if (docEl.msRequestFullscreen) {
-      docEl.msRequestFullscreen();
-    }
-  } catch (e) { }
 };
 
 function openEnvelope() {
   if (isEnvelopeOpened) return;
   isEnvelopeOpened = true;
-  if (sealAutoOpenTimer) {
-    clearTimeout(sealAutoOpenTimer);
-    sealAutoOpenTimer = null;
-  }
   if (openBtn) openBtn.disabled = true;
 
-  // Try unlocking audio if browser allows (succeeds immediately on user gesture)
+  // Prime Reel 1 & audio gently once user opens the seal
+  ensureReelLoaded(1);
+
   try {
     startMusic();
     playing = true;
@@ -488,31 +393,23 @@ function openEnvelope() {
   if (reducedMotion) {
     if (envelope) envelope.classList.add("unsealed", "flap-open", "letter-out");
     if (opener) opener.classList.add("showing-invitation");
+    if (cardPlayBtn) cardPlayBtn.focus({ preventScroll: true });
     return;
   }
 
-  // 1. Break the seal
   if (envelope) envelope.classList.add("unsealed");
-
-  // 2. Open the envelope flap
-  setTimeout(() => {
-    if (envelope) envelope.classList.add("flap-open");
-  }, 380);
-
-  // 3. Letter slides up out of the envelope
-  setTimeout(() => {
-    if (envelope) envelope.classList.add("letter-out");
-  }, 950);
-
-  // 4. Reveal the full invitation card with all ceremony details & Play button — and STAY!
+  setTimeout(() => { if (envelope) envelope.classList.add("flap-open"); }, 340);
+  setTimeout(() => { if (envelope) envelope.classList.add("letter-out"); }, 860);
   setTimeout(() => {
     if (opener) opener.classList.add("showing-invitation");
     burst();
-  }, 1450);
+    if (cardPlayBtn) {
+      setTimeout(() => cardPlayBtn.focus({ preventScroll: true }), 120);
+    }
+  }, 1300);
 }
 
-function handlePlayInvitation() {
-  enterFullScreen();
+function closeOpenerAndReveal({ autoPlay = true, scrollToSelector = null } = {}) {
   try {
     startMusic();
     playing = true;
@@ -522,54 +419,41 @@ function handlePlayInvitation() {
     }
   } catch (e) { }
 
-  userInteractionAllowedAfter = Date.now() + 3200;
+  userInteractionAllowedAfter = Date.now() + 250;
   playFilmVideos();
+  if (autoPlay) ensureReelLoaded(2);
 
   if (opener) {
     opener.classList.add("open");
   }
 
-  // Reveal site and immediately start the videos
-  revealSite();
+  revealSite({ autoPlay });
+
+  if (scrollToSelector) {
+    const el = document.querySelector(scrollToSelector);
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+      }, 60);
+    }
+  }
 
   setTimeout(() => {
-    try {
-      if (opener) opener.remove();
-    } catch (e) { }
-  }, 850);
+    try { if (opener) opener.remove(); } catch (e) { }
+  }, 700);
 }
 
 if (opener && openBtn && envelope) {
   document.body.classList.add("locked");
   document.body.classList.remove("opened");
 
-  // User manual tap on seal opens immediately
-  openBtn.addEventListener("click", () => {
-    openEnvelope();
-  });
+  openBtn.addEventListener("click", openEnvelope);
 
-  // Schedule auto-open: seal opens by default in 2 seconds if not opened already
-  function scheduleSealAutoOpen() {
-    if (sealAutoOpenTimer || isEnvelopeOpened) return;
-    sealAutoOpenTimer = setTimeout(() => {
-      if (!isEnvelopeOpened) {
-        openEnvelope();
-      }
-    }, 2000);
-  }
-
-  const preloaderEl = document.getElementById("sitePreloader");
-  if (!preloaderEl || preloaderEl.classList.contains("is-loaded")) {
-    scheduleSealAutoOpen();
-  } else {
-    window.addEventListener("sitePreloaderDone", scheduleSealAutoOpen, { once: true });
-    // Safety fallback
-    setTimeout(scheduleSealAutoOpen, 4200);
-  }
-
-  // Play button on the invitation card triggers video film
   if (cardPlayBtn) {
-    cardPlayBtn.addEventListener("click", handlePlayInvitation);
+    cardPlayBtn.addEventListener("click", () => closeOpenerAndReveal({ autoPlay: true }));
+  }
+  if (cardSkipBtn) {
+    cardSkipBtn.addEventListener("click", () => closeOpenerAndReveal({ autoPlay: false, scrollToSelector: "#countdown" }));
   }
 } else {
   document.body.classList.remove("locked");
@@ -584,29 +468,10 @@ if (opener && openBtn && envelope) {
   }
 }
 
-// ---------- Continuous scroll story: progress, reveal, smooth anchors, Play tour ----------
+// ---------- Scroll Progress & Section Reveal ----------
 const panels = Array.from(document.querySelectorAll(".panel"));
-const progress = document.getElementById("progress");
+const progressBar = document.getElementById("progress");
 
-// Scroll progress bar & subtle temple parallax
-let ticking = false;
-const templeArt = document.querySelector(".temple-artwork");
-function updateProgress() {
-  ticking = false;
-  if (progress) {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const p = max > 0 ? Math.min(Math.max(window.scrollY / max, 0), 1) : 0;
-    progress.style.width = (p * 100) + "%";
-  }
-
-}
-window.addEventListener("scroll", () => {
-  if (!ticking) { ticking = true; requestAnimationFrame(updateProgress); }
-}, { passive: true });
-updateProgress();
-
-// Scroll-triggered reveal (like the reference's section entrances)
-// Scroll-triggered reveal & dynamic day-night atmospheric transition
 if ("IntersectionObserver" in window) {
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
@@ -618,14 +483,14 @@ if ("IntersectionObserver" in window) {
         }
       }
     });
-  }, { threshold: 0.28 });
+  }, { threshold: 0.22 });
   panels.forEach((p) => io.observe(p));
 } else {
   panels.forEach((p) => p.classList.add("in"));
 }
 
 // ==========================================================================
-// CINEMATIC SCROLL FILM ENGINE: TRIPLE-REEL STORYTELLING ON SCROLL
+// CINEMATIC SCROLL FILM ENGINE (LAZY REEL LOADING & LOW-OVERHEAD LOOP)
 // ==========================================================================
 const filmTrack = document.getElementById("scrollCinemaTrack");
 const video1 = document.getElementById("filmVideo1");
@@ -634,100 +499,129 @@ const video3 = document.getElementById("filmVideo3");
 const videoLayer1 = document.getElementById("videoLayer1");
 const videoLayer2 = document.getElementById("videoLayer2");
 const videoLayer3 = document.getElementById("videoLayer3");
-const filmStageContent = document.querySelector(".film-stage-content");
 const filmFrames = Array.from(document.querySelectorAll(".film-scene-frame"));
-const filmTimelineFill = document.getElementById("filmTimelineFill");
-const filmActName = document.getElementById("filmActName");
-const filmTimecode = document.getElementById("filmTimecode");
-const filmDots = Array.from(document.querySelectorAll(".film-cue-dot"));
-const filmFocusBtn = document.getElementById("filmFocusBtn");
-const playBtn = document.getElementById("playBtn");
+const filmEventMenu = document.getElementById("filmEventMenu");
+const filmResumeBtn = document.getElementById("filmResumeBtn");
+const coverScrollHint = document.getElementById("coverScrollHint");
+const filmBottomProgressFill = document.getElementById("filmBottomProgressFill");
+const filmBuffering = document.getElementById("filmBuffering");
+const actMenuButtons = Array.from(document.querySelectorAll("[data-target-act]"));
 
-const actTitles = [
-  "REEL 1 · TIRUCHENDUR SHORE",
-  "REEL 1 · ACT I: ENGAGEMENT",
-  "REEL 2 · ACT II: SACRED MUHURTHAM",
-  "REEL 3 · ACT III: RECEPTION GALA"
-];
+function setBuffering(show) {
+  if (filmBuffering) {
+    filmBuffering.hidden = !show;
+  }
+}
 
 const timeThemes = ["sunrise", "twilight", "sunrise", "night"];
-
-// Initialize 3 video reels: muted, inline, primed, sped up by 10% across all chapters
-const FILM_PLAYBACK_RATE = 0.40; // Sped up by 10% (0.36 * 1.10 = 0.396 ≈ 0.40x)
-const RECEPTION_PLAYBACK_RATE = 0.48; // Sped up by 10% (0.44 * 1.10 = 0.484 ≈ 0.48x)
+const FILM_PLAYBACK_RATE = 0.40;
+const RECEPTION_PLAYBACK_RATE = 0.48;
 let dur1 = 10.0;
 let dur2 = 10.0;
 let dur3 = 10.0;
-[video1, video2, video3].forEach((v, idx) => {
-  if (!v) return;
-  const reelRate = (idx === 2) ? RECEPTION_PLAYBACK_RATE : FILM_PLAYBACK_RATE;
+
+const reelVideos = [video1, video2, video3];
+const reelInitialized = [false, false, false];
+
+function ensureReelLoaded(reelNumber) {
+  const idx = reelNumber - 1;
+  const v = reelVideos[idx];
+  if (!v || reelInitialized[idx]) return;
+  reelInitialized[idx] = true;
+
+  const reelRate = idx === 2 ? RECEPTION_PLAYBACK_RATE : FILM_PLAYBACK_RATE;
   v.muted = true;
   v.playsInline = true;
   v.defaultPlaybackRate = reelRate;
   v.playbackRate = reelRate;
   v.setAttribute("playsinline", "");
   v.setAttribute("webkit-playsinline", "");
+
+  if (!v.src && v.dataset.src) {
+    v.src = v.dataset.src;
+  }
+  v.preload = "auto";
+
   v.addEventListener("loadedmetadata", () => {
     v.playbackRate = reelRate;
     if (idx === 0 && v.duration && !isNaN(v.duration)) dur1 = v.duration;
     if (idx === 1 && v.duration && !isNaN(v.duration)) dur2 = v.duration;
     if (idx === 2 && v.duration && !isNaN(v.duration)) dur3 = v.duration;
     try {
-      v.pause();
-      if (idx === 0) v.currentTime = 2.85;
+      if (!filmAutoPlaying) {
+        v.pause();
+        if (idx === 0 && (v.currentTime < 2.0 || v.currentTime > 5.0)) {
+          v.currentTime = 2.85;
+        }
+      }
     } catch (e) { }
-  });
-  v.addEventListener("play", () => {
-    v.playbackRate = reelRate;
-  });
+  }, { once: true });
+
+  v.addEventListener("play", () => { v.playbackRate = reelRate; });
+  v.addEventListener("waiting", () => { if (filmAutoPlaying) setBuffering(true); });
+  v.addEventListener("canplay", () => setBuffering(false));
+  v.addEventListener("playing", () => setBuffering(false));
+  v.addEventListener("seeked", () => setBuffering(false));
   v.addEventListener("ratechange", () => {
     if (filmAutoPlaying && Math.abs(v.playbackRate - reelRate) > 0.02) {
       v.playbackRate = reelRate;
     }
   });
+
   try {
     v.load();
     v.playbackRate = reelRate;
     v.pause();
     v.currentTime = idx === 0 ? 2.85 : 0.001;
   } catch (e) { }
-});
+}
 
-// Scrubbing and playback state (start with standing couple at 2.85s)
-let targetTime1 = 2.85;
-let targetTime2 = 0;
-let targetTime3 = 0;
+// Initialize Reel 1 metadata lightly at startup; Reels 2 & 3 stay deferred until needed
+if (video1) {
+  video1.muted = true;
+  video1.playsInline = true;
+  video1.defaultPlaybackRate = FILM_PLAYBACK_RATE;
+  video1.playbackRate = FILM_PLAYBACK_RATE;
+  video1.addEventListener("loadedmetadata", () => {
+    if (video1.duration && !isNaN(video1.duration)) dur1 = video1.duration;
+    try { video1.pause(); video1.currentTime = 2.85; } catch (e) { }
+  }, { once: true });
+}
+
 let currentFilmAct = 0;
-filmAutoPlaying = false;
 let autoPlayAnimId = null;
-let cardsHidden = false;
 let userInteractionAllowedAfter = 0;
 let touchStartX = 0;
 let touchStartY = 0;
 
-// Toggle Focus Mode (Hide/Show Narrative Cards to admire full-screen film)
-if (filmFocusBtn && filmStageContent) {
-  filmFocusBtn.addEventListener("click", () => {
-    cardsHidden = !cardsHidden;
-    filmStageContent.classList.toggle("cards-hidden", cardsHidden);
-    filmFocusBtn.classList.toggle("is-active", cardsHidden);
-    filmFocusBtn.setAttribute("aria-pressed", String(cardsHidden));
-    const label = filmFocusBtn.querySelector(".focus-label");
-    if (label) {
-      label.textContent = cardsHidden ? "Show Story" : "Film Focus";
-    }
-  });
+// Cached layout metrics (refreshed on resize / reveal)
+let cachedTrackTop = 0;
+let cachedTrackHeight = 1;
+let cachedDocScrollMax = 1;
+function cacheFilmTrackMetrics() {
+  if (filmTrack) {
+    cachedTrackTop = filmTrack.offsetTop;
+    cachedTrackHeight = Math.max(1, filmTrack.offsetHeight - window.innerHeight);
+  }
+  cachedDocScrollMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
 }
+cacheFilmTrackMetrics();
 
-// Dock the floating play button directly above the active event description card or footer
+// Memoized UI state to avoid redundant DOM writes at 60fps
+let lastRenderedAct = -1;
+let lastMenuVisible = null;
+let lastResumeVisible = null;
+let lastHintHidden = null;
+let lastTimeTheme = null;
 let lastMeasuredAct = -1;
+const frameCache = filmFrames.map(() => ({ op: -1, ty: 999, active: null, pe: null }));
+
 function updateResumeBtnPosition(force = false) {
-  const filmResumeBtn = document.getElementById("filmResumeBtn");
   if (!filmResumeBtn) return;
   if (!force && lastMeasuredAct === currentFilmAct) return;
   lastMeasuredAct = currentFilmAct;
 
-  const activeFrame = (typeof filmFrames !== "undefined" && filmFrames[currentFilmAct]) || document.querySelector(".film-scene-frame.is-active");
+  const activeFrame = filmFrames[currentFilmAct] || document.querySelector(".film-scene-frame.is-active");
   if (!activeFrame) return;
   const card = activeFrame.querySelector(".cinema-lower-third, .cinema-cover-footer");
   if (card) {
@@ -739,28 +633,17 @@ function updateResumeBtnPosition(force = false) {
   }
 }
 
-// Render narrative cards, timecode, HUD and lighting according to normalized progress (0.00 to 1.00)
 function renderFilmUI(progress) {
-  // Update scrubber progress bar fill
-  if (filmTimelineFill) {
-    filmTimelineFill.style.width = (progress * 100) + "%";
+  if (filmBottomProgressFill) {
+    filmBottomProgressFill.style.transform = `scaleX(${progress.toFixed(4)})`;
   }
 
-  // Hide the "Scroll up" hint on cover once scrolled past the premiere title
-  const coverScrollHint = document.getElementById("coverScrollHint");
-  if (coverScrollHint) {
-    if (progress > 0.02 || window.scrollY > 40) {
-      coverScrollHint.classList.add("is-hidden");
-    } else {
-      coverScrollHint.classList.remove("is-hidden");
-    }
+  const hintHidden = progress > 0.08 || window.scrollY > 120;
+  if (coverScrollHint && hintHidden !== lastHintHidden) {
+    lastHintHidden = hintHidden;
+    coverScrollHint.classList.toggle("is-hidden", hintHidden);
   }
 
-  // 4 acts across progress:
-  // Act 0: 0.00 – 0.20 (Standing Couple on Shore)
-  // Act 1: 0.20 – 0.44 (Engagement Mandapam)
-  // Act 2: 0.44 – 0.72 (Sacred Muhurtham)
-  // Act 3: 0.72 – 1.00 (Reception Gala)
   let activeIdx = 0;
   if (progress < 0.20) activeIdx = 0;
   else if (progress < 0.44) activeIdx = 1;
@@ -769,101 +652,81 @@ function renderFilmUI(progress) {
 
   currentFilmAct = activeIdx;
 
-  // Update HUD act title & active dot
-  if (filmActName) {
-    filmActName.textContent = actTitles[activeIdx];
+  const menuVisible = progress >= 0.12 && progress < 0.98;
+  if (filmEventMenu && menuVisible !== lastMenuVisible) {
+    lastMenuVisible = menuVisible;
+    filmEventMenu.classList.toggle("is-visible", menuVisible);
   }
-  filmDots.forEach((dot, idx) => {
-    dot.classList.toggle("active", idx === activeIdx);
-  });
 
-  // Update floating event navigation menu visibility & active states
-  const filmEventMenu = document.getElementById("filmEventMenu");
-  if (filmEventMenu) {
-    if (progress >= 0.12 && progress < 0.98) {
-      filmEventMenu.classList.add("is-visible");
-    } else {
-      filmEventMenu.classList.remove("is-visible");
+  const resumeVisible = progress < 0.98;
+  if (filmResumeBtn && resumeVisible !== lastResumeVisible) {
+    lastResumeVisible = resumeVisible;
+    filmResumeBtn.classList.toggle("is-visible", resumeVisible);
+  }
+  updateResumeBtnPosition();
+
+  if (activeIdx !== lastRenderedAct) {
+    lastRenderedAct = activeIdx;
+    actMenuButtons.forEach((b) => {
+      const act = parseInt(b.dataset.targetAct, 10);
+      const isActive = act === activeIdx && activeIdx > 0;
+      b.classList.toggle("is-active", isActive);
+      b.setAttribute("aria-current", isActive ? "true" : "false");
+    });
+    const theme = timeThemes[activeIdx];
+    if (theme !== lastTimeTheme) {
+      lastTimeTheme = theme;
+      document.body.setAttribute("data-time-of-day", theme);
     }
   }
 
-  // Floating play/resume button visibility inside the cinema scenes (including the first part)
-  const filmResumeBtn = document.getElementById("filmResumeBtn");
-  if (filmResumeBtn) {
-    filmResumeBtn.classList.toggle("is-visible", progress < 0.98);
-    updateResumeBtnPosition();
-  }
+  // Lazy-load Reels 2 & 3 ahead of their transition windows
+  if (progress > 0.15) ensureReelLoaded(2);
+  if (progress > 0.48) ensureReelLoaded(3);
 
-  document.querySelectorAll("[data-target-act]").forEach((btn) => {
-    const act = parseInt(btn.dataset.targetAct, 10);
-    const isActive = (act === activeIdx && activeIdx > 0);
-    btn.classList.toggle("is-active", isActive);
-    btn.setAttribute("aria-current", isActive ? "true" : "false");
-  });
-
-  // Dynamic atmospheric body lighting
-  document.body.setAttribute("data-time-of-day", timeThemes[activeIdx]);
-
-  // Update Timecode in HUD
-  if (filmTimecode) {
-    const totalSecs = progress * (dur1 + dur2 + dur3);
-    const m = Math.floor(totalSecs / 60);
-    const s = Math.floor(totalSecs % 60);
-    const ms = Math.floor((totalSecs % 1) * 10);
-    filmTimecode.textContent = `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}.${ms}`;
-  }
-
-  // --- NARRATIVE SCENE CARD PROGRESSION ---
-  filmFrames.forEach((frame, idx) => {
+  for (let idx = 0; idx < filmFrames.length; idx++) {
+    const frame = filmFrames[idx];
     let opacity = 0;
-    let translateY = 24; // px
+    let translateY = 24;
+
     if (idx === 0) {
-      // Act 0: Cover (0.00 to 0.20)
-      if (progress < 0.14) {
-        opacity = 1;
-        translateY = 0;
-      } else if (progress < 0.20) {
+      if (progress < 0.14) { opacity = 1; translateY = 0; }
+      else if (progress < 0.20) {
         const t = (progress - 0.14) / 0.06;
         opacity = 1 - t;
         translateY = -t * 24;
       }
     } else if (idx === 1) {
-      // Act 1: Engagement (0.20 to 0.44)
       if (progress >= 0.18 && progress < 0.24) {
         const t = (progress - 0.18) / 0.06;
         opacity = t;
         translateY = (1 - t) * 24;
       } else if (progress >= 0.24 && progress < 0.38) {
-        opacity = 1;
-        translateY = 0;
+        opacity = 1; translateY = 0;
       } else if (progress >= 0.38 && progress < 0.44) {
         const t = (progress - 0.38) / 0.06;
         opacity = 1 - t;
         translateY = -t * 24;
       }
     } else if (idx === 2) {
-      // Act 2: Sacred Muhurtham (0.44 to 0.72)
       if (progress >= 0.42 && progress < 0.48) {
         const t = (progress - 0.42) / 0.06;
         opacity = t;
         translateY = (1 - t) * 24;
       } else if (progress >= 0.48 && progress < 0.66) {
-        opacity = 1;
-        translateY = 0;
+        opacity = 1; translateY = 0;
       } else if (progress >= 0.66 && progress < 0.72) {
         const t = (progress - 0.66) / 0.06;
         opacity = 1 - t;
         translateY = -t * 24;
       }
     } else if (idx === 3) {
-      // Act 3: Reception (0.72 to 1.00)
       if (progress >= 0.70 && progress < 0.76) {
         const t = (progress - 0.70) / 0.06;
         opacity = t;
         translateY = (1 - t) * 24;
       } else if (progress >= 0.76 && progress < 0.94) {
-        opacity = 1;
-        translateY = 0;
+        opacity = 1; translateY = 0;
       } else if (progress >= 0.94) {
         const t = (progress - 0.94) / 0.06;
         opacity = 1 - t;
@@ -871,23 +734,35 @@ function renderFilmUI(progress) {
       }
     }
 
-    if (!reducedMotion) {
-      frame.style.opacity = opacity.toFixed(3);
-      frame.style.transform = `translateY(${translateY.toFixed(1)}px)`;
+    const quantizedOp = reducedMotion ? (opacity > 0.2 ? 1 : 0) : Math.round(opacity * 200) / 200;
+    const quantizedTy = reducedMotion ? 0 : Math.round(translateY * 2) / 2;
+    const isFocused = quantizedOp > 0.05 && (activeIdx === idx || (idx > 0 && Math.abs(activeIdx - idx) <= 1));
+    const peMode = (activeIdx === idx || quantizedOp > 0.2) ? "auto" : "none";
+
+    const cache = frameCache[idx];
+    if (cache.op !== quantizedOp) {
+      cache.op = quantizedOp;
+      frame.style.opacity = String(quantizedOp);
     }
-    const isFocused = opacity > 0.05 && (activeIdx === idx || (idx > 0 && Math.abs(activeIdx - idx) <= 1));
-    frame.classList.toggle("is-active", isFocused);
-    frame.style.pointerEvents = "none";
-    const card = frame.querySelector(".cinema-lower-third, .cinema-cover-header, .cinema-cover-footer");
-    if (card) {
-      card.style.pointerEvents = (activeIdx === idx || opacity > 0.2) ? "auto" : "none";
+    if (cache.ty !== quantizedTy) {
+      cache.ty = quantizedTy;
+      frame.style.transform = `translateY(${quantizedTy}px)`;
     }
-  });
+    if (cache.active !== isFocused) {
+      cache.active = isFocused;
+      frame.classList.toggle("is-active", isFocused);
+    }
+    if (cache.pe !== peMode) {
+      cache.pe = peMode;
+      frame.style.pointerEvents = "none";
+      const card = frame.querySelector(".cinema-lower-third, .cinema-cover-header, .cinema-cover-footer");
+      if (card) card.style.pointerEvents = peMode;
+    }
+  }
 }
 
-// Gentle, non-blocking video frame seeking for manual scrolling
 function scrubVideoTo(video, targetT) {
-  if (!video) return;
+  if (!video || !video.src) return;
   const clamped = Math.max(0, Math.min(targetT, video.duration || 10));
   if (!video.seeking && Math.abs(video.currentTime - clamped) > 0.06) {
     try {
@@ -900,20 +775,22 @@ function scrubVideoTo(video, targetT) {
   }
 }
 
-// Update state when manually scrolling
+let lastInCinema = null;
 function updateFilmProgress() {
   if (!filmTrack) return;
   const rect = filmTrack.getBoundingClientRect();
-  const trackHeight = filmTrack.offsetHeight - window.innerHeight;
+  const trackHeight = cachedTrackHeight;
   if (trackHeight <= 0) return;
 
   const progress = Math.min(Math.max(-rect.top / trackHeight, 0), 1);
   const inCinema = rect.top <= 80 && rect.bottom >= window.innerHeight * 0.15;
-  document.body.classList.toggle("in-cinema", inCinema);
+  if (inCinema !== lastInCinema) {
+    lastInCinema = inCinema;
+    document.body.classList.toggle("in-cinema", inCinema);
+  }
 
   renderFilmUI(progress);
 
-  // Smooth layered crossfade across the 3 video layers (top layer dissolves over 100% opaque bottom layer)
   if (progress < 0.38) {
     if (videoLayer1) videoLayer1.style.opacity = "1";
     if (videoLayer2) videoLayer2.style.opacity = "0";
@@ -938,7 +815,6 @@ function updateFilmProgress() {
     if (videoLayer3) videoLayer3.style.opacity = "1";
   }
 
-  // If user is manually scrolling, gently scrub video frames to current position
   if (!filmAutoPlaying) {
     if (progress < 0.46 && video1) {
       const t1 = 2.85 + Math.min(Math.max(progress / 0.44, 0), 1) * (9.6 - 2.85);
@@ -957,16 +833,14 @@ function updateFilmProgress() {
   }
 }
 
-// Buttery-smooth hardware-accelerated Auto-Playback at 0.85x speed:
-// Videos actually play natively at 60fps, crossfade seamlessly, and smoothly drive the film journey
 function startAutoPlayFilm() {
-  if (filmAutoPlaying) return;
+  if (filmAutoPlaying || !filmTrack) return;
   filmAutoPlaying = true;
   document.body.classList.add("movie-playing");
-  updatePlaybackUI(true);
 
-  // Background audio track starts/ensures playback
-  if (!playing && typeof startMusic === "function") {
+  ensureReelLoaded(1);
+
+  if (!playing) {
     try {
       startMusic();
       playing = true;
@@ -977,25 +851,24 @@ function startAutoPlayFilm() {
     } catch { }
   }
 
-  // Determine current position to resume playing from
-  if (!filmTrack) return;
   const rect = filmTrack.getBoundingClientRect();
-  const trackHeight = filmTrack.offsetHeight - window.innerHeight;
+  const trackHeight = cachedTrackHeight;
   let currentProg = Math.min(Math.max(-rect.top / trackHeight, 0), 1);
 
-  // If near the end, restart from beginning
   if (currentProg >= 0.96) {
     currentProg = 0;
     if (video1) video1.currentTime = 2.85;
-    if (video2) video2.currentTime = 0;
-    if (video3) video3.currentTime = 0;
-    window.scrollTo({ top: filmTrack.offsetTop, behavior: "instant" });
+    if (video2 && video2.src) video2.currentTime = 0;
+    if (video3 && video3.src) video3.currentTime = 0;
+    window.scrollTo({ top: cachedTrackTop, behavior: "instant" });
   }
 
   let activeReel = 1;
   if (currentProg < 0.44) activeReel = 1;
   else if (currentProg < 0.72) activeReel = 2;
   else activeReel = 3;
+
+  ensureReelLoaded(activeReel);
 
   if (activeReel === 1) {
     if (videoLayer1) videoLayer1.style.opacity = "1";
@@ -1039,12 +912,12 @@ function startAutoPlayFilm() {
     let overallProg = 0;
 
     if (activeReel === 1) {
-      // REEL 1 PLAYBACK (Act 0 & Act 1)
       const t1 = video1 ? video1.currentTime : 2.85;
       const progReel1 = Math.min(Math.max((t1 - 2.85) / (9.6 - 2.85), 0), 1);
       overallProg = progReel1 * 0.44;
 
-      // Luxurious 1.4s smooth crossfade into Reel 2 between 8.15s and 9.55s
+      if (t1 >= 6.0) ensureReelLoaded(2);
+
       if (t1 >= 8.15) {
         if (video2 && video2.paused) {
           video2.currentTime = 0.04;
@@ -1072,13 +945,13 @@ function startAutoPlayFilm() {
         }
       }
     } else if (activeReel === 2) {
-      // REEL 2 PLAYBACK (Act 2: Sacred Muhurtham)
       const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 10.0;
       const t2 = video2 ? video2.currentTime : 0;
       const progReel2 = Math.min(Math.max(t2 / maxReel2T, 0), 1);
       overallProg = 0.44 + progReel2 * 0.28;
 
-      // Luxurious 1.4s smooth crossfade into Reel 3 during last 1.4s of Reel 2
+      if (t2 >= 5.0) ensureReelLoaded(3);
+
       const fadeStart2 = Math.max(maxReel2T - 1.40, 0.5);
       if (t2 >= fadeStart2) {
         if (video3 && video3.paused) {
@@ -1107,7 +980,6 @@ function startAutoPlayFilm() {
         }
       }
     } else {
-      // REEL 3 PLAYBACK (Act 3: Reception Gala)
       const maxReel3T = (dur3 && dur3 > 1.0) ? dur3 : 10.0;
       const t3 = video3 ? video3.currentTime : 0;
       const progReel3 = Math.min(Math.max(t3 / Math.min(maxReel3T, 9.6), 0), 1);
@@ -1117,7 +989,6 @@ function startAutoPlayFilm() {
       if (videoLayer2) videoLayer2.style.opacity = "0";
       if (videoLayer3) videoLayer3.style.opacity = "1";
 
-      // Reached the end of the film — hold on final frame of reception video
       if (t3 >= Math.min(maxReel3T, 9.6) - 0.15 || overallProg >= 0.995) {
         stopAutoPlayFilm();
         if (video3) {
@@ -1128,18 +999,16 @@ function startAutoPlayFilm() {
         }
         const countdownEl = document.getElementById("countdown");
         if (countdownEl) {
-          countdownEl.scrollIntoView({ behavior: "smooth" });
+          countdownEl.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
         }
         return;
       }
     }
 
-    // Drive UI & narrative scenes smoothly
     renderFilmUI(overallProg);
 
-    // Keep page scroll position synchronized with the film
-    const targetScrollY = filmTrack.offsetTop + overallProg * trackHeight;
-    window.scrollTo(0, targetScrollY);
+    const targetScrollY = cachedTrackTop + overallProg * cachedTrackHeight;
+    window.scrollTo({ top: targetScrollY, behavior: "instant" });
 
     autoPlayAnimId = requestAnimationFrame(autoPlayStep);
   }
@@ -1150,6 +1019,7 @@ function startAutoPlayFilm() {
 function stopAutoPlayFilm() {
   if (!filmAutoPlaying) return;
   filmAutoPlaying = false;
+  setBuffering(false);
   document.body.classList.remove("movie-playing");
   if (autoPlayAnimId) {
     cancelAnimationFrame(autoPlayAnimId);
@@ -1158,14 +1028,12 @@ function stopAutoPlayFilm() {
   if (video1) { try { video1.pause(); } catch (e) { } }
   if (video2) { try { video2.pause(); } catch (e) { } }
   if (video3) { try { video3.pause(); } catch (e) { } }
-  updatePlaybackUI(false);
   updateResumeBtnPosition(true);
 }
 
-// User interactions (wheel, touch swipe, keys) pause autoplay
+// User interactions pause autoplay promptly
 window.addEventListener("wheel", (e) => {
-  if (!filmAutoPlaying) return;
-  if (Date.now() < userInteractionAllowedAfter) return;
+  if (!filmAutoPlaying || Date.now() < userInteractionAllowedAfter) return;
   if (Math.abs(e.deltaY) > 3 || Math.abs(e.deltaX) > 3) {
     stopAutoPlayFilm();
   }
@@ -1179,8 +1047,7 @@ window.addEventListener("touchstart", (e) => {
 }, { passive: true });
 
 window.addEventListener("touchmove", (e) => {
-  if (!filmAutoPlaying) return;
-  if (Date.now() < userInteractionAllowedAfter) return;
+  if (!filmAutoPlaying || Date.now() < userInteractionAllowedAfter) return;
   if (e.touches && e.touches[0]) {
     const dx = Math.abs(e.touches[0].clientX - touchStartX);
     const dy = Math.abs(e.touches[0].clientY - touchStartY);
@@ -1193,109 +1060,81 @@ window.addEventListener("touchmove", (e) => {
 const NAV_KEYS = new Set([
   "ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " ", "Spacebar", "Escape"
 ]);
-
 window.addEventListener("keydown", (e) => {
-  if (!filmAutoPlaying) return;
-  if (Date.now() < userInteractionAllowedAfter) return;
+  if (!filmAutoPlaying || Date.now() < userInteractionAllowedAfter) return;
   if (NAV_KEYS.has(e.key)) {
     stopAutoPlayFilm();
   }
 });
 
-// Window scroll listener: only syncs progress when in manual mode.
-// Programmatic scrolling will NEVER pause autoplay.
-window.addEventListener("scroll", () => {
+// Unified rAF-throttled scroll handler
+let scrollTicking = false;
+function onWindowScroll() {
+  scrollTicking = false;
+  if (progressBar) {
+    const p = Math.min(Math.max(window.scrollY / cachedDocScrollMax, 0), 1);
+    progressBar.style.width = `${(p * 100).toFixed(2)}%`;
+  }
   if (!filmAutoPlaying) {
-    requestAnimationFrame(updateFilmProgress);
+    updateFilmProgress();
+  }
+}
+
+window.addEventListener("scroll", () => {
+  if (!scrollTicking) {
+    scrollTicking = true;
+    requestAnimationFrame(onWindowScroll);
   }
 }, { passive: true });
 
-updateFilmProgress();
+onWindowScroll();
 
-// Smooth Jump to specific Film Act (0, 1, 2, 3)
 function jumpToFilmAct(actIdx) {
   stopAutoPlayFilm();
   if (!filmTrack) return;
-  const trackHeight = filmTrack.offsetHeight - window.innerHeight;
+  const clampedAct = Math.min(Math.max(actIdx, 0), 3);
+  if (clampedAct >= 1) ensureReelLoaded(1);
+  if (clampedAct >= 2) ensureReelLoaded(2);
+  if (clampedAct >= 3) ensureReelLoaded(3);
   const actTargets = [0.01, 0.30, 0.56, 0.84];
-  const targetTop = filmTrack.offsetTop + trackHeight * actTargets[Math.min(Math.max(actIdx, 0), 3)];
+  const p = actTargets[clampedAct];
 
+  // Seek target video frame immediately so the jump lands on the matching visual scene
+  try {
+    if (clampedAct <= 1 && video1) {
+      video1.currentTime = 2.85 + Math.min(Math.max(p / 0.44, 0), 1) * (9.6 - 2.85);
+    } else if (clampedAct === 2 && video2 && video2.src) {
+      const maxReel2T = (dur2 && dur2 > 1.0) ? dur2 : 10.0;
+      video2.currentTime = Math.min(Math.max((p - 0.44) / 0.28, 0), 1) * maxReel2T;
+    } else if (clampedAct === 3 && video3 && video3.src) {
+      const maxReel3T = (dur3 && dur3 > 1.0) ? dur3 : 10.0;
+      video3.currentTime = Math.min(Math.max((p - 0.72) / 0.28, 0), 1) * Math.min(maxReel3T, 9.6);
+    }
+  } catch (e) { }
+
+  const targetTop = cachedTrackTop + cachedTrackHeight * p;
   window.scrollTo({
     top: targetTop,
     behavior: reducedMotion ? "auto" : "smooth"
   });
 }
 
-// Click on Scrubber Dots
 document.addEventListener("click", (e) => {
-  const cueDot = e.target.closest("[data-target-act]");
-  if (cueDot) {
-    const act = parseInt(cueDot.dataset.targetAct, 10);
+  const actBtn = e.target.closest("[data-target-act]");
+  if (actBtn) {
+    const act = parseInt(actBtn.dataset.targetAct, 10);
     jumpToFilmAct(act);
+    return;
   }
-});
-
-if (playBtn) {
-  playBtn.addEventListener("click", () => {
-    if (filmAutoPlaying) {
-      stopAutoPlayFilm();
-    } else {
-      startAutoPlayFilm();
-    }
-  });
-}
-
-const filmResumeBtn = document.getElementById("filmResumeBtn");
-if (filmResumeBtn) {
-  filmResumeBtn.addEventListener("click", () => {
-    userInteractionAllowedAfter = Date.now() + 2500;
-    startAutoPlayFilm();
-  });
-}
-
-// Tapping the film stage while video is playing pauses playback and shows the play button
-const stickyFilmViewport = document.querySelector(".sticky-film-viewport");
-if (stickyFilmViewport) {
-  stickyFilmViewport.addEventListener("click", (e) => {
-    if (e.target.closest("button") || e.target.closest("a") || e.target.closest("input") || e.target.closest(".scene-card")) {
-      return;
-    }
-    if (filmAutoPlaying && Date.now() >= userInteractionAllowedAfter) {
-      stopAutoPlayFilm();
-    }
-  });
-}
-
-window.addEventListener("resize", () => {
-  updateResumeBtnPosition(true);
-}, { passive: true });
-
-updateResumeBtnPosition(true);
-
-
-// Smooth anchor buttons
-document.addEventListener("click", (e) => {
-  const t = e.target.closest("[data-scroll]");
-  if (t) {
+  const scrollTrigger = e.target.closest("[data-scroll]");
+  if (scrollTrigger) {
     e.preventDefault();
     stopAutoPlayFilm();
-    const selector = t.dataset.scroll;
-    if (selector === "#muhurtham") {
-      jumpToFilmAct(2);
-      return;
-    }
-    if (selector === "#engagement") {
-      jumpToFilmAct(1);
-      return;
-    }
-    if (selector === "#reception") {
-      jumpToFilmAct(3);
-      return;
-    }
-    if (selector === "#cover") {
-      jumpToFilmAct(0);
-      return;
-    }
+    const selector = scrollTrigger.dataset.scroll;
+    if (selector === "#muhurtham") return jumpToFilmAct(2);
+    if (selector === "#engagement") return jumpToFilmAct(1);
+    if (selector === "#reception") return jumpToFilmAct(3);
+    if (selector === "#cover") return jumpToFilmAct(0);
     const target = document.querySelector(selector);
     if (target) {
       target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
@@ -1303,7 +1142,44 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// Silent Backend View Counter (stored in backend only, not exposed anywhere in the UI)
+if (filmResumeBtn) {
+  filmResumeBtn.addEventListener("click", () => {
+    userInteractionAllowedAfter = Date.now() + 250;
+    startAutoPlayFilm();
+  });
+}
+
+const replayFilmBtn = document.getElementById("replayFilmBtn");
+if (replayFilmBtn) {
+  replayFilmBtn.addEventListener("click", () => {
+    userInteractionAllowedAfter = Date.now() + 250;
+    if (video1) video1.currentTime = 2.85;
+    if (video2 && video2.src) video2.currentTime = 0;
+    if (video3 && video3.src) video3.currentTime = 0;
+    window.scrollTo({ top: cachedTrackTop, behavior: "instant" });
+    updateFilmProgress();
+    startAutoPlayFilm();
+  });
+}
+
+const stickyFilmViewport = document.querySelector(".sticky-film-viewport");
+if (stickyFilmViewport) {
+  stickyFilmViewport.addEventListener("click", (e) => {
+    if (e.target.closest("button, a, input, .scene-card")) return;
+    if (filmAutoPlaying && Date.now() >= userInteractionAllowedAfter) {
+      stopAutoPlayFilm();
+    }
+  });
+}
+
+window.addEventListener("resize", () => {
+  cacheFilmTrackMetrics();
+  updateResumeBtnPosition(true);
+}, { passive: true });
+
+updateResumeBtnPosition(true);
+
+// Silent Backend View Counter
 (function trackViewSilently() {
   try {
     const isNewSession = !sessionStorage.getItem("gd_view_counted");
@@ -1321,11 +1197,12 @@ document.addEventListener("click", (e) => {
 })();
 
 // ==========================================================================
-// PETAL SHOWERS ON EVERY TAP + SHARED SERVER COUNT (அட்சதை & மலர் மழை)
+// PETAL SHOWERS + SHARED BLESSING COUNTER
 // ==========================================================================
 const showerCountEl = document.getElementById("showerCount");
 let showerTotal = null;
-let lastShowerAt = 0;
+let lastShowerVisualAt = 0;
+let lastShowerPostAt = 0;
 
 function renderShowerTotal() {
   if (showerCountEl && showerTotal !== null) {
@@ -1350,6 +1227,9 @@ async function fetchShowerTotal() {
 async function recordShower() {
   showerTotal = (showerTotal === null ? 0 : showerTotal) + 1;
   renderShowerTotal();
+  const now = Date.now();
+  if (now - lastShowerPostAt < 2000) return;
+  lastShowerPostAt = now;
   try {
     const res = await fetch("/api/showers", { method: "POST", cache: "no-store" });
     if (!res.ok) throw new Error("bad status");
@@ -1361,178 +1241,264 @@ async function recordShower() {
   }
 }
 
-function triggerBlessingShower(originX, originY, count = 14) {
-  if (reducedMotion) return;
-  const flowerGlyphs = ["🌸", "🌹", "🌼", "🏵️", "🌺"];
-  const totalItems = Math.min(Math.max(count, 10), 16);
+// ==========================================================================
+// CANVAS PARTICLE ENGINE (BLESSING BURSTS + CURSOR TRAIL, ZERO DOM CHURN)
+// ==========================================================================
+const particleCanvas = document.getElementById("particleCanvas");
+const pCtx = particleCanvas ? particleCanvas.getContext("2d") : null;
+const activeParticles = [];
+let particleAnimId = null;
+let canvasW = window.innerWidth;
+let canvasH = window.innerHeight;
+const MAX_CANVAS_PARTICLES = window.innerWidth < 768 ? 48 : 75;
 
-  for (let i = 0; i < totalItems; i++) {
-    const isPetal = i % 3 !== 0; // ~66% petals, ~33% golden akshadhai grains
-    const el = document.createElement("span");
+function resizeParticleCanvas() {
+  if (!particleCanvas || !pCtx) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvasW = window.innerWidth;
+  canvasH = window.innerHeight;
+  particleCanvas.width = Math.round(canvasW * dpr);
+  particleCanvas.height = Math.round(canvasH * dpr);
+  pCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+if (particleCanvas && pCtx) {
+  resizeParticleCanvas();
+  window.addEventListener("resize", resizeParticleCanvas, { passive: true });
+}
 
-    if (isPetal) {
-      el.className = "blessing-rose-petal";
-      el.textContent = flowerGlyphs[i % flowerGlyphs.length];
-      const sizeRem = 0.95 + (i % 4) * 0.12;
-      el.style.setProperty("--petal-size", `${sizeRem}rem`);
-    } else {
-      el.className = "akshadhai-grain";
+function stepParticles(now) {
+  if (!pCtx || activeParticles.length === 0) {
+    if (pCtx) pCtx.clearRect(0, 0, canvasW, canvasH);
+    particleAnimId = null;
+    return;
+  }
+
+  pCtx.clearRect(0, 0, canvasW, canvasH);
+
+  for (let i = activeParticles.length - 1; i >= 0; i--) {
+    const p = activeParticles[i];
+    const age = (now - p.born) / 1000;
+    if (age >= p.life) {
+      activeParticles.splice(i, 1);
+      continue;
     }
 
-    // Centered start coordinates
-    el.style.left = `${originX}px`;
-    el.style.top = `${originY}px`;
+    const t = age / p.life;
+    const alpha = t < 0.12 ? t / 0.12 : Math.max(0, 1 - (t - 0.12) / 0.88);
+    const swayOffset = Math.sin(age * p.swayFreq + p.phase) * p.swayAmp;
+    const x = p.x + p.vx * age + swayOffset;
+    const y = p.y + p.vy * age + 0.5 * p.gravity * age * age;
+    const rot = p.rot + p.vRot * age;
 
-    // Symmetrical, organized fan spread
-    const spreadNorm = (i / (totalItems - 1) - 0.5) * 2; // -1.0 to +1.0
-    const spreadX = (spreadNorm * (50 + (i % 3) * 20)) + "px"; // soft horizontal fan ±70px
-    const riseY = -(25 + (1 - Math.abs(spreadNorm)) * 25 + (i % 3) * 8) + "px"; // gentle crest in center
-    const sway = ((i % 2 === 0 ? 1 : -1) * (20 + (i % 3) * 8)) + "px"; // natural oscillating sway ±30px
-    const rot1 = (spreadNorm * 35) + "deg";
-    const rot2 = (-spreadNorm * 45) + "deg";
+    pCtx.save();
+    pCtx.globalAlpha = alpha;
+    pCtx.translate(x, y);
+    pCtx.rotate(rot);
 
-    // Drop distance to bottom of viewport with margin
-    const dropH = Math.max(450, window.innerHeight - originY + 120) + "px";
+    if (p.kind === "grain") {
+      pCtx.fillStyle = "#f5c842";
+      pCtx.beginPath();
+      pCtx.ellipse(0, 0, 2.5, 5, 0, 0, Math.PI * 2);
+      pCtx.fill();
+    } else {
+      pCtx.font = `${p.size}px serif`;
+      pCtx.textAlign = "center";
+      pCtx.textBaseline = "middle";
+      pCtx.fillText(p.glyph, 0, 0);
+    }
 
-    // Durations & rhythmic delays
-    const dur = 3.2 + (i % 4) * 0.3 + "s";
-    const delay = (i * 0.03) + "s";
+    pCtx.restore();
+  }
 
-    el.style.setProperty("--spread-x", spreadX);
-    el.style.setProperty("--rise-y", riseY);
-    el.style.setProperty("--sway", sway);
-    el.style.setProperty("--rot-1", rot1);
-    el.style.setProperty("--rot-2", rot2);
-    el.style.setProperty("--drop-h", dropH);
-    el.style.setProperty("--anim-dur", dur);
-    el.style.animationDelay = delay;
+  particleAnimId = requestAnimationFrame(stepParticles);
+}
 
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 4500);
+function pushParticle(p) {
+  if (!pCtx || reducedMotion) return;
+  if (activeParticles.length >= MAX_CANVAS_PARTICLES) {
+    activeParticles.shift();
+  }
+  activeParticles.push(p);
+  if (!particleAnimId) {
+    particleAnimId = requestAnimationFrame(stepParticles);
   }
 }
 
-// Shower petals on taps, anywhere on the page EXCEPT on buttons & interactive links
+function triggerBlessingShower(originX, originY, count = 12) {
+  if (reducedMotion || !pCtx) return;
+  const flowerGlyphs = ["🌸", "🌹", "🌼", "🏵️", "🌺"];
+  const totalItems = Math.min(Math.max(count, 8), 16);
+  const now = performance.now();
+
+  for (let i = 0; i < totalItems; i++) {
+    const spreadNorm = (i / (totalItems - 1) - 0.5) * 2;
+    const isPetal = i % 3 !== 0;
+    pushParticle({
+      kind: isPetal ? "petal" : "grain",
+      glyph: flowerGlyphs[i % flowerGlyphs.length],
+      size: 16 + (i % 4) * 3,
+      x: originX,
+      y: originY,
+      vx: spreadNorm * (45 + (i % 3) * 14),
+      vy: -(65 + (1 - Math.abs(spreadNorm)) * 45 + (i % 3) * 12),
+      gravity: 165,
+      swayAmp: 18 + (i % 3) * 6,
+      swayFreq: 2.5 + (i % 3) * 0.6,
+      phase: i * 0.7,
+      rot: spreadNorm * 0.6,
+      vRot: (i % 2 === 0 ? 1 : -1) * (1.2 + (i % 3) * 0.5),
+      born: now + i * 22,
+      life: 2.8 + (i % 4) * 0.28
+    });
+  }
+}
+
 document.addEventListener("pointerdown", (e) => {
-  // Never interfere with buttons (like mute/unmute), links, inputs, or scrubber controls
-  if (e.target.closest("button, a, input, select, textarea, [role='button'], .film-cue-dot, .invitation-card")) {
+  if (document.body.classList.contains("locked")) return;
+  if (e.target.closest("button, a, input, select, textarea, [role='button'], .invitation-card, #calDialog, .cal-dialog")) {
     return;
   }
   const now = Date.now();
-  if (now - lastShowerAt < 280) return;
-  lastShowerAt = now;
-  const x = (typeof e.clientX === "number" ? e.clientX : window.innerWidth / 2);
-  const y = (typeof e.clientY === "number" ? e.clientY : window.innerHeight / 2);
+  if (now - lastShowerVisualAt < 320) return;
+  lastShowerVisualAt = now;
+  const x = typeof e.clientX === "number" ? e.clientX : window.innerWidth / 2;
+  const y = typeof e.clientY === "number" ? e.clientY : window.innerHeight / 2;
   triggerBlessingShower(x, y);
   recordShower();
 });
 
-fetchShowerTotal();
-setInterval(fetchShowerTotal, 30000);
+const blessBtn = document.getElementById("blessBtn");
+if (blessBtn) {
+  blessBtn.addEventListener("click", (e) => {
+    const r = blessBtn.getBoundingClientRect();
+    const x = e.clientX || (r.left + r.width / 2);
+    const y = e.clientY || r.top;
+    triggerBlessingShower(x, y, 14);
+    recordShower();
+  });
+}
 
-// Ambient floating petals (reference-style falling petal layer)
+// Share Invitation button (Web Share API with clipboard fallback)
+const shareBtn = document.getElementById("shareBtn");
+if (shareBtn) {
+  shareBtn.addEventListener("click", async () => {
+    const shareUrl = "https://gnanaganesh-weds-dharshini.gnanaganesh.in/";
+    const shareData = {
+      title: "GnanaGanesh weds Dharshini — Wedding Invitation",
+      text: "Join us to celebrate the wedding of GnanaGanesh & Dharshini on 12–13 December 2026 in Tiruchendur & Thoothukudi!",
+      url: shareUrl
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (e) {
+        if (e && e.name === "AbortError") return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      const label = shareBtn.querySelector("span");
+      if (label) {
+        const orig = label.textContent;
+        label.textContent = "✓ Link Copied!";
+        setTimeout(() => { label.textContent = orig; }, 2200);
+      }
+    } catch (e) { }
+  });
+}
+
+// Modal focus trap inside #opener while locked
+if (opener) {
+  opener.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab" || opener.classList.contains("open")) return;
+    const isCardOpen = opener.classList.contains("showing-invitation");
+    const scope = isCardOpen ? document.getElementById("invitationCard") : opener;
+    if (!scope) return;
+    const focusables = Array.from(scope.querySelectorAll("button:not([disabled]), a[href]"))
+      .filter((el) => el.offsetParent !== null);
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+}
+
+// Fetch shared count once (no background polling)
+fetchShowerTotal();
+
+// Ambient floating petals
 if (!reducedMotion) {
   const amb = document.getElementById("ambience");
   if (amb) {
     const glyphs = ["🌸", "🏵️", "🌼", "❋"];
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 10; i++) {
       const s = document.createElement("span");
       s.className = "ambient-petal";
       s.textContent = glyphs[i % glyphs.length];
-      s.style.left = Math.random() * 100 + "%";
-      s.style.fontSize = 0.7 + Math.random() * 0.9 + "rem";
-      s.style.animationDuration = 9 + Math.random() * 10 + "s";
-      s.style.animationDelay = -Math.random() * 15 + "s";
+      s.style.left = `${Math.random() * 100}%`;
+      s.style.fontSize = `${0.7 + Math.random() * 0.8}rem`;
+      s.style.animationDuration = `${10 + Math.random() * 9}s`;
+      s.style.animationDelay = `${-Math.random() * 15}s`;
       amb.appendChild(s);
     }
   }
 }
 
-// ==========================================================================
-// INTERACTIVE MOUSE-MOVE SHOWER (CURSOR TRAIL OF PETALS & AKSHADHAI)
-// ==========================================================================
+// Interactive Cursor Trail via Canvas
 (function initCursorShower() {
-  if (reducedMotion) return;
+  if (reducedMotion || !pCtx) return;
 
-  const container = document.getElementById("cursorShower") || document.body;
   const flowerGlyphs = ["🌸", "🌹", "🌼", "🏵️", "🌺", "✨", "🌾"];
   let lastX = 0;
   let lastY = 0;
   let lastTime = 0;
-  const MAX_ACTIVE_PARTICLES = 50;
 
-  function spawnParticle(x, y) {
-    if (container.children.length > MAX_ACTIVE_PARTICLES) {
-      container.removeChild(container.firstElementChild);
-    }
-
+  function spawnTrailParticle(x, y) {
     const isAkshadhai = Math.random() < 0.22;
-    const el = document.createElement("span");
-
-    if (isAkshadhai) {
-      el.className = "cursor-akshadhai-grain";
-    } else {
-      el.className = "cursor-shower-particle";
-      const glyph = flowerGlyphs[Math.floor(Math.random() * flowerGlyphs.length)];
-      el.textContent = glyph;
-      const size = (0.9 + Math.random() * 0.45).toFixed(2);
-      el.style.setProperty("--c-size", `${size}rem`);
-    }
-
-    const vx = ((Math.random() - 0.5) * 44).toFixed(1) + "px";
-    const vy = (-(Math.random() * 22 + 8)).toFixed(1) + "px";
-    const drop = (Math.random() * 85 + 110).toFixed(1) + "px";
-    const sway = ((Math.random() - 0.5) * 32).toFixed(1) + "px";
-    const rot1 = Math.round((Math.random() - 0.5) * 50) + "deg";
-    const rot2 = Math.round((Math.random() - 0.5) * 220) + "deg";
-    const dur = (1.2 + Math.random() * 0.4).toFixed(2) + "s";
-
-    el.style.setProperty("--x", `${x}px`);
-    el.style.setProperty("--y", `${y}px`);
-    el.style.setProperty("--vx", vx);
-    el.style.setProperty("--vy", vy);
-    el.style.setProperty("--drop", drop);
-    el.style.setProperty("--sway", sway);
-    el.style.setProperty("--rot1", rot1);
-    el.style.setProperty("--rot2", rot2);
-    el.style.setProperty("--c-dur", dur);
-
-    container.appendChild(el);
-    setTimeout(() => {
-      if (el.parentNode === container) {
-        container.removeChild(el);
-      }
-    }, 1600);
+    pushParticle({
+      kind: isAkshadhai ? "grain" : "petal",
+      glyph: flowerGlyphs[Math.floor(Math.random() * flowerGlyphs.length)],
+      size: 14 + Math.random() * 6,
+      x,
+      y,
+      vx: (Math.random() - 0.5) * 38,
+      vy: -(Math.random() * 20 + 8),
+      gravity: 145,
+      swayAmp: 12 + Math.random() * 10,
+      swayFreq: 3.2,
+      phase: Math.random() * Math.PI * 2,
+      rot: (Math.random() - 0.5) * 0.8,
+      vRot: (Math.random() - 0.5) * 2.6,
+      born: performance.now(),
+      life: 1.1 + Math.random() * 0.35
+    });
   }
 
   function handleMove(clientX, clientY) {
+    if (document.body.classList.contains("locked")) return;
     const now = performance.now();
     const dist = Math.hypot(clientX - lastX, clientY - lastY);
 
-    // Only shower when moving with noticeable speed or distance
-    if (dist > 16 || (now - lastTime > 40 && dist > 5)) {
-      // If user moved briskly, interpolate a middle particle so trail is continuous
-      if (dist > 50) {
-        const midX = (lastX + clientX) / 2;
-        const midY = (lastY + clientY) / 2;
-        spawnParticle(midX, midY);
+    if (dist > 20 || (now - lastTime > 50 && dist > 6)) {
+      if (dist > 60) {
+        spawnTrailParticle((lastX + clientX) / 2, (lastY + clientY) / 2);
       }
-      spawnParticle(clientX, clientY);
-
+      spawnTrailParticle(clientX, clientY);
       lastX = clientX;
       lastY = clientY;
       lastTime = now;
     }
   }
 
-  window.addEventListener("pointermove", (e) => {
-    handleMove(e.clientX, e.clientY);
-  }, { passive: true });
-
+  window.addEventListener("pointermove", (e) => handleMove(e.clientX, e.clientY), { passive: true });
   window.addEventListener("touchmove", (e) => {
-    if (e.touches && e.touches[0]) {
-      handleMove(e.touches[0].clientX, e.touches[0].clientY);
-    }
+    if (e.touches && e.touches[0]) handleMove(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
 })();
-
