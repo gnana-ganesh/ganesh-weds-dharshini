@@ -37,8 +37,7 @@ body {
   background: var(--ink-950);
   color: var(--ink);
   line-height: 1.65;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -1077,11 +1076,11 @@ body.locked .film-floating-play-btn {
    EVENT CHAPTERS NAVIGATION MENU
    ========================================================================== */
 .film-event-menu {
-  position: absolute;
-  top: clamp(14px, 2.5vh, 26px);
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top, 14px));
   left: 50%;
   transform: translate(-50%, -14px);
-  z-index: 90;
+  z-index: 95;
   display: flex;
   align-items: center;
   gap: 0.3rem;
@@ -1096,7 +1095,7 @@ body.locked .film-floating-play-btn {
   pointer-events: none;
   transition: opacity 0.35s ease, transform 0.35s var(--ease-out);
 }
-.film-event-menu.is-visible {
+body.in-cinema .film-event-menu.is-visible {
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, 0);
@@ -1873,24 +1872,30 @@ body.in-cinema .film-bottom-progress { opacity: 1; }
   .cover-scroll-hint { margin-top: 0.2rem; padding: 4px 12px; font-size: 0.72rem; }
 
   .film-event-menu {
-    top: max(56px, calc(env(safe-area-inset-top, 10px) + 46px));
-    left: 50%;
-    transform: translate(-50%, -10px);
-    width: calc(100% - 20px);
-    max-width: 390px;
-    padding: 0.24rem 0.4rem;
-    gap: 0.14rem;
-    justify-content: center;
-    z-index: 90;
+    top: max(10px, env(safe-area-inset-top, 10px));
+    left: max(10px, env(safe-area-inset-left, 10px));
+    right: calc(max(12px, env(safe-area-inset-right, 12px)) + 44px);
+    width: auto;
+    max-width: none;
+    transform: translateY(-10px);
+    padding: 0.2rem 0.32rem;
+    gap: 0.12rem;
+    justify-content: space-between;
+    overflow-x: auto;
+    scrollbar-width: none;
+    z-index: 95;
   }
-  .film-event-menu.is-visible { transform: translate(-50%, 0); }
+  .film-event-menu::-webkit-scrollbar { display: none; }
+  body.in-cinema .film-event-menu.is-visible { transform: translateY(0); }
   .event-menu-btn {
-    padding: 0.26rem 0.42rem;
-    font-size: clamp(0.65rem, 2.3vw, 0.74rem);
-    gap: 0.2rem;
+    padding: 0.24rem 0.36rem;
+    font-size: clamp(0.6rem, 2.5vw, 0.72rem);
+    gap: 0.18rem;
+    flex: 1 1 auto;
+    justify-content: center;
   }
-  .event-menu-btn .menu-icon { font-size: 0.82rem; }
-  .menu-sep { font-size: 0.45rem; opacity: 0.5; }
+  .event-menu-btn .menu-icon { font-size: 0.78rem; }
+  .menu-sep { display: none; }
 
   .film-floating-play-btn {
     padding: 0.62rem 1.4rem;

@@ -652,7 +652,7 @@ function renderFilmUI(progress) {
 
   currentFilmAct = activeIdx;
 
-  const menuVisible = progress >= 0.12 && progress < 0.98;
+  const menuVisible = progress >= 0.19 && progress < 0.98;
   if (filmEventMenu && menuVisible !== lastMenuVisible) {
     lastMenuVisible = menuVisible;
     filmEventMenu.classList.toggle("is-visible", menuVisible);
